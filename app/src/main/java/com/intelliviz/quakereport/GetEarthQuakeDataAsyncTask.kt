@@ -1,7 +1,6 @@
-package com.example.android.quakereport
+package com.intelliviz.quakereport
 
 import android.os.AsyncTask
-import android.widget.ArrayAdapter
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -11,7 +10,7 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 
-class GetEarthQuakeDataAsyncTask(var adapter: ArrayAdapter<String>) : AsyncTask<String?, Void, String>() {
+class GetEarthQuakeDataAsyncTask(var adapter: EarthquakeAdapter) : AsyncTask<String?, Void, String>() {
 
     override fun doInBackground(vararg p0: String?): String {
        var data: String = loadDataFromURL(p0[0])
@@ -27,17 +26,9 @@ class GetEarthQuakeDataAsyncTask(var adapter: ArrayAdapter<String>) : AsyncTask<
         var earthQuakes: JSONArray = jsonData.getJSONArray("features")
 
 
-        var locations: MutableList<String> = ArrayList<String>()
-        for (i in  0..(earthQuakes.length()-1)) {
-            val item = earthQuakes.getJSONObject(i)
-            var properties = item.getJSONObject("properties")
-            var place = properties.getString("place")
-            locations.add(place)
-        }
+        val earthquakes: MutableList<Earthquake> = QueryUtils.extractEarthquakes(result)
 
-        adapter.clear()
-        adapter.addAll(locations)
-        adapter.notifyDataSetChanged()
+        adapter.addAll(earthquakes)
     }
 
 

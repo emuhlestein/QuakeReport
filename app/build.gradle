@@ -7,7 +7,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.example.android.quakereport"
+        applicationId "com.intelliviz.quakereport"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1

@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.android.quakereport
+package com.intelliviz.quakereport
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.ListView
+import android.support.v7.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.earthquake_activity.*
 import java.util.*
 
 class EarthquakeActivity : AppCompatActivity() {
@@ -30,24 +29,22 @@ class EarthquakeActivity : AppCompatActivity() {
         var url: String = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=2016-05-02&endtime=2016-05-03&format=geojson&minmag=4.5"
 
         // Create a fake list of earthquake locations.
-        val earthquakes = ArrayList<String>()
-        earthquakes.add("San Francisco")
-        earthquakes.add("London")
-        earthquakes.add("Tokyo")
-        earthquakes.add("Mexico City")
-        earthquakes.add("Moscow")
-        earthquakes.add("Rio de Janeiro")
-        earthquakes.add("Paris")
+        val earthquakes = ArrayList<Earthquake>()
+//        earthquakes.add("San Francisco")
+//        earthquakes.add("London")
+//        earthquakes.add("Tokyo")
+//        earthquakes.add("Mexico City")
+//        earthquakes.add("Moscow")
+//        earthquakes.add("Rio de Janeiro")
+//        earthquakes.add("Paris")
 
         // Find a reference to the {@link ListView} in the layout
-        val earthquakeListView = findViewById<View>(R.id.list) as ListView
+        //val earthquakeListView = findViewById<View>(R.id.earthquakeListView) as RecyclerView
 
         // Create a new {@link ArrayAdapter} of earthquakes
-        val adapter = ArrayAdapter(
-                this, android.R.layout.simple_list_item_1, earthquakes)
+        val adapter = EarthquakeAdapter(this, earthquakes)
 
-        // Set the adapter on the {@link ListView}
-        // so the list can be populated in the user interface
+        earthquakeListView.layoutManager = LinearLayoutManager(this)
         earthquakeListView.adapter = adapter
 
         GetEarthQuakeDataAsyncTask(adapter).execute(url)
