@@ -17,6 +17,7 @@ package com.intelliviz.quakereport
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.earthquake_activity.*
 import java.util.*
@@ -44,7 +45,10 @@ class EarthquakeActivity : AppCompatActivity() {
         // Create a new {@link ArrayAdapter} of earthquakes
         val adapter = EarthquakeAdapter(this, earthquakes)
 
-        earthquakeListView.layoutManager = LinearLayoutManager(this)
+        //earthquakeListView.layoutManager = LinearLayoutManager(this)
+        var layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        earthquakeListView.layoutManager = layoutManager
+        earthquakeListView.addItemDecoration(DividerItemDecoration(this, layoutManager.getOrientation()))
         earthquakeListView.adapter = adapter
 
         GetEarthQuakeDataAsyncTask(adapter).execute(url)

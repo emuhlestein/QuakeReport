@@ -21,9 +21,7 @@ class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val earthquake = getItem(position)
-        holder.magnitudeTextView.text = earthquake.magnitude.toString()
-        holder.locationTextView.text = earthquake.location
-        holder.dateTextView.text = earthquake.date
+        holder.bind(earthquake)
     }
 
     fun addAll(earthquakes: List<Earthquake>) {
@@ -36,11 +34,17 @@ class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>
         return earthquakes[position]
     }
 
-
-
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val magnitudeTextView = view.magnitude
         val locationTextView = view.location
         val dateTextView = view.date
+        val timeTextView = view.time
+
+        fun bind(earthquake: Earthquake) {
+            magnitudeTextView.text = earthquake.magnitude.toString()
+            locationTextView.text = earthquake.location
+            dateTextView.text = earthquake.date
+            timeTextView.text = earthquake.time
+        }
     }
 }

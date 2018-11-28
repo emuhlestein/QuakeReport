@@ -31,7 +31,8 @@ object QueryUtils {
                 val place = properties.getString("place")
                 val time = properties.getLong("time")
                 val dateString = getDateToDisplay(time)
-                earthquakes.add(Earthquake(mag, place, dateString))
+                val timeString = getTimeToDisplay(time)
+                earthquakes.add(Earthquake(mag, place, dateString, timeString))
             }
         } catch (e: JSONException) {
             Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e)
@@ -42,7 +43,13 @@ object QueryUtils {
 
     fun getDateToDisplay(time: Long): String {
         var dateObject = Date(time)
-        var dateFormatter: SimpleDateFormat = SimpleDateFormat("MMM DD, yyyy")
+        var dateFormatter: SimpleDateFormat = SimpleDateFormat("MMM dd, yyyy")
         return dateFormatter.format(dateObject)
+    }
+
+    fun getTimeToDisplay(time: Long): String {
+        var dateObject = Date(time)
+        var timeFormatter: SimpleDateFormat = SimpleDateFormat("h:mm a")
+        return timeFormatter.format(dateObject)
     }
 }
