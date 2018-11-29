@@ -32,7 +32,14 @@ object QueryUtils {
                 val time = properties.getLong("time")
                 val dateString = getDateToDisplay(time)
                 val timeString = getTimeToDisplay(time)
-                earthquakes.add(Earthquake(mag, place, dateString, timeString))
+                val tokens: List<String> = place.split(",")
+                if(tokens.size == 0) {
+                    earthquakes.add(Earthquake(mag, "", "", dateString, timeString))
+                } else if(tokens.size == 1) {
+                    earthquakes.add(Earthquake(mag, tokens[0], "", dateString, timeString))
+                } else {
+                    earthquakes.add(Earthquake(mag, tokens[0], tokens[1], dateString, timeString))
+                }
             }
         } catch (e: JSONException) {
             Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e)

@@ -36,13 +36,15 @@ class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val magnitudeTextView = view.magnitude
-        val locationTextView = view.location
+        val distanceTextView = view.distance
+        val cityTextView = view.city
         val dateTextView = view.date
         val timeTextView = view.time
 
         fun bind(earthquake: Earthquake) {
             magnitudeTextView.text = earthquake.magnitude.toString()
-            locationTextView.text = earthquake.location
+            distanceTextView.text = earthquake.distance
+            cityTextView.text = earthquake.city
             dateTextView.text = earthquake.date
             timeTextView.text = earthquake.time
         }
