@@ -7,12 +7,14 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import kotlinx.android.synthetic.main.earthquake_list_item.view.*
 
 
 class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>) :
         RecyclerView.Adapter<EarthquakeAdapter.ViewHolder>() {
     private val earthquakes: MutableList<Earthquake> = items
+    private lateinit var listener: OnEarthquakeSelectListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context).inflate(R.layout.earthquake_list_item, parent, false))
@@ -37,51 +39,61 @@ class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>
         return earthquakes[position]
     }
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
+        override fun onClick(p0: View?) {
+            Toast.makeText(context, earthquake!!.city, Toast.LENGTH_LONG).show()
+        }
+
         val magnitudeTextView = view.magnitude
         val distanceTextView = view.distance
         val cityTextView = view.city
         val dateTextView = view.date
         val timeTextView = view.time
+        var earthquake: Earthquake? = null
+
+        init {
+            view.touchables
+            view.setOnClickListener(this)
+        }
 
         fun bind(earthquake: Earthquake, context: Context) {
+            this.earthquake = earthquake
             magnitudeTextView.text = earthquake.magnitude.toString()
             distanceTextView.text = earthquake.distance
             cityTextView.text = earthquake.city
             dateTextView.text = earthquake.date
             timeTextView.text = earthquake.time
             val magnitudeCircle = magnitudeTextView.getBackground() as GradientDrawable
-            var magnitudeColor = getMagnitudeColor(earthquake.magnitude)
-            magnitudeColor = ContextCompat.getColor(context, magnitudeColor)
+            var magnitudeColor = getMagnitudeColor(context, earthquake.magnitude)
             magnitudeCircle.setColor(magnitudeColor)
-
         }
 
-        private fun getMagnitudeColor(magnitude: Double): Int {
+        private fun getMagnitudeColor(context: Context, magnitude: Double): Int {
 
+            var colorIndex: Int
             if(magnitude <= 1.0) {
-                return R.color.magnitude1
+                colorIndex = R.color.magnitude1
             } else if(magnitude <= 2.0) {
-                return R.color.magnitude2
+                colorIndex = R.color.magnitude2
             } else if(magnitude <= 3.0) {
-                return R.color.magnitude3
+                colorIndex = R.color.magnitude3
             } else if(magnitude <= 4.0) {
-                return R.color.magnitude4
+                colorIndex = R.color.magnitude4
             } else if(magnitude <= 5.0) {
-                return R.color.magnitude5
+                colorIndex = R.color.magnitude5
             } else if(magnitude <= 6.0) {
-                return R.color.magnitude6
+                colorIndex = R.color.magnitude6
             } else if(magnitude <= 7.0) {
-                return R.color.magnitude7
+                colorIndex = R.color.magnitude7
             } else if(magnitude <= 8.0) {
-                return R.color.magnitude8
+                colorIndex = R.color.magnitude8
             } else if(magnitude <= 9.0) {
-                return R.color.magnitude9
+                colorIndex = R.color.magnitude9
             } else {
-                return R.color.magnitude10plus
+                colorIndex = R.color.magnitude10plus
             }
+
+            return ContextCompat.getColor(context, colorIndex)
         }
     }
-
-
 }

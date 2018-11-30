@@ -30,15 +30,16 @@ object QueryUtils {
                 val mag = properties.getDouble("mag")
                 val place = properties.getString("place")
                 val time = properties.getLong("time")
+                val url = properties.getString("url")
                 val dateString = getDateToDisplay(time)
                 val timeString = getTimeToDisplay(time)
                 val tokens: List<String> = place.split(",")
                 if(tokens.size == 0) {
-                    earthquakes.add(Earthquake(mag, "", "", dateString, timeString))
+                    earthquakes.add(Earthquake(mag, "", "", dateString, timeString, url))
                 } else if(tokens.size == 1) {
-                    earthquakes.add(Earthquake(mag, tokens[0], "", dateString, timeString))
+                    earthquakes.add(Earthquake(mag, tokens[0], "", dateString, timeString, url))
                 } else {
-                    earthquakes.add(Earthquake(mag, tokens[0], tokens[1], dateString, timeString))
+                    earthquakes.add(Earthquake(mag, tokens[0], tokens[1], dateString, timeString, url))
                 }
             }
         } catch (e: JSONException) {
