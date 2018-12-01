@@ -1,20 +1,22 @@
 package com.intelliviz.quakereport
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import kotlinx.android.synthetic.main.earthquake_list_item.view.*
 
 
 class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>) :
         RecyclerView.Adapter<EarthquakeAdapter.ViewHolder>() {
     private val earthquakes: MutableList<Earthquake> = items
-    private lateinit var listener: OnEarthquakeSelectListener
+    private lateinit var listener: GetEarthQuakeDataAsyncTask.OnEarthquakeLoadListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context).inflate(R.layout.earthquake_list_item, parent, false))
@@ -40,9 +42,7 @@ class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
-        override fun onClick(p0: View?) {
-            Toast.makeText(context, earthquake!!.city, Toast.LENGTH_LONG).show()
-        }
+
 
         val magnitudeTextView = view.magnitude
         val distanceTextView = view.distance
@@ -50,6 +50,12 @@ class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>
         val dateTextView = view.date
         val timeTextView = view.time
         var earthquake: Earthquake? = null
+
+        override fun onClick(p0: View?) {
+            val intent = Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(earthquake!!.url))
+            startActivity(context, intent, null)
+        }
 
         init {
             view.touchables

@@ -10,7 +10,18 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 
-class GetEarthQuakeDataAsyncTask(var adapter: EarthquakeAdapter) : AsyncTask<String?, Void, String>() {
+class GetEarthQuakeDataAsyncTask(_listener: GetEarthQuakeDataAsyncTask.OnEarthquakeLoadListener) : AsyncTask<String?, Void, String>() {
+
+
+    private var listener: OnEarthquakeLoadListener? = null
+
+    init {
+        listener = _listener
+    }
+
+    interface OnEarthquakeLoadListener {
+        fun onEarthquakeLoad(earthquakes: List<Earthquake>)
+    }
 
     override fun doInBackground(vararg p0: String?): String {
        var data: String = loadDataFromURL(p0[0])
@@ -28,7 +39,7 @@ class GetEarthQuakeDataAsyncTask(var adapter: EarthquakeAdapter) : AsyncTask<Str
 
         val earthquakes: MutableList<Earthquake> = QueryUtils.extractEarthquakes(result)
 
-        adapter.addAll(earthquakes)
+        listener?.onEarthquakeLoad(earthquakes)
     }
 
 

@@ -15,6 +15,8 @@
  */
 package com.intelliviz.quakereport
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -24,10 +26,13 @@ import java.util.*
 
 class EarthquakeActivity : AppCompatActivity() {
 
+    private lateinit var viewModel: EarthquakeViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.earthquake_activity)
         var url: String = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=2016-05-02&endtime=2016-05-03&format=geojson&minmag=4.5"
+        //https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10
 
         // Create a fake list of earthquake locations.
         val earthquakes = ArrayList<Earthquake>()
@@ -55,8 +60,17 @@ class EarthquakeActivity : AppCompatActivity() {
             Toast.makeText(this, "HERE", Toast.LENGTH_LONG).show()
         }
 
+        val earthquakeObserver = Observer<List<Earthquake>> { earthquake ->
+            adapter.addAll(earthquakes)
+        }
 
-        GetEarthQuakeDataAsyncTask(adapter).execute(url)
+        viewModel = ViewModelProviders.of(this).get(EarthquakeViewModel::class.java)
+        viewModel.earthquakes?.observe(this, earthquakeObserver)
+        viewModel.loadEarthquakes(url)
+
+
+        //GetEarthQuakeDataAsyncTask(adapter).execute(url)
+
     }
 
     companion object {
