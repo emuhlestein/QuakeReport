@@ -1,17 +1,18 @@
 package com.intelliviz.quakereport
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 
 class EarthquakeRepository : GetEarthQuakeDataAsyncTask.OnEarthquakeLoadListener {
     override fun onEarthquakeLoad(earthquakes: List<Earthquake>) {
-       this.earthquakes.value = earthquakes
+       this._earthquakes.value = earthquakes
     }
 
-    var earthquakes = MutableLiveData<List<Earthquake>>()
+    var _earthquakes = MutableLiveData<List<Earthquake>>()
 
-//    fun getEarthquakes(): MutableLiveData<List<Earthquake>> {
-//        return earthquakes
-//    }
+    fun getEarthquakes(): LiveData<List<Earthquake>> {
+        return _earthquakes
+    }
 
     fun loadEarthQuakes(url: String) {
         GetEarthQuakeDataAsyncTask(this).execute(url)

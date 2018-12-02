@@ -61,11 +61,12 @@ class EarthquakeActivity : AppCompatActivity() {
         }
 
         val earthquakeObserver = Observer<List<Earthquake>> { earthquake ->
+            val earthquakes =  ArrayList<Earthquake>(earthquake)
             adapter.addAll(earthquakes)
         }
 
         viewModel = ViewModelProviders.of(this).get(EarthquakeViewModel::class.java)
-        viewModel.earthquakes?.observe(this, earthquakeObserver)
+        viewModel.getEarthquakes().observe(this, earthquakeObserver)
         viewModel.loadEarthquakes(url)
 
 
