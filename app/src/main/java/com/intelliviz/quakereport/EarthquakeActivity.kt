@@ -17,14 +17,18 @@ package com.intelliviz.quakereport
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.earthquake_activity.*
 import java.util.*
 
-class EarthquakeActivity : AppCompatActivity() {
+class EarthquakeActivity : AppCompatActivity(), DatePickerFragment.OnDateSelectedListener {
 
     private lateinit var viewModel: EarthquakeViewModel
 
@@ -69,9 +73,33 @@ class EarthquakeActivity : AppCompatActivity() {
         viewModel.getEarthquakes().observe(this, earthquakeObserver)
         viewModel.loadEarthquakes(url)
 
+    }
 
-        //GetEarthQuakeDataAsyncTask(adapter).execute(url)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val intent: Intent
+        when (item.itemId) {
+            R.id.options_item -> {
+                val newFragment = DatePickerFragment()
+                newFragment.show(supportFragmentManager, "date picker")
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDateSelected(day: String, month: String, year: String) {
+        var dateStart = year + "-" + month + "-" + day
+        var dateEnd = year + "-" + month + "-" + (day+1)
+        Toast.makeText(this, "selected date is $dateStart", Toast.LENGTH_SHORT).show()
+        var url: String = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=$dateStart&endtime=$dateEnd&format=geojson&minmag=4.5"
+        viewModel.loadEarthquakes(url)
+        Log.d("TAG", dateStart)
     }
 
     companion object {
