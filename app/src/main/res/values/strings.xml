@@ -6,4 +6,6 @@
     <string name="end_date">End Date</string>
     <string name="min_mag">Min Magnitude</string>
     <string name="max_mag">Max Magnitude</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
 </resources>
