@@ -85,15 +85,17 @@ class EarthquakeActivity : AppCompatActivity(), DatePickerFragment.OnDateSelecte
         val intent: Intent
         when (item.itemId) {
             R.id.options_item -> {
-                val newFragment = DatePickerFragment()
-                newFragment.show(supportFragmentManager, "date picker")
+                //val newFragment = DatePickerFragment()
+                //newFragment.show(supportFragmentManager, "date picker")
+                intent = Intent(this, EarthquakeOptionsActivity::class.java)
+                startActivity(intent)
             }
         }
 
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onDateSelected(day: String, month: String, year: String) {
+    override fun onDateSelected(day: String, month: String, year: String, id: Int) {
         var dateStart = year + "-" + month + "-" + day
         var dateEnd = year + "-" + month + "-" + (day+1)
         Toast.makeText(this, "selected date is $dateStart", Toast.LENGTH_SHORT).show()

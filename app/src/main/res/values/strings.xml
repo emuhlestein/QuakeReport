@@ -2,4 +2,8 @@
 <resources>
     <string name="app_name">Quake Report</string>
     <string name="no_results">No earthquakes found</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="min_mag">Min Magnitude</string>
+    <string name="max_mag">Max Magnitude</string>
 </resources>

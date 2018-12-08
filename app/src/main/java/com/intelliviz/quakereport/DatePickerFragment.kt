@@ -8,20 +8,33 @@ import java.util.*
 
 class DatePickerFragment : DialogFragment() {
 
+    var mId: Int = 0
     var listener: DatePickerFragment.OnDateSelectedListener? = null
 
     interface OnDateSelectedListener {
-        fun onDateSelected(day: String, month: String, year: String)
+        fun onDateSelected(day: String, month: String, year: String, id: Int)
+    }
+
+    companion object {
+        private val ARG_ID = "id"
+        fun newInstance(id: Int): DatePickerFragment {
+            val args: Bundle = Bundle()
+            args.putInt(ARG_ID, id)
+            val fragment = DatePickerFragment()
+            fragment.arguments = args
+            return fragment
+        }
     }
 
     private val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, month, day ->
         if(activity is OnDateSelectedListener ) {
             listener = activity as OnDateSelectedListener
-            listener?.onDateSelected("" + view.dayOfMonth, "" + (view.month + 1), "" + view.year)
+            listener?.onDateSelected("" + view.dayOfMonth, "" + (view.month + 1), "" + view.year, mId)
         }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        mId = arguments!!.getInt(ARG_ID)
         val c = Calendar.getInstance()
         val year = c.get(Calendar.YEAR)
         val month = c.get(Calendar.MONTH)
