@@ -38,11 +38,15 @@ class EarthquakeOptionsActivity : AppCompatActivity(), DatePickerFragment.OnDate
         end_date_text_view.text = s
 
         ok_button.setOnClickListener {
-            var intent = Intent()
-            intent.putExtra(EXTRA_START_DATE, startDate)
-            intent.putExtra(EXTRA_END_DATE, endDate)
-            intent.putExtra(EXTRA_MIN_MAG, minMag)
-            intent.putExtra(EXTRA_MAX_MAG, maxMag)
+            val minmag = min_mag_spinner.selectedItem.toString().toInt()
+            val maxmag = max_mag_spinner.selectedItem.toString().toInt()
+            val startdate = start_date_text_view.text
+            val enddate = end_date_text_view.text
+            val intent = Intent()
+            intent.putExtra(EXTRA_START_DATE, startdate)
+            intent.putExtra(EXTRA_END_DATE, enddate)
+            intent.putExtra(EXTRA_MIN_MAG, minmag)
+            intent.putExtra(EXTRA_MAX_MAG, maxmag)
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
@@ -54,9 +58,9 @@ class EarthquakeOptionsActivity : AppCompatActivity(), DatePickerFragment.OnDate
 
     override fun onDateSelected(day: String, month: String, year: String, id: Int) {
         if(id == START_DATE) {
-            startDate = year + "-" + month + "-" + day
+            start_date_text_view.text = year + "-" + month + "-" + day
         } else if(id == END_DATE) {
-            endDate = year + "-" + month + "-" + day
+            end_date_text_view.text = year + "-" + month + "-" + day
         }
     }
 

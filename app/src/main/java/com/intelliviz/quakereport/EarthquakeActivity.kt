@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2016 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.intelliviz.quakereport
 
 import android.arch.lifecycle.Observer
@@ -39,29 +24,13 @@ class EarthquakeActivity : AppCompatActivity(), DatePickerFragment.OnDateSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.earthquake_activity)
-        var url: String = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=2016-05-02&endtime=2016-05-03&format=geojson&minmag=4.5"
+        val url: String = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=2016-05-02&endtime=2016-05-03&format=geojson&minmag=4.5"
         //https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10
 
-        // Create a fake list of earthquake locations.
         val earthquakes = ArrayList<Earthquake>()
-//        earthquakes.add("San Francisco")
-//        earthquakes.add("London")
-//        earthquakes.add("Tokyo")
-//        earthquakes.add("Mexico City")
-//        earthquakes.add("Moscow")
-//        earthquakes.add("Rio de Janeiro")
-//        earthquakes.add("Paris")
-
-        // Find a reference to the {@link ListView} in the layout
-        //val earthquakeListView = findViewById<View>(R.id.earthquakeListView) as RecyclerView
-
-        // Create a new {@link ArrayAdapter} of earthquakes
         val adapter = EarthquakeAdapter(this, earthquakes)
-
-        //earthquakeListView.layoutManager = LinearLayoutManager(this)
-        var layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         earthquakeListView.layoutManager = layoutManager
-        //earthquakeListView.addItemDecoration(DividerItemDecoration(this, layoutManager.getOrientation()))
         earthquakeListView.adapter = adapter
 
         earthquakeListView.setOnClickListener {
@@ -69,14 +38,13 @@ class EarthquakeActivity : AppCompatActivity(), DatePickerFragment.OnDateSelecte
         }
 
         val earthquakeObserver = Observer<List<Earthquake>> { earthquake ->
-            val earthquakes =  ArrayList<Earthquake>(earthquake)
-            adapter.addAll(earthquakes)
+            val earthquakeData =  ArrayList<Earthquake>(earthquake)
+            adapter.addAll(earthquakeData)
         }
 
         viewModel = ViewModelProviders.of(this).get(EarthquakeViewModel::class.java)
         viewModel.getEarthquakes().observe(this, earthquakeObserver)
         viewModel.loadEarthquakes(url)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -100,19 +68,19 @@ class EarthquakeActivity : AppCompatActivity(), DatePickerFragment.OnDateSelecte
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        var endDate = data?.getStringExtra(EXTRA_START_DATE)
-        var startDate = data?.getStringExtra(EXTRA_END_DATE)
-        var minMag = data?.getIntExtra(EXTRA_MIN_MAG, DEFAULT_MAGNITUDE)
+        val endDate = data?.getStringExtra(EXTRA_END_DATE)
+        val startDate = data?.getStringExtra(EXTRA_START_DATE)
+        val minMag = data?.getIntExtra(EXTRA_MIN_MAG, DEFAULT_MAGNITUDE)
         var maxMag = data?.getIntExtra(EXTRA_MAX_MAG, DEFAULT_MAGNITUDE)
-        var url: String = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=$startDate&endtime=$endDate&format=geojson&minmag=$minMag"
+        val url = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=$startDate&endtime=$endDate&format=geojson&minmag=$minMag"
         viewModel.loadEarthquakes(url)
     }
 
     override fun onDateSelected(day: String, month: String, year: String, id: Int) {
-        var dateStart = year + "-" + month + "-" + day
-        var dateEnd = year + "-" + month + "-" + (day+1)
+        val dateStart = year + "-" + month + "-" + day
+        val dateEnd = year + "-" + month + "-" + (day+1)
         Toast.makeText(this, "selected date is $dateStart", Toast.LENGTH_SHORT).show()
-        var url: String = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=$dateStart&endtime=$dateEnd&format=geojson&minmag=4.5"
+        val url = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=$dateStart&endtime=$dateEnd&format=geojson&minmag=4.5"
         viewModel.loadEarthquakes(url)
         Log.d("TAG", dateStart)
     }
