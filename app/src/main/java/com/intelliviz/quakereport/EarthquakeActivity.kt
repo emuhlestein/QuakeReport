@@ -25,6 +25,10 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import com.intelliviz.quakereport.EarthquakeOptionsActivity.Companion.EXTRA_END_DATE
+import com.intelliviz.quakereport.EarthquakeOptionsActivity.Companion.EXTRA_MAX_MAG
+import com.intelliviz.quakereport.EarthquakeOptionsActivity.Companion.EXTRA_MIN_MAG
+import com.intelliviz.quakereport.EarthquakeOptionsActivity.Companion.EXTRA_START_DATE
 import kotlinx.android.synthetic.main.earthquake_activity.*
 import java.util.*
 
@@ -88,11 +92,20 @@ class EarthquakeActivity : AppCompatActivity(), DatePickerFragment.OnDateSelecte
                 //val newFragment = DatePickerFragment()
                 //newFragment.show(supportFragmentManager, "date picker")
                 intent = Intent(this, EarthquakeOptionsActivity::class.java)
-                startActivity(intent)
+                startActivityForResult(intent, REQUEST_CODE)
             }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        var endDate = data?.getStringExtra(EXTRA_START_DATE)
+        var startDate = data?.getStringExtra(EXTRA_END_DATE)
+        var minMag = data?.getIntExtra(EXTRA_MIN_MAG, DEFAULT_MAGNITUDE)
+        var maxMag = data?.getIntExtra(EXTRA_MAX_MAG, DEFAULT_MAGNITUDE)
+        var url: String = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=$startDate&endtime=$endDate&format=geojson&minmag=$minMag"
+        viewModel.loadEarthquakes(url)
     }
 
     override fun onDateSelected(day: String, month: String, year: String, id: Int) {
@@ -105,7 +118,8 @@ class EarthquakeActivity : AppCompatActivity(), DatePickerFragment.OnDateSelecte
     }
 
     companion object {
-
         val LOG_TAG = EarthquakeActivity::class.java.name
+        val REQUEST_CODE = 1
+        val DEFAULT_MAGNITUDE = 0
     }
 }
