@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -17,7 +16,8 @@ import com.intelliviz.quakereport.EarthquakeOptionsActivity.Companion.EXTRA_STAR
 import kotlinx.android.synthetic.main.earthquake_activity.*
 import java.util.*
 
-class EarthquakeActivity : AppCompatActivity(), DatePickerFragment.OnDateSelectedListener {
+class EarthquakeActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOptionsSelectedListener {
+
 
     private lateinit var viewModel: EarthquakeViewModel
 
@@ -42,9 +42,16 @@ class EarthquakeActivity : AppCompatActivity(), DatePickerFragment.OnDateSelecte
             adapter.addAll(earthquakeData)
         }
 
+        var endDate: String = QueryPreferences.getEndDate(this)
+        var startDate: String = QueryPreferences.getStartDate(this)
+        var minMag: Int = QueryPreferences.getMinMag(this)
+        var maxMag: Int = QueryPreferences.getMaxMag(this)
+
         viewModel = ViewModelProviders.of(this).get(EarthquakeViewModel::class.java)
         viewModel.getEarthquakes().observe(this, earthquakeObserver)
-        viewModel.loadEarthquakes(url)
+        //viewModel.loadEarthquakes(url)
+
+        viewModel.loadEarthquakes(endDate, startDate, minMag, maxMag)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -59,8 +66,10 @@ class EarthquakeActivity : AppCompatActivity(), DatePickerFragment.OnDateSelecte
             R.id.options_item -> {
                 //val newFragment = DatePickerFragment()
                 //newFragment.show(supportFragmentManager, "date picker")
-                intent = Intent(this, EarthquakeOptionsActivity::class.java)
-                startActivityForResult(intent, REQUEST_CODE)
+                var dialog: EarthquakeOptionsDialog = EarthquakeOptionsDialog.newInstance(0)
+                dialog.show(supportFragmentManager, "options")
+//                intent = Intent(this, EarthquakeOptionsActivity::class.java)
+//                startActivityForResult(intent, REQUEST_CODE)
             }
         }
 
@@ -76,13 +85,21 @@ class EarthquakeActivity : AppCompatActivity(), DatePickerFragment.OnDateSelecte
         viewModel.loadEarthquakes(url)
     }
 
-    override fun onDateSelected(day: String, month: String, year: String, id: Int) {
-        val dateStart = year + "-" + month + "-" + day
-        val dateEnd = year + "-" + month + "-" + (day+1)
-        Toast.makeText(this, "selected date is $dateStart", Toast.LENGTH_SHORT).show()
-        val url = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=$dateStart&endtime=$dateEnd&format=geojson&minmag=4.5"
-        viewModel.loadEarthquakes(url)
-        Log.d("TAG", dateStart)
+//    override fun onDateSelected(day: String, month: String, year: String, id: Int) {
+//        val dateStart = year + "-" + month + "-" + day
+//        val dateEnd = year + "-" + month + "-" + (day+1)
+//        Toast.makeText(this, "selected date is $dateStart", Toast.LENGTH_SHORT).show()
+//        val url = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=$dateStart&endtime=$dateEnd&format=geojson&minmag=4.5"
+//        viewModel.loadEarthquakes(url)
+//        Log.d("TAG", dateStart)
+//    }
+
+    override fun onOptionsSelected(startDate: String, endDate: String, minMag: Int, maxMag: Int) {
+        QueryPreferences.setStartDate(this, startDate)
+        QueryPreferences.setEndDate(this, endDate)
+        QueryPreferences.setMinMag(this, minMag)
+        QueryPreferences.setMaxMag(this, maxMag)
+        viewModel.loadEarthquakes(endDate, startDate, minMag, maxMag)
     }
 
     companion object {

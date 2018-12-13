@@ -13,8 +13,8 @@ class EarthquakeOptionsActivity : AppCompatActivity(), DatePickerFragment.OnDate
 
     var endDate = ""
     var startDate = ""
-    var minMag = 0;
-    var maxMag = 0;
+    var minMag = 0
+    var maxMag = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_earhtquake_options)
