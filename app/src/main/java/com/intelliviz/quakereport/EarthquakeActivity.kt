@@ -66,7 +66,11 @@ class EarthquakeActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOption
             R.id.options_item -> {
                 //val newFragment = DatePickerFragment()
                 //newFragment.show(supportFragmentManager, "date picker")
-                var dialog: EarthquakeOptionsDialog = EarthquakeOptionsDialog.newInstance(0)
+                var startDate = QueryPreferences.getStartDate(this)
+                var endDate = QueryPreferences.getEndDate(this)
+                val minMag = QueryPreferences.getMinMag(this)
+                val maxMag = QueryPreferences.getMaxMag(this)
+                var dialog: EarthquakeOptionsDialog = EarthquakeOptionsDialog.newInstance(0, startDate, endDate, minMag, maxMag)
                 dialog.show(supportFragmentManager, "options")
 //                intent = Intent(this, EarthquakeOptionsActivity::class.java)
 //                startActivityForResult(intent, REQUEST_CODE)
