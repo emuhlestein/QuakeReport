@@ -57,21 +57,19 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
         val startDateButton = view.findViewById<View>(R.id.start_date_button) as Button
 
         startDateButton.setOnClickListener {
-            val newFragment = DatePickerFragment.newInstance(START_DATE)
+            val sDate = start_date_text_view.text.toString()
+            val newFragment = DatePickerFragment.newInstance(START_DATE, sDate)
             newFragment.setTargetFragment(this, DATE_REQUEST)
             newFragment.show(activity!!.supportFragmentManager, "date picker")
         }
 
         val endDateButton = view.findViewById<View>(R.id.end_date_button) as Button
         endDateButton.setOnClickListener {
-            val newFragment = DatePickerFragment.newInstance(END_DATE)
+            val eDate = end_date_text_view.text.toString()
+            val newFragment = DatePickerFragment.newInstance(END_DATE, eDate)
             newFragment.setTargetFragment(this, DATE_REQUEST)
             newFragment.show(activity!!.supportFragmentManager, "date picker")
         }
-
-//        val dateFormat = SimpleDateFormat("dd-MM-yyyy")
-//        val currentDate = Date()
-//        val s = dateFormat.format(currentDate)
 
         val startDateTextView = view.findViewById<View>(R.id.start_date_text_view) as TextView
         startDateTextView.setText(startDate)
@@ -86,10 +84,10 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
             val startdate = start_date_text_view.text.toString()
             val enddate = end_date_text_view.text.toString()
             val intent = Intent()
-            intent.putExtra(EarthquakeOptionsActivity.EXTRA_START_DATE, startdate)
-            intent.putExtra(EarthquakeOptionsActivity.EXTRA_END_DATE, enddate)
-            intent.putExtra(EarthquakeOptionsActivity.EXTRA_MIN_MAG, minmag)
-            intent.putExtra(EarthquakeOptionsActivity.EXTRA_MAX_MAG, maxmag)
+            intent.putExtra(EXTRA_START_DATE, startdate)
+            intent.putExtra(EXTRA_END_DATE, enddate)
+            intent.putExtra(EXTRA_MIN_MAG, minmag)
+            intent.putExtra(EXTRA_MAX_MAG, maxmag)
             sendResult(startdate, enddate, minmag, maxmag)
             dismiss()
         }
@@ -100,18 +98,18 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
         }
 
         val minMagSpinner = view.findViewById<View>(R.id.min_mag_spinner) as Spinner
-        minMagSpinner.setSelection(minMag)
+        minMagSpinner.setSelection(minMag-1)
 
         val maxMagSpinner = view.findViewById<View>(R.id.max_mag_spinner) as Spinner
-        maxMagSpinner.setSelection(maxMag)
+        maxMagSpinner.setSelection(maxMag-1)
         return view
     }
 
     override fun onDateSelected(day: String, month: String, year: String, id: Int) {
         if(id == START_DATE) {
-            start_date_text_view.text = year + "-" + month + "-" + day
+            start_date_text_view.text = getFormatDate(day, month, year)
         } else if(id == END_DATE) {
-            end_date_text_view.text = year + "-" + month + "-" + day
+            end_date_text_view.text = getFormatDate(day, month, year)
         }
     }
 
@@ -121,20 +119,19 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
         val month = data?.getStringExtra(DatePickerFragment.EXTRA_MONTH)
         val day = data?.getStringExtra(DatePickerFragment.EXTRA_DAY)
         if(id == START_DATE) {
-            start_date_text_view.text = year + "-" + month + "-" + day
+            start_date_text_view.text = getFormatDate(day!!, month!!, year!!)
         } else if(id == END_DATE) {
-            end_date_text_view.text = year + "-" + month + "-" + day
+            end_date_text_view.text = getFormatDate(day!!, month!!, year!!)
         }
     }
-
 
     fun sendResult(startDate: String, endDate: String, minMag: Int, maxMag: Int) {
         if(targetFragment != null) {
             var intent = Intent()
-            intent.putExtra(EarthquakeOptionsActivity.EXTRA_START_DATE, startDate)
-            intent.putExtra(EarthquakeOptionsActivity.EXTRA_END_DATE, endDate)
-            intent.putExtra(EarthquakeOptionsActivity.EXTRA_MIN_MAG, minMag)
-            intent.putExtra(EarthquakeOptionsActivity.EXTRA_MAX_MAG, maxMag)
+            intent.putExtra(EarthquakeOptionsDialog.EXTRA_START_DATE, startDate)
+            intent.putExtra(EarthquakeOptionsDialog.EXTRA_END_DATE, endDate)
+            intent.putExtra(EarthquakeOptionsDialog.EXTRA_MIN_MAG, minMag)
+            intent.putExtra(EarthquakeOptionsDialog.EXTRA_MAX_MAG, maxMag)
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         } else {
             if(activity is EarthquakeOptionsDialog.OnOptionsSelectedListener) {
@@ -143,5 +140,9 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
                 listener?.onOptionsSelected(startDate, endDate, minMag, maxMag)
             }
         }
+    }
+
+    private fun getFormatDate(day: String, month: String, year: String): String {
+        return year + "-" + month + "-" + day
     }
 }

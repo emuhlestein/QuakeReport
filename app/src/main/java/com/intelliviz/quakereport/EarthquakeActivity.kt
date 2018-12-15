@@ -9,10 +9,10 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import com.intelliviz.quakereport.EarthquakeOptionsActivity.Companion.EXTRA_END_DATE
-import com.intelliviz.quakereport.EarthquakeOptionsActivity.Companion.EXTRA_MAX_MAG
-import com.intelliviz.quakereport.EarthquakeOptionsActivity.Companion.EXTRA_MIN_MAG
-import com.intelliviz.quakereport.EarthquakeOptionsActivity.Companion.EXTRA_START_DATE
+import com.intelliviz.quakereport.EarthquakeOptionsDialog.Companion.EXTRA_END_DATE
+import com.intelliviz.quakereport.EarthquakeOptionsDialog.Companion.EXTRA_MAX_MAG
+import com.intelliviz.quakereport.EarthquakeOptionsDialog.Companion.EXTRA_MIN_MAG
+import com.intelliviz.quakereport.EarthquakeOptionsDialog.Companion.EXTRA_START_DATE
 import kotlinx.android.synthetic.main.earthquake_activity.*
 import java.util.*
 

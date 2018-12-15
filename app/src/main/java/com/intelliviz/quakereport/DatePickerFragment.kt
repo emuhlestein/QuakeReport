@@ -6,7 +6,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
-import java.util.*
 
 class DatePickerFragment : DialogFragment() {
 
@@ -23,9 +22,11 @@ class DatePickerFragment : DialogFragment() {
         val EXTRA_DAY = "day"
         val EXTRA_ID = "id"
         private val ARG_ID = "id"
-        fun newInstance(id: Int): DatePickerFragment {
+        private val ARG_DATE = "date"
+        fun newInstance(id: Int, date: String): DatePickerFragment {
             val args: Bundle = Bundle()
             args.putInt(ARG_ID, id)
+            args.putString(ARG_DATE, date)
             val fragment = DatePickerFragment()
             fragment.arguments = args
             return fragment
@@ -48,11 +49,24 @@ class DatePickerFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         mId = arguments!!.getInt(ARG_ID)
-        val c = Calendar.getInstance()
-        val year = c.get(Calendar.YEAR)
-        val month = c.get(Calendar.MONTH)
-        val day = c.get(Calendar.DAY_OF_MONTH)
+        val date = arguments!!.getString(ARG_DATE)
 
-        return DatePickerDialog(activity!!, dateSetListener, year, month, day)
+
+        return DatePickerDialog(activity!!, dateSetListener, getYear(date), getMonth(date), getDay(date))
+    }
+
+    private fun getDay(date: String): Int {
+        val tokens: List<String> = date.split("-")
+        return tokens[2].toInt()
+    }
+
+    private fun getMonth(date: String): Int {
+        val tokens: List<String> = date.split("-")
+        return tokens[1].toInt() - 1
+    }
+
+    private fun getYear(date: String): Int {
+        val tokens: List<String> = date.split("-")
+        return tokens[0].toInt()
     }
 }
