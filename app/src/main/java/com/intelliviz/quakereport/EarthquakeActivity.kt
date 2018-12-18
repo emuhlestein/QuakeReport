@@ -24,8 +24,6 @@ class EarthquakeActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOption
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.earthquake_activity)
-        val url: String = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=2016-05-02&endtime=2016-05-03&format=geojson&minmag=4.5"
-        //https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10
 
         val earthquakes = ArrayList<Earthquake>()
         val adapter = EarthquakeAdapter(this, earthquakes)
@@ -42,10 +40,10 @@ class EarthquakeActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOption
             adapter.addAll(earthquakeData)
         }
 
-        var endDate: String = QueryPreferences.getEndDate(this)
-        var startDate: String = QueryPreferences.getStartDate(this)
-        var minMag: Int = QueryPreferences.getMinMag(this)
-        var maxMag: Int = QueryPreferences.getMaxMag(this)
+        val endDate: String = QueryPreferences.getEndDate(this)
+        val startDate: String = QueryPreferences.getStartDate(this)
+        val minMag: Int = QueryPreferences.getMinMag(this)
+        val maxMag: Int = QueryPreferences.getMaxMag(this)
 
         viewModel = ViewModelProviders.of(this).get(EarthquakeViewModel::class.java)
         viewModel.getEarthquakes().observe(this, earthquakeObserver)
@@ -88,15 +86,6 @@ class EarthquakeActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOption
         val url = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=$startDate&endtime=$endDate&format=geojson&minmag=$minMag"
         viewModel.loadEarthquakes(url)
     }
-
-//    override fun onDateSelected(day: String, month: String, year: String, id: Int) {
-//        val dateStart = year + "-" + month + "-" + day
-//        val dateEnd = year + "-" + month + "-" + (day+1)
-//        Toast.makeText(this, "selected date is $dateStart", Toast.LENGTH_SHORT).show()
-//        val url = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=$dateStart&endtime=$dateEnd&format=geojson&minmag=4.5"
-//        viewModel.loadEarthquakes(url)
-//        Log.d("TAG", dateStart)
-//    }
 
     override fun onOptionsSelected(startDate: String, endDate: String, minMag: Int, maxMag: Int) {
         QueryPreferences.setStartDate(this, startDate)
