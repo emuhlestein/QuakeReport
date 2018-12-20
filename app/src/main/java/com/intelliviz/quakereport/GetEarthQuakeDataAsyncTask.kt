@@ -1,8 +1,7 @@
 package com.intelliviz.quakereport
 
 import android.os.AsyncTask
-import org.json.JSONArray
-import org.json.JSONObject
+import com.intelliviz.quakereport.db.Earthquake
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -32,10 +31,6 @@ class GetEarthQuakeDataAsyncTask(_listener: GetEarthQuakeDataAsyncTask.OnEarthqu
         if(result == null) {
             return
         }
-
-        var jsonData: JSONObject = JSONObject(result)
-        var earthQuakes: JSONArray = jsonData.getJSONArray("features")
-
 
         val earthquakes: MutableList<Earthquake> = QueryUtils.extractEarthquakes(result)
 

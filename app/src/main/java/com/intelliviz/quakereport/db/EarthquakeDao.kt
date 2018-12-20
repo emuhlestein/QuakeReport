@@ -1,13 +1,16 @@
 package com.intelliviz.quakereport.db
 
+import android.arch.lifecycle.LiveData
+import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
+import android.arch.persistence.room.OnConflictStrategy.REPLACE
 import android.arch.persistence.room.Query
 
+@Dao
 interface EarthquakeDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertEearthquake(earthquake: Earthquake)
+    @Insert(onConflict = REPLACE)
+    fun insertEarthquake(earthquake: Earthquake)
 
     @Delete
     fun deleteEarthquake(earthquake: Earthquake)
@@ -16,5 +19,5 @@ interface EarthquakeDao {
     fun deleteAll()
 
     @Query("SELECT * FROM Earthquake")
-    fun getEarthquakes(): List<Earthquake>
+    fun getEarthquakes(): LiveData<List<Earthquake>>
 }

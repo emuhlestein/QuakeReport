@@ -1,6 +1,7 @@
 package com.intelliviz.quakereport
 
 import android.util.Log
+import com.intelliviz.quakereport.db.Earthquake
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -8,6 +9,11 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 object QueryUtils {
+
+    val EXTRA_START_DATE = "start_date"
+    val EXTRA_END_DATE = "end_date"
+    val EXTRA_MIN_MAG = "min_mag"
+    val EXTRA_MAX_MAG = "max_mag"
 
     /**
      * Return a list of [Earthquake] objects that has been built up from
@@ -35,11 +41,11 @@ object QueryUtils {
                 val timeString = getTimeToDisplay(time)
                 val tokens: List<String> = place.split(",")
                 if(tokens.size == 0) {
-                    earthquakes.add(Earthquake(mag, "", "", dateString, timeString, url))
+                    earthquakes.add(Earthquake(0, mag, "", "", dateString, timeString, url))
                 } else if(tokens.size == 1) {
-                    earthquakes.add(Earthquake(mag, tokens[0], "", dateString, timeString, url))
+                    earthquakes.add(Earthquake(0, mag, tokens[0], "", dateString, timeString, url))
                 } else {
-                    earthquakes.add(Earthquake(mag, tokens[0], tokens[1], dateString, timeString, url))
+                    earthquakes.add(Earthquake(0, mag, tokens[0], tokens[1], dateString, timeString, url))
                 }
             }
         } catch (e: JSONException) {

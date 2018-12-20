@@ -13,6 +13,7 @@ import com.intelliviz.quakereport.EarthquakeOptionsDialog.Companion.EXTRA_END_DA
 import com.intelliviz.quakereport.EarthquakeOptionsDialog.Companion.EXTRA_MAX_MAG
 import com.intelliviz.quakereport.EarthquakeOptionsDialog.Companion.EXTRA_MIN_MAG
 import com.intelliviz.quakereport.EarthquakeOptionsDialog.Companion.EXTRA_START_DATE
+import com.intelliviz.quakereport.db.Earthquake
 import kotlinx.android.synthetic.main.earthquake_activity.*
 import java.util.*
 
@@ -45,8 +46,9 @@ class EarthquakeActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOption
         val minMag: Int = QueryPreferences.getMinMag(this)
         val maxMag: Int = QueryPreferences.getMaxMag(this)
 
-        viewModel = ViewModelProviders.of(this).get(EarthquakeViewModel::class.java)
-        viewModel.getEarthquakes().observe(this, earthquakeObserver)
+        val factory: EarthquakeViewModel.Factory =  EarthquakeViewModel.Factory(application, endDate, startDate, minMag, maxMag)
+        viewModel = ViewModelProviders.of(this, factory).get(EarthquakeViewModel::class.java)
+        viewModel.getEarthquakes()?.observe(this, earthquakeObserver)
         //viewModel.loadEarthquakes(url)
 
         viewModel.loadEarthquakes(endDate, startDate, minMag, maxMag)
