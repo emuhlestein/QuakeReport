@@ -85,8 +85,8 @@ class EarthquakeActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOption
         val startDate = data?.getStringExtra(EXTRA_START_DATE)
         val minMag = data?.getIntExtra(EXTRA_MIN_MAG, DEFAULT_MAGNITUDE)
         var maxMag = data?.getIntExtra(EXTRA_MAX_MAG, DEFAULT_MAGNITUDE)
-        val url = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=$startDate&endtime=$endDate&format=geojson&minmag=$minMag"
-        viewModel.loadEarthquakes(url)
+        //val url = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=$startDate&endtime=$endDate&format=geojson&minmag=$minMag"
+        viewModel.loadEarthquakes(endDate, startDate, minMag, maxMag)
     }
 
     override fun onOptionsSelected(startDate: String, endDate: String, minMag: Int, maxMag: Int) {

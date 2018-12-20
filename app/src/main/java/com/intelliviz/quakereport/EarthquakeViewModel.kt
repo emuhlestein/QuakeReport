@@ -18,7 +18,7 @@ class EarthquakeViewModel(application: Application, endDate: String?, startDate:
     init {
         repo = EarthquakeRepository(application)
         subscriberToDatabaseChanges()
-        requestEarthquakes()
+        requestEarthquakes(endDate, startDate, minMag, maxMag)
     }
 
     private var earthquakes: LiveData<List<Earthquake>>? = null
@@ -27,35 +27,16 @@ class EarthquakeViewModel(application: Application, endDate: String?, startDate:
         earthquakes = repo?.getEarthquakes()
     }
 
-    private fun requestEarthquakes() {
-        var intent = Intent(getApplication(), EarthquakeService::class.java)
-        // TODO add url to intent
+    private fun requestEarthquakes(endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?) {
+        val intent = createIntent(endDate, startDate, minMag, maxMag)
         getApplication<Application>().startService(intent)
     }
 
     fun getEarthquakes() = earthquakes
 
-    fun loadEarthquakes(url: String) {
-        repo?.loadEarthQuakes(url)
-    }
-
     fun loadEarthquakes(endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?) {
-
-        var baseURL: String = "https://earthquake.usgs.gov/fdsnws/event/1/query?"
-        var url: String = baseURL + "format=geojson"
-        if(endDate != null && !endDate?.isEmpty()) {
-            url = url + "&endtime=" + endDate
-        }
-        if(startDate != null && !startDate.isEmpty()) {
-            url = url + "&starttime=" + startDate
-        }
-        if(minMag != null) {
-            url = url + "&minmag=" + minMag
-        }
         val intent = createIntent(endDate, startDate, minMag, maxMag)
         getApplication<Application>().startService(intent)
-        //repo?.loadEarthQuakes(url)
-        //val url: String = "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime=2016-05-02&endtime=2016-05-03&format=geojson&minmag=4.5"
     }
 
     private fun createIntent(endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?): Intent {
@@ -66,7 +47,6 @@ class EarthquakeViewModel(application: Application, endDate: String?, startDate:
         intent.putExtra(EXTRA_MAX_MAG, maxMag)
         return intent
     }
-
 
     class Factory(private val mApplication: Application,
                   private val endDate: String?, private val startDate: String?,

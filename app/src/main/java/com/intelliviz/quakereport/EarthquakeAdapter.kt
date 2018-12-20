@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.earthquake_list_item.view.*
 class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>) :
         RecyclerView.Adapter<EarthquakeAdapter.ViewHolder>() {
     private val earthquakes: MutableList<Earthquake> = items
-    private lateinit var listener: GetEarthQuakeDataAsyncTask.OnEarthquakeLoadListener
+    //private lateinit var listener: GetEarthQuakeDataAsyncTask.OnEarthquakeLoadListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context).inflate(R.layout.earthquake_list_item, parent, false))
@@ -43,7 +43,6 @@ class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
-
 
         val magnitudeTextView = view.magnitude
         val distanceTextView = view.distance
@@ -71,13 +70,13 @@ class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>
             dateTextView.text = earthquake.date
             timeTextView.text = earthquake.time
             val magnitudeCircle = magnitudeTextView.getBackground() as GradientDrawable
-            var magnitudeColor = getMagnitudeColor(context, earthquake.magnitude)
+            val magnitudeColor = getMagnitudeColor(context, earthquake.magnitude)
             magnitudeCircle.setColor(magnitudeColor)
         }
 
         private fun getMagnitudeColor(context: Context, magnitude: Double): Int {
 
-            var colorIndex: Int
+            val colorIndex: Int
             if(magnitude <= 1.0) {
                 colorIndex = R.color.magnitude1
             } else if(magnitude <= 2.0) {

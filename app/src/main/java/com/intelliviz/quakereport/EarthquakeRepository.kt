@@ -1,23 +1,20 @@
 package com.intelliviz.quakereport
 
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import com.intelliviz.quakereport.db.AppDatabase
 import com.intelliviz.quakereport.db.Earthquake
+import com.intelliviz.quakereport.db.EarthquakeDao
 
-class EarthquakeRepository(var context: Context) : GetEarthQuakeDataAsyncTask.OnEarthquakeLoadListener {
-    override fun onEarthquakeLoad(earthquakes: List<Earthquake>) {
-       this._earthquakes.value = earthquakes
+class EarthquakeRepository(context: Context) {
+    private val earthquakeDao: EarthquakeDao
+
+    init {
+        val db = AppDatabase.getAppDataBase(context)
+        earthquakeDao = db?.earthquakeDao()!!
     }
-
-    var _earthquakes = MutableLiveData<List<Earthquake>>()
 
     fun getEarthquakes(): LiveData<List<Earthquake>> {
-        return AppDatabase.getAppDataBase(context)?.earthquakeDao()!!.getEarthquakes()
-    }
-
-    fun loadEarthQuakes(url: String) {
-        GetEarthQuakeDataAsyncTask(this).execute(url)
+        return earthquakeDao.getEarthquakes()
     }
 }
