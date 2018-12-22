@@ -8,6 +8,9 @@
     <string name="max_mag">Max Magnitude</string>
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
+    <string name="range">Range</string>
+    <string name="recent">Recent</string>
+    <string name="trend">Trend</string>
 
     <string-array name="magnitudes">
         <item>1</item>

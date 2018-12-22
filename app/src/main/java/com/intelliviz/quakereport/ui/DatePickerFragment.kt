@@ -1,4 +1,4 @@
-package com.intelliviz.quakereport
+package com.intelliviz.quakereport.ui
 
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -10,7 +10,7 @@ import android.support.v4.app.DialogFragment
 class DatePickerFragment : DialogFragment() {
 
     var mId: Int = 0
-    var listener: DatePickerFragment.OnDateSelectedListener? = null
+    var listener: OnDateSelectedListener? = null
 
     interface OnDateSelectedListener {
         fun onDateSelected(day: String, month: String, year: String, id: Int)
@@ -34,7 +34,7 @@ class DatePickerFragment : DialogFragment() {
     }
 
     private val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, month, day ->
-        if(activity is OnDateSelectedListener ) {
+        if(activity is OnDateSelectedListener) {
             listener = activity as OnDateSelectedListener
             listener?.onDateSelected("" + view.dayOfMonth, "" + (view.month + 1), "" + view.year, mId)
         } else if(targetFragment != null) {

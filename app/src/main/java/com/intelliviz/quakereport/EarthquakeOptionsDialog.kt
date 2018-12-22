@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
+import com.intelliviz.quakereport.ui.DatePickerFragment
 import kotlinx.android.synthetic.main.activity_earhtquake_options.*
 
 class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelectedListener {

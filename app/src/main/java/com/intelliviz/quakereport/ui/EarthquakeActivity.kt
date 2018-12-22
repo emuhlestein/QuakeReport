@@ -1,4 +1,4 @@
-package com.intelliviz.quakereport
+package com.intelliviz.quakereport.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import com.intelliviz.quakereport.*
 import com.intelliviz.quakereport.EarthquakeOptionsDialog.Companion.EXTRA_END_DATE
 import com.intelliviz.quakereport.EarthquakeOptionsDialog.Companion.EXTRA_MAX_MAG
 import com.intelliviz.quakereport.EarthquakeOptionsDialog.Companion.EXTRA_MIN_MAG
@@ -46,7 +47,7 @@ class EarthquakeActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOption
         val minMag: Int = QueryPreferences.getMinMag(this)
         val maxMag: Int = QueryPreferences.getMaxMag(this)
 
-        val factory: EarthquakeViewModel.Factory =  EarthquakeViewModel.Factory(application, endDate, startDate, minMag, maxMag)
+        val factory: EarthquakeViewModel.Factory = EarthquakeViewModel.Factory(application, endDate, startDate, minMag, maxMag)
         viewModel = ViewModelProviders.of(this, factory).get(EarthquakeViewModel::class.java)
         viewModel.getEarthquakes()?.observe(this, earthquakeObserver)
         //viewModel.loadEarthquakes(url)
