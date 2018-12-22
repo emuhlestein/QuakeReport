@@ -5,6 +5,7 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.intelliviz.quakereport.R
 import kotlinx.android.synthetic.main.activity_navigation.*
@@ -14,6 +15,9 @@ class NavigationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
+
+        val toolbar = findViewById<Toolbar>(R.id.app_toolbar)
+        setSupportActionBar(toolbar)
     }
 
     private fun initBottomNavigation() {

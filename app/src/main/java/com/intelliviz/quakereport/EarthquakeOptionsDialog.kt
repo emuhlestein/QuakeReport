@@ -128,7 +128,7 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
 
     fun sendResult(startDate: String, endDate: String, minMag: Int, maxMag: Int) {
         if(targetFragment != null) {
-            var intent = Intent()
+            val intent = Intent()
             intent.putExtra(EarthquakeOptionsDialog.EXTRA_START_DATE, startDate)
             intent.putExtra(EarthquakeOptionsDialog.EXTRA_END_DATE, endDate)
             intent.putExtra(EarthquakeOptionsDialog.EXTRA_MIN_MAG, minMag)
@@ -136,8 +136,8 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         } else {
             if(activity is EarthquakeOptionsDialog.OnOptionsSelectedListener) {
-                var listener: EarthquakeOptionsDialog.OnOptionsSelectedListener? = null
-                listener = activity as EarthquakeOptionsDialog.OnOptionsSelectedListener
+                //var listener: EarthquakeOptionsDialog.OnOptionsSelectedListener? = null
+                val listener = activity as EarthquakeOptionsDialog.OnOptionsSelectedListener
                 listener?.onOptionsSelected(startDate, endDate, minMag, maxMag)
             }
         }

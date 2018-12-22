@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import com.intelliviz.quakereport.R
 
 class EarthquakeRangeFragment: Fragment() {
     companion object {
@@ -17,8 +17,7 @@ class EarthquakeRangeFragment: Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val textView = TextView(getContext())
-        textView.text = "Range Earhtquakes"
-        return textView
+        val view = inflater.inflate(R.layout.earthquake_range_fragment, container, false)
+        return view
     }
 }
