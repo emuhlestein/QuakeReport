@@ -1,13 +1,12 @@
 package com.intelliviz.quakereport.ui
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 
-class EarthquakeRecentFragment: Fragment() {
+class EarthquakeRecentFragment: BaseFragment() {
     companion object {
 
         fun newInstance(): EarthquakeRecentFragment {
@@ -20,5 +19,8 @@ class EarthquakeRecentFragment: Fragment() {
         val textView = TextView(getContext())
         textView.text = "Recent Earhtquakes"
         return textView
+    }
+
+    override fun loadEarthquakes(startDate: String, endDate: String, minMag: Int, maxMag: Int) {
     }
 }

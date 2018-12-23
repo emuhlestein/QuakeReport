@@ -3,7 +3,6 @@ package com.intelliviz.quakereport.ui
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -17,7 +16,7 @@ import com.intelliviz.quakereport.R
 import com.intelliviz.quakereport.db.Earthquake
 import java.util.*
 
-class EarthquakeRangeFragment: Fragment() {
+class EarthquakeRangeFragment: BaseFragment() {
     private lateinit var viewModel: EarthquakeViewModel
     companion object {
 
@@ -61,7 +60,7 @@ class EarthquakeRangeFragment: Fragment() {
         return view
     }
 
-    fun loadEarthquakes(startDate: String, endDate: String, minMag: Int, maxMag: Int) {
+    override fun loadEarthquakes(startDate: String, endDate: String, minMag: Int, maxMag: Int) {
         viewModel.loadEarthquakes(endDate, startDate, minMag, maxMag)
     }
 

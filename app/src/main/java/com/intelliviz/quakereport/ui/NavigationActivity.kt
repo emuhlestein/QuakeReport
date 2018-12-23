@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.activity_navigation.*
 
 class NavigationActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOptionsSelectedListener {
 
-    var fragment: EarthquakeRangeFragment? = null
+    var fragment: BaseFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
