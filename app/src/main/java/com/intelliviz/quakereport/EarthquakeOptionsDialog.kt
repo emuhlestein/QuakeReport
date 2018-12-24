@@ -118,11 +118,25 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
                     maxMagSpinner?.setSelection(position)
                 }
             }
-
         }
+
         minMagSpinner?.setSelection(minMag-1)
 
         maxMagSpinner = view.findViewById<View>(R.id.max_mag_spinner) as Spinner
+        maxMagSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+                val maxMag = magnitudes[position]
+                val minMag = magnitudes[minMagSpinner!!.selectedItemPosition]
+                if(maxMag < minMag) {
+                    minMagSpinner?.setSelection(position)
+                }
+            }
+        }
+
         maxMagSpinner?.setSelection(maxMag-1)
         return view
     }
