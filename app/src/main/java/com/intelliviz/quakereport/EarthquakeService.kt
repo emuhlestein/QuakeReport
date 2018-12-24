@@ -24,7 +24,6 @@ class EarthquakeService : IntentService("EarthquakeService") {
         val minMag = intent?.getIntExtra(EXTRA_MIN_MAG, 0)
         val maxMag = intent?.getIntExtra(EXTRA_MAX_MAG, 0)
 
-        // TODO read earth quakes
         val baseURL = "https://earthquake.usgs.gov/fdsnws/event/1/query?"
         var url: String = baseURL + "format=geojson"
         if(endDate != null && !endDate?.isEmpty()) {
@@ -42,7 +41,6 @@ class EarthquakeService : IntentService("EarthquakeService") {
 
         val earthquakes: MutableList<Earthquake> = QueryUtils.extractEarthquakes(jsonString)
 
-        // TODO save earthquakes to data base
         db?.beginTransaction()
         try {
             db?.earthquakeDao()?.deleteAll()

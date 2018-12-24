@@ -14,21 +14,23 @@ object QueryPreferences {
     val MIN_MAG_DEFAULT: Int = 1
 
     fun getStartDate(context: Context): String {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(START_DATE, "2016-05-02")
+        val currentDate = getCurrentDate(false)
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(START_DATE, currentDate)
     }
 
     fun setStartDate(context: Context, startDate: String) {
-        var editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         editor.putString(START_DATE, startDate)
         editor.apply()
     }
 
     fun getEndDate(context: Context): String {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(END_DATE, "2016-05-03")
+        val currentDate = getCurrentDate(true)
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(END_DATE, currentDate)
     }
 
     fun setEndDate(context: Context, endDate: String) {
-        var editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         editor.putString(END_DATE, endDate)
         editor.apply()
     }
@@ -38,7 +40,7 @@ object QueryPreferences {
     }
 
     fun setMinMag(context: Context, minMag: Int) {
-        var editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         editor.putInt(MIN_MAG, minMag)
         editor.apply()
     }
@@ -48,14 +50,22 @@ object QueryPreferences {
     }
 
     fun setMaxMag(context: Context, maxMag: Int) {
-        var editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         editor.putInt(MAX_MAG, maxMag)
         editor.apply()
     }
 
-    private fun getCurrentDate(): String {
+    private fun getCurrentDate(addDay: Boolean): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
         val currentDate = Date()
-        return dateFormat.format(currentDate)
+        var currentFormattedDate = dateFormat.format(currentDate)
+        if(addDay) {
+            val c: Calendar = Calendar.getInstance()
+            c.time = dateFormat.parse(currentFormattedDate)
+            c.add(Calendar.DATE, 1)
+            currentFormattedDate = dateFormat.format(c.time)
+        }
+
+        return currentFormattedDate
     }
 }

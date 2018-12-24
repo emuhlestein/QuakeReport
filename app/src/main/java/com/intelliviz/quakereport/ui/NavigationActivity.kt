@@ -25,6 +25,13 @@ class NavigationActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOption
         setSupportActionBar(toolbar)
 
         initBottomNavigation()
+
+        val fm = supportFragmentManager
+        val fragment = fm.findFragmentById(R.id.content_frame)
+        if (fragment == null) {
+            val selectedItem = bottom_navigation.menu.getItem(0)
+            selectNavFragment(selectedItem)
+        }
     }
 
     private fun initBottomNavigation() {
@@ -77,11 +84,11 @@ class NavigationActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOption
                 fragmentTag = RANGE_FRAG_TAG
             }
             R.id.recent_menu -> {
-                //fragment = EarthquakeRecentFragment.newInstance()
+                fragment = EarthquakeRecentFragment.newInstance()
                 fragmentTag = RECENT_FRAG_TAG
             }
             R.id.trend_menu -> {
-                //fragment = EarthquakeTrendFragment.newInstance()
+                fragment = EarthquakeTrendFragment.newInstance()
                 fragmentTag = TREND_FRAG_TAG
             }
             else -> return
