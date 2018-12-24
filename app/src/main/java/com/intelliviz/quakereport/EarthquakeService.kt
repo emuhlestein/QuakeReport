@@ -33,11 +33,13 @@ class EarthquakeService : IntentService("EarthquakeService") {
             url = url + "&starttime=" + startDate
         }
         if(minMag != null) {
-            url = url + "&minmag=" + minMag
+            url = url + "&minmagnitude=" + minMag
+        }
+        if(maxMag != null) {
+            url = url + "&maxmagnitude=" + minMag
         }
 
         val jsonString = loadDataFromURL(url)
-
 
         val earthquakes: MutableList<Earthquake> = QueryUtils.extractEarthquakes(jsonString)
 

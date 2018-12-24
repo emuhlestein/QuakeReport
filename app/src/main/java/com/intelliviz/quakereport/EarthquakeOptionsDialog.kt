@@ -7,13 +7,18 @@ import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
 import com.intelliviz.quakereport.ui.DatePickerFragment
-import kotlinx.android.synthetic.main.activity_earhtquake_options.*
+import kotlinx.android.synthetic.main.activity_earthquake_options.*
 
 class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelectedListener {
+
+    var minMagSpinner: Spinner? = null
+    var maxMagSpinner: Spinner? = null
+    lateinit var magnitudes: Array<String>
 
     companion object {
         private val ARG_ID = "id"
@@ -48,7 +53,7 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.activity_earhtquake_options, container, false)
+        val view = inflater.inflate(R.layout.activity_earthquake_options, container, false)
 
         val startDate = arguments!!.getString(ARG_START_DATE)
         val endDate = arguments!!.getString(ARG_END_DATE)
@@ -56,6 +61,8 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
         val maxMag = arguments!!.getInt(ARG_MAX_MAG)
 
         val startDateButton = view.findViewById<View>(R.id.start_date_button) as Button
+
+        magnitudes = resources.getStringArray(R.array.magnitudes)
 
         startDateButton.setOnClickListener {
             val sDate = start_date_text_view.text.toString()
@@ -73,10 +80,10 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
         }
 
         val startDateTextView = view.findViewById<View>(R.id.start_date_text_view) as TextView
-        startDateTextView.setText(startDate)
+        startDateTextView.text = startDate
 
         val endDateTextView = view.findViewById<View>(R.id.end_date_text_view) as TextView
-        endDateTextView.setText(endDate)
+        endDateTextView.text = endDate
 
         val okButton = view.findViewById<View>(R.id.ok_button) as Button
         okButton.setOnClickListener {
@@ -98,11 +105,25 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
             dismiss()
         }
 
-        val minMagSpinner = view.findViewById<View>(R.id.min_mag_spinner) as Spinner
-        minMagSpinner.setSelection(minMag-1)
+        minMagSpinner = view.findViewById<View>(R.id.min_mag_spinner) as Spinner
+        minMagSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
 
-        val maxMagSpinner = view.findViewById<View>(R.id.max_mag_spinner) as Spinner
-        maxMagSpinner.setSelection(maxMag-1)
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+                val minMag = magnitudes[position]
+                val maxMag = magnitudes[maxMagSpinner!!.selectedItemPosition]
+                if(minMag > maxMag) {
+                    maxMagSpinner?.setSelection(position)
+                }
+            }
+
+        }
+        minMagSpinner?.setSelection(minMag-1)
+
+        maxMagSpinner = view.findViewById<View>(R.id.max_mag_spinner) as Spinner
+        maxMagSpinner?.setSelection(maxMag-1)
         return view
     }
 
