@@ -21,22 +21,22 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
     lateinit var magnitudes: Array<String>
 
     companion object {
-        private val ARG_ID = "id"
-        private val ARG_START_DATE = "start_date"
-        private val ARG_END_DATE = "end_date"
-        private val ARG_MIN_MAG = "min_mag"
-        private val ARG_MAX_MAG = "max_mag"
-        private val START_DATE: Int = 1
-        private val END_DATE: Int = 2
-        private val DATE_REQUEST: Int = 3
+        private const val ARG_ID = "id"
+        private const val ARG_START_DATE = "start_date"
+        private const val ARG_END_DATE = "end_date"
+        private const val ARG_MIN_MAG = "min_mag"
+        private const val ARG_MAX_MAG = "max_mag"
+        private const val START_DATE: Int = 1
+        private const val END_DATE: Int = 2
+        private const val DATE_REQUEST: Int = 3
 
-        val EXTRA_END_DATE = "end_date"
-        val EXTRA_START_DATE = "start_date"
-        val EXTRA_MIN_MAG = "min_mag"
-        val EXTRA_MAX_MAG = "max_mag"
+        const val EXTRA_END_DATE = "end_date"
+        const val EXTRA_START_DATE = "start_date"
+        const val EXTRA_MIN_MAG = "min_mag"
+        const val EXTRA_MAX_MAG = "max_mag"
 
         fun newInstance(id: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int): EarthquakeOptionsDialog {
-            val args: Bundle = Bundle()
+            val args = Bundle()
             args.putInt(ARG_ID, id)
             args.putString(ARG_START_DATE, startDate)
             args.putString(ARG_END_DATE, endDate)
@@ -112,9 +112,9 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
-                val minMag = magnitudes[position]
-                val maxMag = magnitudes[maxMagSpinner!!.selectedItemPosition]
-                if(minMag > maxMag) {
+                val minMagnitude = magnitudes[position]
+                val maxMagnitude = magnitudes[maxMagSpinner!!.selectedItemPosition]
+                if(minMagnitude > maxMagnitude) {
                     maxMagSpinner?.setSelection(position)
                 }
             }
@@ -129,9 +129,9 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
-                val maxMag = magnitudes[position]
-                val minMag = magnitudes[minMagSpinner!!.selectedItemPosition]
-                if(maxMag < minMag) {
+                val maxMagnitude = magnitudes[position]
+                val minMagnitude = magnitudes[minMagSpinner!!.selectedItemPosition]
+                if(maxMagnitude < minMagnitude) {
                     minMagSpinner?.setSelection(position)
                 }
             }
@@ -173,7 +173,7 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
             if(activity is EarthquakeOptionsDialog.OnOptionsSelectedListener) {
                 //var listener: EarthquakeOptionsDialog.OnOptionsSelectedListener? = null
                 val listener = activity as EarthquakeOptionsDialog.OnOptionsSelectedListener
-                listener?.onOptionsSelected(startDate, endDate, minMag, maxMag)
+                listener.onOptionsSelected(startDate, endDate, minMag, maxMag)
             }
         }
     }

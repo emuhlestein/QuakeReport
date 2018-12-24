@@ -36,7 +36,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
             url = url + "&minmagnitude=" + minMag
         }
         if(maxMag != null) {
-            url = url + "&maxmagnitude=" + minMag
+            url = url + "&maxmagnitude=" + maxMag
         }
 
         val jsonString = loadDataFromURL(url)
