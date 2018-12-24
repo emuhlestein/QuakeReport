@@ -14,6 +14,7 @@ import com.intelliviz.quakereport.EarthquakeViewModel
 import com.intelliviz.quakereport.QueryPreferences
 import com.intelliviz.quakereport.R
 import com.intelliviz.quakereport.db.Earthquake
+import kotlinx.android.synthetic.main.earthquake_range_fragment.*
 import java.util.*
 
 class EarthquakeRangeFragment: BaseFragment() {
@@ -41,8 +42,15 @@ class EarthquakeRangeFragment: BaseFragment() {
             Toast.makeText(activity, "HERE", Toast.LENGTH_LONG).show()
         }
 
-        val earthquakeObserver = Observer<List<Earthquake>> { earthquake ->
-            val earthquakeData =  ArrayList<Earthquake>(earthquake)
+        val earthquakeObserver = Observer<List<Earthquake>> { earthquakes ->
+            val earthquakeData =  ArrayList<Earthquake>(earthquakes)
+            if(earthquakeData.isEmpty()) {
+                earthquakeListView.visibility = View.GONE
+                emptyView.visibility = View.VISIBLE
+            } else {
+                earthquakeListView.visibility = View.VISIBLE
+                emptyView.visibility = View.GONE
+            }
             adapter.addAll(earthquakeData)
         }
 

@@ -72,7 +72,7 @@ class NavigationActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOption
         QueryPreferences.setEndDate(this, endDate)
         QueryPreferences.setMinMag(this, minMag)
         QueryPreferences.setMaxMag(this, maxMag)
-        fragment?.loadEarthquakes(endDate, startDate, minMag, maxMag)
+        fragment?.loadEarthquakes(startDate, endDate, minMag, maxMag)
     }
 
     private fun selectNavFragment(item: MenuItem) {
