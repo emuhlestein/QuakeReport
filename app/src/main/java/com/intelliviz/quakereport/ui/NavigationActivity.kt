@@ -1,6 +1,5 @@
 package com.intelliviz.quakereport.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.FragmentTransaction
@@ -48,19 +47,14 @@ class NavigationActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOption
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val intent: Intent
         when (item.itemId) {
             R.id.options_item -> {
-                //val newFragment = DatePickerFragment()
-                //newFragment.show(supportFragmentManager, "date picker")
                 var startDate = QueryPreferences.getStartDate(this)
                 var endDate = QueryPreferences.getEndDate(this)
                 val minMag = QueryPreferences.getMinMag(this)
                 val maxMag = QueryPreferences.getMaxMag(this)
                 var dialog: EarthquakeOptionsDialog = EarthquakeOptionsDialog.newInstance(0, startDate, endDate, minMag, maxMag)
                 dialog.show(supportFragmentManager, "options")
-//                intent = Intent(this, EarthquakeOptionsActivity::class.java)
-//                startActivityForResult(intent, REQUEST_CODE)
             }
         }
 

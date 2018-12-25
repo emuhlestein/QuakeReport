@@ -21,8 +21,6 @@
         <service
             android:name=".EarthquakeService"
             android:enabled="true" />
-
-        <activity android:name=".ui.EarthquakeActivity"></activity>
     </application>
 
 </manifest>
