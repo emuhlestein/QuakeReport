@@ -11,6 +11,8 @@
     <string name="range">Range</string>
     <string name="recent">Recent</string>
     <string name="trend">Trend</string>
+    <string name="days_label">days</string>
+    <string name="last_label">Last</string>
 
     <string-array name="magnitudes">
         <item>1</item>

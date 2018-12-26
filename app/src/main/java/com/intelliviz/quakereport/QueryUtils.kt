@@ -14,6 +14,7 @@ object QueryUtils {
     val EXTRA_END_DATE = "end_date"
     val EXTRA_MIN_MAG = "min_mag"
     val EXTRA_MAX_MAG = "max_mag"
+    val EXTRA_NUM_DAYS = "num_days"
 
     /**
      * Return a list of [Earthquake] objects that has been built up from
@@ -56,14 +57,14 @@ object QueryUtils {
     }
 
     fun getDateToDisplay(time: Long): String {
-        var dateObject = Date(time)
-        var dateFormatter: SimpleDateFormat = SimpleDateFormat("MMM dd, yyyy")
+        val dateObject = Date(time)
+        val dateFormatter = SimpleDateFormat("MMM dd, yyyy")
         return dateFormatter.format(dateObject)
     }
 
     fun getTimeToDisplay(time: Long): String {
-        var dateObject = Date(time)
-        var timeFormatter: SimpleDateFormat = SimpleDateFormat("h:mm a")
+        val dateObject = Date(time)
+        val timeFormatter = SimpleDateFormat("h:mm a")
         return timeFormatter.format(dateObject)
     }
 }

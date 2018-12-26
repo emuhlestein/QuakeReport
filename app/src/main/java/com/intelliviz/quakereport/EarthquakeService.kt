@@ -26,7 +26,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
 
         val baseURL = "https://earthquake.usgs.gov/fdsnws/event/1/query?"
         var url: String = baseURL + "format=geojson"
-        if(endDate != null && !endDate?.isEmpty()) {
+        if(endDate != null && !endDate.isEmpty()) {
             url = url + "&endtime=" + endDate
         }
         if(startDate != null && !startDate.isEmpty()) {

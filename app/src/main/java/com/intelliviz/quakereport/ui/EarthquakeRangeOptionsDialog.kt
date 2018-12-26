@@ -1,4 +1,4 @@
-package com.intelliviz.quakereport
+package com.intelliviz.quakereport.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -11,10 +11,10 @@ import android.widget.AdapterView
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
-import com.intelliviz.quakereport.ui.DatePickerFragment
-import kotlinx.android.synthetic.main.activity_earthquake_options.*
+import com.intelliviz.quakereport.R
+import kotlinx.android.synthetic.main.earthquake_range_options.*
 
-class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelectedListener {
+class EarthquakeRangeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelectedListener {
 
     var minMagSpinner: Spinner? = null
     var maxMagSpinner: Spinner? = null
@@ -35,14 +35,14 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
         const val EXTRA_MIN_MAG = "min_mag"
         const val EXTRA_MAX_MAG = "max_mag"
 
-        fun newInstance(id: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int): EarthquakeOptionsDialog {
+        fun newInstance(id: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int): EarthquakeRangeOptionsDialog {
             val args = Bundle()
             args.putInt(ARG_ID, id)
             args.putString(ARG_START_DATE, startDate)
             args.putString(ARG_END_DATE, endDate)
             args.putInt(ARG_MIN_MAG, minMag)
             args.putInt(ARG_MAX_MAG, maxMag)
-            val fragment = EarthquakeOptionsDialog()
+            val fragment = EarthquakeRangeOptionsDialog()
             fragment.arguments = args
             return fragment
         }
@@ -53,7 +53,7 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.activity_earthquake_options, container, false)
+        val view = inflater.inflate(R.layout.earthquake_range_options, container, false)
 
         val startDate = arguments!!.getString(ARG_START_DATE)
         val endDate = arguments!!.getString(ARG_END_DATE)
@@ -164,15 +164,15 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
     fun sendResult(startDate: String, endDate: String, minMag: Int, maxMag: Int) {
         if(targetFragment != null) {
             val intent = Intent()
-            intent.putExtra(EarthquakeOptionsDialog.EXTRA_START_DATE, startDate)
-            intent.putExtra(EarthquakeOptionsDialog.EXTRA_END_DATE, endDate)
-            intent.putExtra(EarthquakeOptionsDialog.EXTRA_MIN_MAG, minMag)
-            intent.putExtra(EarthquakeOptionsDialog.EXTRA_MAX_MAG, maxMag)
+            intent.putExtra(EXTRA_START_DATE, startDate)
+            intent.putExtra(EXTRA_END_DATE, endDate)
+            intent.putExtra(EXTRA_MIN_MAG, minMag)
+            intent.putExtra(EXTRA_MAX_MAG, maxMag)
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         } else {
-            if(activity is EarthquakeOptionsDialog.OnOptionsSelectedListener) {
-                //var listener: EarthquakeOptionsDialog.OnOptionsSelectedListener? = null
-                val listener = activity as EarthquakeOptionsDialog.OnOptionsSelectedListener
+            if(activity is OnOptionsSelectedListener) {
+                //var listener: EarthquakeRangeOptionsDialog.OnOptionsSelectedListener? = null
+                val listener = activity as OnOptionsSelectedListener
                 listener.onOptionsSelected(startDate, endDate, minMag, maxMag)
             }
         }

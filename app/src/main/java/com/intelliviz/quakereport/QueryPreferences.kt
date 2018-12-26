@@ -11,10 +11,12 @@ object QueryPreferences {
     val END_DATE: String = "EndDate"
     val MIN_MAG: String = "MinMag"
     val MAX_MAG: String = "MaxMag"
+    val NUM_DAYS: String = "NumDays"
     val MIN_MAG_DEFAULT: Int = 1
+    val NUM_DAYS_DEFAULT: Int = 30
 
     fun getStartDate(context: Context): String {
-        val currentDate = getCurrentDate(false)
+        val currentDate = getCurrentDate(0)
         return PreferenceManager.getDefaultSharedPreferences(context).getString(START_DATE, currentDate)
     }
 
@@ -25,7 +27,7 @@ object QueryPreferences {
     }
 
     fun getEndDate(context: Context): String {
-        val currentDate = getCurrentDate(true)
+        val currentDate = getCurrentDate(1)
         return PreferenceManager.getDefaultSharedPreferences(context).getString(END_DATE, currentDate)
     }
 
@@ -55,14 +57,28 @@ object QueryPreferences {
         editor.apply()
     }
 
-    private fun getCurrentDate(addDay: Boolean): String {
+    fun getNumDays(context: Context): Int {
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(NUM_DAYS, NUM_DAYS_DEFAULT)
+    }
+
+    fun setNumDays(context: Context, maxMag: Int) {
+        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        editor.putInt(NUM_DAYS, maxMag)
+        editor.apply()
+    }
+
+    fun getCurrentDate(): String {
+       return getCurrentDate(0)
+    }
+
+    fun getCurrentDate(numDays: Int): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
         val currentDate = Date()
         var currentFormattedDate = dateFormat.format(currentDate)
-        if(addDay) {
+        if(numDays > 0) {
             val c: Calendar = Calendar.getInstance()
             c.time = dateFormat.parse(currentFormattedDate)
-            c.add(Calendar.DATE, 1)
+            c.add(Calendar.DATE, -numDays)
             currentFormattedDate = dateFormat.format(c.time)
         }
 

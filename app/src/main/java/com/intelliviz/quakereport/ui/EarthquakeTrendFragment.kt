@@ -1,14 +1,13 @@
 package com.intelliviz.quakereport.ui
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 
-class EarthquakeTrendFragment: BaseFragment() {
-    override fun loadEarthquakes(startDate: String, endDate: String, minMag: Int, maxMag: Int) {
-    }
+class EarthquakeTrendFragment: Fragment() {
 
     companion object {
 

@@ -1,20 +1,23 @@
 package com.intelliviz.quakereport.ui
 
+import EarthquakeRecentOptionsDialog
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import com.intelliviz.quakereport.EarthquakeOptionsDialog
 import com.intelliviz.quakereport.QueryPreferences
 import com.intelliviz.quakereport.R
 import kotlinx.android.synthetic.main.activity_navigation.*
 
-class NavigationActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOptionsSelectedListener {
+class NavigationActivity : AppCompatActivity(),
+        EarthquakeRangeOptionsDialog.OnOptionsSelectedListener,
+        EarthquakeRecentOptionsDialog.OnOptionsSelectedListener {
 
-    var fragment: BaseFragment? = null
+    var fragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,12 +52,20 @@ class NavigationActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOption
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.options_item -> {
-                var startDate = QueryPreferences.getStartDate(this)
-                var endDate = QueryPreferences.getEndDate(this)
-                val minMag = QueryPreferences.getMinMag(this)
-                val maxMag = QueryPreferences.getMaxMag(this)
-                var dialog: EarthquakeOptionsDialog = EarthquakeOptionsDialog.newInstance(0, startDate, endDate, minMag, maxMag)
-                dialog.show(supportFragmentManager, "options")
+                if(fragment?.tag == RANGE_FRAG_TAG) {
+                    val startDate = QueryPreferences.getStartDate(this)
+                    val endDate = QueryPreferences.getEndDate(this)
+                    val minMag = QueryPreferences.getMinMag(this)
+                    val maxMag = QueryPreferences.getMaxMag(this)
+                    val dialog = EarthquakeRangeOptionsDialog.newInstance(0, startDate, endDate, minMag, maxMag)
+                    dialog.show(supportFragmentManager, "options")
+                } else if(fragment?.tag == RECENT_FRAG_TAG) {
+                    val numDays = QueryPreferences.getNumDays(this)
+                    val minMag = QueryPreferences.getMinMag(this)
+                    val maxMag = QueryPreferences.getMaxMag(this)
+                    val dialog = EarthquakeRecentOptionsDialog.newInstance(0, numDays, minMag, maxMag)
+                    dialog.show(supportFragmentManager, "options")
+                }
             }
         }
 
@@ -66,7 +77,24 @@ class NavigationActivity : AppCompatActivity(), EarthquakeOptionsDialog.OnOption
         QueryPreferences.setEndDate(this, endDate)
         QueryPreferences.setMinMag(this, minMag)
         QueryPreferences.setMaxMag(this, maxMag)
-        fragment?.loadEarthquakes(startDate, endDate, minMag, maxMag)
+        val tempFragment = fragment
+        if(tempFragment is EarthquakeRangeFragment) {
+            fragment?.let {
+                tempFragment.loadEarthquakes(startDate, endDate, minMag, maxMag)
+            }
+        }
+    }
+
+    override fun onOptionsSelected(numDays: Int, minMag: Int, maxMag: Int) {
+        QueryPreferences.setNumDays(this, numDays)
+        QueryPreferences.setMinMag(this, minMag)
+        QueryPreferences.setMaxMag(this, maxMag)
+        val tempFragment = fragment
+        if(tempFragment is EarthquakeRecentFragment) {
+            tempFragment?.let {
+                tempFragment.loadEarthquakes(numDays, minMag, maxMag)
+            }
+        }
     }
 
     private fun selectNavFragment(item: MenuItem) {

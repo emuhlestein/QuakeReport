@@ -3,6 +3,7 @@ package com.intelliviz.quakereport.ui
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -10,15 +11,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.intelliviz.quakereport.EarthquakeAdapter
-import com.intelliviz.quakereport.EarthquakeViewModel
+import com.intelliviz.quakereport.EarthquakeRangeViewModel
 import com.intelliviz.quakereport.QueryPreferences
 import com.intelliviz.quakereport.R
 import com.intelliviz.quakereport.db.Earthquake
 import kotlinx.android.synthetic.main.earthquake_range_fragment.*
 import java.util.*
 
-class EarthquakeRangeFragment: BaseFragment() {
-    private lateinit var viewModel: EarthquakeViewModel
+class EarthquakeRangeFragment: Fragment() {
+    private lateinit var viewModel: EarthquakeRangeViewModel
     companion object {
 
         fun newInstance(): EarthquakeRangeFragment {
@@ -59,8 +60,8 @@ class EarthquakeRangeFragment: BaseFragment() {
         val minMag: Int = QueryPreferences.getMinMag(context!!)
         val maxMag: Int = QueryPreferences.getMaxMag(context!!)
 
-        val factory: EarthquakeViewModel.Factory = EarthquakeViewModel.Factory(activity!!.application, endDate, startDate, minMag, maxMag)
-        viewModel = ViewModelProviders.of(this, factory).get(EarthquakeViewModel::class.java)
+        val factory: EarthquakeRangeViewModel.Factory = EarthquakeRangeViewModel.Factory(activity!!.application, endDate, startDate, minMag, maxMag)
+        viewModel = ViewModelProviders.of(this, factory).get(EarthquakeRangeViewModel::class.java)
         viewModel.getEarthquakes()?.observe(this, earthquakeObserver)
         //viewModel.loadEarthquakes(url)
 
@@ -68,7 +69,7 @@ class EarthquakeRangeFragment: BaseFragment() {
         return view
     }
 
-    override fun loadEarthquakes(startDate: String, endDate: String, minMag: Int, maxMag: Int) {
+    fun loadEarthquakes(startDate: String, endDate: String, minMag: Int, maxMag: Int) {
         viewModel.loadEarthquakes(endDate, startDate, minMag, maxMag)
     }
 
