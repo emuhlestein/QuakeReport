@@ -5,7 +5,8 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import com.intelliviz.quakereport.GraphView
+import com.intelliviz.quakereport.R
 
 class EarthquakeTrendFragment: Fragment() {
 
@@ -18,8 +19,10 @@ class EarthquakeTrendFragment: Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val textView = TextView(getContext())
-        textView.text = "Trend Earhtquakes"
-        return textView
+        val view = inflater.inflate(R.layout.earthquake_trend_fragment, container, false)
+
+        val earthquakeGraphView = view.findViewById<GraphView>(R.id.earthquakeGraphView)
+        earthquakeGraphView.setMinMaxX(1900F, 2018F)
+        return view
     }
 }

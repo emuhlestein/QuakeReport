@@ -7,8 +7,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/earthquakeListView"
+    <com.intelliviz.quakereport.GraphView
+        android:id="@+id/earthquakeGraphView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@android:color/transparent"

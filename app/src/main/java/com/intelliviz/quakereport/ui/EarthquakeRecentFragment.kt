@@ -31,7 +31,7 @@ class EarthquakeRecentFragment: Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.earthquake_recent_fragment, container, false)
 
-        var earthquakeListView = view.findViewById<RecyclerView>(R.id.earthquakeListView)
+        val earthquakeListView = view.findViewById<RecyclerView>(R.id.earthquakeListView)
 
         val earthquakes = ArrayList<Earthquake>()
         val adapter = EarthquakeAdapter(context!!, earthquakes)
