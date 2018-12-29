@@ -23,6 +23,7 @@ class EarthquakeTrendFragment: Fragment() {
 
         val earthquakeGraphView = view.findViewById<GraphView>(R.id.earthquakeGraphView)
         earthquakeGraphView.setMinMaxX(1900F, 2018F)
+        earthquakeGraphView.setMinMaxY(0F, 9F)
         return view
     }
 }
