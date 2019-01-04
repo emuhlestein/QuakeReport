@@ -22,8 +22,14 @@ class EarthquakeTrendFragment: Fragment() {
         val view = inflater.inflate(R.layout.earthquake_trend_fragment, container, false)
 
         val earthquakeGraphView = view.findViewById<GraphView>(R.id.earthquakeGraphView)
-        earthquakeGraphView.setMinMaxX(1900F, 2018F)
-        earthquakeGraphView.setMinMaxY(0F, 9F)
+//        earthquakeGraphView.setMinMaxX(1900F, 2018F)
+//        earthquakeGraphView.setXInc(20)
+//        earthquakeGraphView.setMinMaxY(0F, 9F)
+//        earthquakeGraphView.setYInc(1)
+
+        var y: FloatArray = floatArrayOf(100F, 6F, 7F, 4F, 3F)
+        var x: FloatArray = floatArrayOf(1900F, 1935F, 1970F, 1985F, 2000F)
+        earthquakeGraphView.setData(x, y)
         return view
     }
 }
