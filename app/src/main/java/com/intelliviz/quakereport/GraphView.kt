@@ -18,7 +18,7 @@ import kotlin.math.roundToInt
 class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context, attributes), SurfaceHolder.Callback {
 
     object companion {
-        var HORIZONTAL_MARGIN_SP: Float = 40F
+        var HORIZONTAL_MARGIN_SP: Float = 50F
         var VERTICAL_MARGIN_SP: Float = 50F
         var PADDING_SP: Float = 8F
     }
@@ -121,6 +121,7 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
 //    }
 
     override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+
         Log.d("EDM", "width = $width, height = $height")
         var canvas = holder?.lockCanvas()
 
@@ -145,6 +146,9 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         deltaY = maxY - minY
         deltaX = height.toFloat() - 2 * verticalMargin
         verticalProjection = deltaX/deltaY
+
+        val verticalAxis = VerticalAxis(context, verticalProjection, yValues, height.toFloat())
+        val horizontalAxis = HorizontalAxis(context, verticalProjection, xValues, width.toFloat(), height.toFloat())
 
         var theWidth = width
         var theHeight = height
@@ -177,8 +181,10 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
 //        drawDot(canvas, 4F, 1985)
 //        drawDot(canvas, 3F, 2000)
 
-        drawVerticalAxis(canvas)
-        drawHorizontalAxis(canvas)
+        //drawVerticalAxis(canvas)
+        verticalAxis.draw(canvas, context)
+        //drawHorizontalAxis(canvas)
+        horizontalAxis.draw(canvas, context)
 
         //canvas?.drawText("1900", textX, 400F, greenPaint)
         holder?.unlockCanvasAndPost(canvas)
