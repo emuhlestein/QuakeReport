@@ -9,13 +9,16 @@ import com.intelliviz.quakereport.VerticalAxis.companion.PADDING_SP
 import com.intelliviz.quakereport.VerticalAxis.companion.VERTICAL_MARGIN_SP
 import kotlin.math.roundToInt
 
+
+
 class VerticalAxis(context: Context, var verticalProjection: Float, values: FloatArray, var height: Float) {
-    private var margin: Float = 0F
+    private var margin: Int = 0
     private var axisInc: Int = 0
     private var minValue: Float
     private var maxValue: Float
     private var ticPaint: Paint = Paint()
-    private var padding: Float = 0F
+    private var padding: Int = 0
+    private var pxWidth: Int = 0
 
     object companion {
         var VERTICAL_MARGIN_SP: Float = 50F
@@ -23,6 +26,8 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
     }
 
     init{
+        val textSize = spToPixel(context, 16F)
+        ticPaint.textSize = textSize.toFloat()
         ticPaint.color = Color.BLACK
 
         margin = spToPixel(context, VERTICAL_MARGIN_SP)
@@ -42,7 +47,7 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
         minValue = min
         maxValue = max
 
-        val textHeight = getTextHeight(ticPaint, minValue.toString()) * 3
+        val textHeight = getTextHeight(ticPaint, minValue.toString())
         val spTextHeight = spToPixel(context, textHeight)
         var slots = (height - 2 * margin) / spTextHeight
         var inc = (maxValue - minValue) / slots
@@ -55,26 +60,35 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
     fun draw(canvas: Canvas?, context: Context) {
 
         val textSize = spToPixel(context, 16F)
-        ticPaint.textSize = textSize
-        val minYInt = minValue.toInt()
-        val maxYInt = maxValue.toInt()
-        for(mag in minYInt..maxYInt step axisInc) {
-            drawAxisTic(canvas, mag.toFloat())
+        ticPaint.textSize = textSize.toFloat()
+        val minInt = minValue.toInt()
+        val maxInt = maxValue.toInt()
+        for(value in minInt..maxInt step axisInc) {
+            drawAxisTic(canvas, value.toFloat())
         }
     }
 
-    private fun drawAxisTic(canvas: Canvas?, yValue: Float) {
-        val pixelY = worldToPixelY(yValue)
-        val textHeight = getTextHeight(ticPaint, yValue.toString())
-        val textWidth = getTextWidth(ticPaint, yValue.toString())
+    private fun drawAxisTic(canvas: Canvas?, value: Float) {
+        val pixelY = worldToPixelY(value)
+        val textHeight = getTextHeight(ticPaint, value.toString())
+        val textWidth = getTextWidth(ticPaint, value.toString())
         val xstart = padding
-        canvas?.drawText(yValue.toString(), xstart, pixelY + textHeight / 2, ticPaint)
+        canvas?.drawText(value.toString(), xstart.toFloat(), pixelY + textHeight / 2, ticPaint)
         drawHorizontalLine(canvas, textWidth+padding, pixelY)
     }
 
-    private fun spToPixel(context: Context, sp: Float): Float {
-        val density = context.resources.displayMetrics.scaledDensity
-        return sp * density
+    private fun spToPixel(context: Context, sp: Float): Int {
+        //return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics).toInt()
+        return (sp * context.resources.displayMetrics.scaledDensity).toInt()
+        //val density = context.resources.displayMetrics.scaledDensity
+        //return sp * density
+    }
+
+    private fun pixelToSp(context: Context, px: Float): Int {
+        //return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics).toInt()
+        return (px/context.resources.displayMetrics.scaledDensity).toInt()
+        //val density = context.resources.displayMetrics.scaledDensity
+        //return sp * density
     }
 
     private fun getTextHeight(paint: Paint, text: String): Float {
@@ -94,6 +108,6 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
     }
 
     private fun drawHorizontalLine(canvas: Canvas?, startX: Float, y: Float) {
-        canvas?.drawLine(startX, y, margin, y, ticPaint)
+        canvas?.drawLine(startX, y, margin.toFloat(), y, ticPaint)
     }
 }
