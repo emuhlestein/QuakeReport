@@ -12,7 +12,6 @@ import android.view.SurfaceView
 import com.intelliviz.quakereport.GraphView.companion.HORIZONTAL_MARGIN_SP
 import com.intelliviz.quakereport.GraphView.companion.PADDING_SP
 import com.intelliviz.quakereport.GraphView.companion.VERTICAL_MARGIN_SP
-import kotlin.math.roundToInt
 
 
 class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context, attributes), SurfaceHolder.Callback {
@@ -38,8 +37,6 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
     private var horizontalMargin: Float = 0F
     private var verticalMargin: Float = 0F
     private var padding: Float = 0F
-    private var xInc: Int = 0
-    private var yInc: Int = 0
     private lateinit var xValues: FloatArray
     private lateinit var yValues: FloatArray
 
@@ -98,45 +95,19 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         this.maxX = maxX
     }
 
-    fun setXInc(xInc: Int) {
-        this.xInc = xInc
-    }
-
     fun setMinMaxY(minY: Float, maxY: Float) {
         this.minY = minY
         this.maxY = maxY
-    }
-
-    fun setYInc(yInc: Int) {
-        this.yInc = yInc
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
-//    override fun draw(canvas: Canvas?) {
-//        super.draw(canvas)
-//        canvas?.drawRect(0F, 0F, canvas.width.toFloat(), canvas.height.toFloat(), backgroundPaint)
-//    }
-
     override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
 
         Log.d("EDM", "width = $width, height = $height")
         var canvas = holder?.lockCanvas()
-
-
-        val textHeight = getTextHeight(ticPaint, minY.toString()) * 3
-        val spTextHeight = spToPixel(context, textHeight)
-        var slots = (height - 2 * horizontalMargin) / spTextHeight
-        var inc = (maxY - minY) / slots
-        yInc = inc.roundToInt()
-        if(yInc < inc) {
-            yInc++
-        }
-
-        xInc = 20
-        //yInc = 1
 
         canvas?.drawColor(Color.WHITE)
         deltaX = maxX - minX
@@ -148,48 +119,23 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         verticalProjection = deltaX/deltaY
 
         val verticalAxis = VerticalAxis(context, verticalProjection, yValues, height.toFloat())
-        val horizontalAxis = HorizontalAxis(context, verticalProjection, xValues, width.toFloat(), height.toFloat())
+        val horizontalAxis = HorizontalAxis(context, horizontalProjection, xValues, width.toFloat(), height.toFloat())
 
-        var theWidth = width
-        var theHeight = height
-        var pixelX = worldToPixelX(1950F)
         canvas?.drawRect(0F, 0F, canvas.width.toFloat(), canvas.height.toFloat(), backgroundPaint)
-        //canvas?.drawRect(0F, 0F, 100F, 100F, bluePaint)
-        //canvas?.drawCircle(pixelX, 400F, 10F, bluePaint)
 
         var textSize = spToPixel(context, 16F)
 
         ticPaint.textSize = textSize
 
 
-        var textWidth = getTextWidth(ticPaint, "1900")
-        var half = textWidth / 2
-
-
-        pixelX = worldToPixelX(1920F)
-        var textX = pixelX - half
-        //canvas?.drawCircle(pixelX, 400F, 10F, greenPaint)
-
-
-
         for(i in 0..(yValues.size-1)) {
             drawDot(canvas, xValues[i], yValues[i])
         }
-//        drawDot(canvas, 7F, 1900)
-//        drawDot(canvas, 6F, 1935)
-//        drawDot(canvas, 7F, 1970)
-//        drawDot(canvas, 4F, 1985)
-//        drawDot(canvas, 3F, 2000)
 
-        //drawVerticalAxis(canvas)
         verticalAxis.draw(canvas, context)
-        //drawHorizontalAxis(canvas)
         horizontalAxis.draw(canvas, context)
 
-        //canvas?.drawText("1900", textX, 400F, greenPaint)
         holder?.unlockCanvasAndPost(canvas)
-
-        // resize UI
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder?) {
@@ -224,26 +170,10 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         return bounds.height().toFloat()
     }
 
-    private fun drawDot(canvas: Canvas?, mag: Float, year: Float) {
-        val pixelX = worldToPixelX(year)
-        val pixelY = worldToPixelY(mag)
+    private fun drawDot(canvas: Canvas?, x: Float, y: Float) {
+        val pixelX = worldToPixelX(x)
+        val pixelY = worldToPixelY(y)
         canvas?.drawCircle(pixelX, pixelY, 10F, greenPaint)
-    }
-
-    private fun drawVerticalAxis(canvas: Canvas?) {
-        val minYInt = minY.toInt()
-        val maxYInt = maxY.toInt()
-        for(mag in minYInt..maxYInt step yInc) {
-            drawVerticalAxisTic(canvas, mag.toFloat())
-        }
-    }
-
-    private fun drawHorizontalAxis(canvas: Canvas?) {
-        val minXInt = minX.toInt()
-        val maxXInt = maxX.toInt()
-        for(year in minXInt..maxXInt step xInc) {
-            drawHorizontalAxisTic(canvas, year.toFloat())
-        }
     }
 
     private fun drawVerticalAxisTic(canvas: Canvas?, yValue: Float) {

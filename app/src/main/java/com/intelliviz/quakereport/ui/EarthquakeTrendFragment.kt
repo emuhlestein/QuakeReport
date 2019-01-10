@@ -27,7 +27,7 @@ class EarthquakeTrendFragment: Fragment() {
 //        earthquakeGraphView.setMinMaxY(0F, 9F)
 //        earthquakeGraphView.setYInc(1)
 
-        var y: FloatArray = floatArrayOf(100F, 6F, 7F, 4F, 3F)
+        var y: FloatArray = floatArrayOf(3F, 4F, 6F, 7F, 10F)
         var x: FloatArray = floatArrayOf(1900F, 1935F, 1970F, 1985F, 2000F)
         earthquakeGraphView.setData(x, y)
         return view
