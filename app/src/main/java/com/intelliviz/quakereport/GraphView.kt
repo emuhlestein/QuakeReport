@@ -111,11 +111,11 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
 
         canvas?.drawColor(Color.WHITE)
         deltaX = maxX - minX
-        deltaY = width.toFloat() - 2 * horizontalMargin
+        deltaY = width.toFloat() - 1.5F * horizontalMargin
         horizontalProjection = deltaY/deltaX
 
         deltaY = maxY - minY
-        deltaX = height.toFloat() - 2 * verticalMargin
+        deltaX = height.toFloat() - 1.5F * verticalMargin
         verticalProjection = deltaX/deltaY
 
         val verticalAxis = VerticalAxis(context, verticalProjection, yValues, height.toFloat())

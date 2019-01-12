@@ -22,7 +22,7 @@ class HorizontalAxis(context: Context, var horizontalProjection: Float, values: 
     private var padding: Int = 0
 
     object companion {
-        var HORIZONTAL_MARGIN_SP: Float = 30F
+        var HORIZONTAL_MARGIN_SP: Float = 50F
         var PADDING_SP: Float = 8F
     }
 
@@ -82,7 +82,7 @@ class HorizontalAxis(context: Context, var horizontalProjection: Float, values: 
 
         val Width = width.toInt()
         for(value in 0..Width step 100) {
-            drawVerticalLine(canvas, value.toFloat(), height - (padding + 50))
+            //drawVerticalLine(canvas, value.toFloat(), height - (padding + 50))
         }
     }
 
@@ -92,7 +92,7 @@ class HorizontalAxis(context: Context, var horizontalProjection: Float, values: 
         val textWidth = getTextWidth(ticPaint, value.toString())
         val ystart = height - padding
         canvas?.drawText(value.toInt().toString(), pixelX-textWidth/2, ystart, ticPaint)
-        //drawVerticalLine(canvas, pixelX, height - (padding + textHeight))
+        drawVerticalLine(canvas, pixelX, height - (padding + textHeight))
     }
 
     private fun spToPixel(context: Context, sp: Float): Int {

@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import com.intelliviz.quakereport.VerticalAxis.companion.HORIZONTAL_MARGIN_SP
 import com.intelliviz.quakereport.VerticalAxis.companion.PADDING_SP
 import com.intelliviz.quakereport.VerticalAxis.companion.VERTICAL_MARGIN_SP
 import kotlin.math.roundToInt
@@ -19,10 +20,13 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
     private var ticPaint: Paint = Paint()
     private var padding: Int = 0
     private var pxWidth: Int = 0
+    private var labels: MutableList<String>
+    private var format = ""
 
     object companion {
         var VERTICAL_MARGIN_SP: Float = 50F
-        var PADDING_SP: Float = 8F
+        var HORIZONTAL_MARGIN_SP: Float = 50F
+        var PADDING_SP: Float = 12F
     }
 
     init{
@@ -55,6 +59,16 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
         if(axisInc < inc) {
             axisInc++
         }
+
+        labels = mutableListOf<String>()
+        var maxLen = 0
+        values.forEach { value ->
+            val str:String = "%1.0f".format(value)
+            if(str.length > maxLen) {
+                maxLen = str.length
+            }
+        }
+        format = "%${maxLen}.0f"
     }
 
     fun draw(canvas: Canvas?, context: Context) {
@@ -66,6 +80,12 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
         for(value in minInt..maxInt step axisInc) {
             drawAxisTic(canvas, value.toFloat())
         }
+        var label = "Veritcal Label"
+        val length =  getTextHeight(ticPaint, label)
+        canvas?.save()
+        canvas?.rotate(-90F, 48F, height / 2)
+        canvas?.drawText(label, -2*HORIZONTAL_MARGIN_SP, height / 2, ticPaint)
+        canvas?.restore()
     }
 
     private fun drawAxisTic(canvas: Canvas?, value: Float) {
@@ -73,7 +93,8 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
         val textHeight = getTextHeight(ticPaint, value.toString())
         val textWidth = getTextWidth(ticPaint, value.toString())
         val xstart = padding
-        canvas?.drawText(value.toString(), xstart.toFloat(), pixelY + textHeight / 2, ticPaint)
+        val str:String = "%3.0f".format(value)
+        canvas?.drawText(str, xstart.toFloat(), pixelY + textHeight / 2, ticPaint)
         drawHorizontalLine(canvas, textWidth+padding, pixelY)
     }
 
