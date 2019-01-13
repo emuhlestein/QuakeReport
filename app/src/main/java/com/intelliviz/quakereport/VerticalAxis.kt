@@ -26,7 +26,6 @@ class VerticalAxis(context: Context, private var projection: VerticalProjection,
 
     companion object {
         var MARGIN_SP: Float = 50F // the width of the margin from edge of screen to plotting area
-        var HORIZONTAL_MARGIN_SP: Float = 50F
         var PADDING_SP: Float = 12F
     }
 
@@ -84,7 +83,7 @@ class VerticalAxis(context: Context, private var projection: VerticalProjection,
 
         canvas?.save()
         canvas?.rotate(-90F, 48F, height / 2)
-        canvas?.drawText(label, -2*HORIZONTAL_MARGIN_SP, height / 2, ticPaint)
+        canvas?.drawText(label, 0F, height / 2, ticPaint)
         canvas?.restore()
     }
 

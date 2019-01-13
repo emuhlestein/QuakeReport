@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Rect
 import android.util.AttributeSet
 import android.util.Log
 import android.view.SurfaceHolder
@@ -22,7 +21,7 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         var PADDING_SP: Float = 8F
     }
     private lateinit var surfaceHolder: SurfaceHolder
-    private var backgroundPaint: Paint
+    private var backgroundPaint: Paint = Paint()
     private var bluePaint: Paint
     private var greenPaint: Paint
     private var ticPaint: Paint
@@ -42,7 +41,6 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
     private var verticalLabel: String = ""
 
     init{
-        backgroundPaint = Paint()
         backgroundPaint.color = Color.WHITE
         bluePaint = Paint()
         bluePaint.color = Color.BLUE
@@ -167,40 +165,10 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         return sp * density
     }
 
-    private fun getTextWidth(paint: Paint, text: String): Float {
-        val bounds = Rect()
-        paint.getTextBounds(text, 0, text.length, bounds)
-        return bounds.width().toFloat()
-    }
-
-    private fun getTextHeight(paint: Paint, text: String): Float {
-        val bounds = Rect()
-        paint.getTextBounds(text, 0, text.length, bounds)
-        return bounds.height().toFloat()
-    }
-
     private fun drawDot(canvas: Canvas?, x: Float, y: Float) {
         val pixelX = worldToPixelX(x)
         val pixelY = worldToPixelY(y)
         canvas?.drawCircle(pixelX, pixelY, 10F, greenPaint)
-    }
-
-    private fun drawVerticalAxisTic(canvas: Canvas?, yValue: Float) {
-        val pixelY = worldToPixelY(yValue)
-        val height = getTextHeight(ticPaint, yValue.toString())
-        val width = getTextWidth(ticPaint, yValue.toString())
-        val xstart = padding
-        canvas?.drawText(yValue.toString(), xstart, pixelY + height / 2, ticPaint)
-        drawHorizontalLine(canvas, width+padding, pixelY)
-    }
-
-    private fun drawHorizontalAxisTic(canvas: Canvas?, xValue: Float) {
-        val pixelX = worldToPixelX(xValue)
-        val textHeight = getTextHeight(ticPaint, xValue.toString())
-        val textWidth = getTextWidth(ticPaint, xValue.toString())
-        val ystart = height - padding
-        canvas?.drawText(xValue.toString(), pixelX, ystart, ticPaint)
-        drawVerticalLine(canvas, pixelX, height - (padding + textHeight))
     }
 
     private fun drawHorizontalLine(canvas: Canvas?, startX: Float, y: Float) {
