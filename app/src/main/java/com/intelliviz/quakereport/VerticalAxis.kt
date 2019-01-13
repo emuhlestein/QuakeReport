@@ -5,26 +5,27 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import com.intelliviz.quakereport.VerticalAxis.companion.HORIZONTAL_MARGIN_SP
-import com.intelliviz.quakereport.VerticalAxis.companion.PADDING_SP
-import com.intelliviz.quakereport.VerticalAxis.companion.VERTICAL_MARGIN_SP
 import kotlin.math.roundToInt
 
 
-
-class VerticalAxis(context: Context, var verticalProjection: Float, values: FloatArray, var height: Float) {
+/**
+ * Class to display a vertical axis. The min and max data values are determined and the increment to
+ * evenly increment from min to max is calculated. There is a margin that extends from the edge
+ * of the screen to the plotting area. In the margin is found the tic labels, the tic marks, and
+ * the axis label.
+ */
+class VerticalAxis(context: Context, private var projection: VerticalProjection, var label: String, values: FloatArray, var height: Float) {
     private var margin: Int = 0
     private var axisInc: Int = 0
     private var minValue: Float
     private var maxValue: Float
     private var ticPaint: Paint = Paint()
     private var padding: Int = 0
-    private var pxWidth: Int = 0
     private var labels: MutableList<String>
     private var format = ""
 
-    object companion {
-        var VERTICAL_MARGIN_SP: Float = 50F
+    companion object {
+        var MARGIN_SP: Float = 50F // the width of the margin from edge of screen to plotting area
         var HORIZONTAL_MARGIN_SP: Float = 50F
         var PADDING_SP: Float = 12F
     }
@@ -34,7 +35,7 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
         ticPaint.textSize = textSize.toFloat()
         ticPaint.color = Color.BLACK
 
-        margin = spToPixel(context, VERTICAL_MARGIN_SP)
+        margin = spToPixel(context, MARGIN_SP)
         padding = spToPixel(context, PADDING_SP)
 
         var min = values[0]
@@ -53,14 +54,14 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
 
         val textHeight = getTextHeight(ticPaint, minValue.toString())
         val spTextHeight = spToPixel(context, textHeight)
-        var slots = (height - 2 * margin) / spTextHeight
-        var inc = (maxValue - minValue) / slots
+        val slots = (height - 2 * margin) / spTextHeight
+        val inc = (maxValue - minValue) / slots
         axisInc = inc.roundToInt()
         if(axisInc < inc) {
             axisInc++
         }
 
-        labels = mutableListOf<String>()
+        labels = mutableListOf()
         var maxLen = 0
         values.forEach { value ->
             val str:String = "%1.0f".format(value)
@@ -68,7 +69,7 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
                 maxLen = str.length
             }
         }
-        format = "%${maxLen}.0f"
+        format = "%$maxLen.0f"
     }
 
     fun draw(canvas: Canvas?, context: Context) {
@@ -80,8 +81,7 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
         for(value in minInt..maxInt step axisInc) {
             drawAxisTic(canvas, value.toFloat())
         }
-        var label = "Veritcal Label"
-        val length =  getTextHeight(ticPaint, label)
+
         canvas?.save()
         canvas?.rotate(-90F, 48F, height / 2)
         canvas?.drawText(label, -2*HORIZONTAL_MARGIN_SP, height / 2, ticPaint)
@@ -95,21 +95,11 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
         val xstart = padding
         val str:String = "%3.0f".format(value)
         canvas?.drawText(str, xstart.toFloat(), pixelY + textHeight / 2, ticPaint)
-        drawHorizontalLine(canvas, textWidth+padding, pixelY)
+        drawTic(canvas, textWidth+padding, margin.toFloat(), pixelY)
     }
 
     private fun spToPixel(context: Context, sp: Float): Int {
-        //return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics).toInt()
         return (sp * context.resources.displayMetrics.scaledDensity).toInt()
-        //val density = context.resources.displayMetrics.scaledDensity
-        //return sp * density
-    }
-
-    private fun pixelToSp(context: Context, px: Float): Int {
-        //return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics).toInt()
-        return (px/context.resources.displayMetrics.scaledDensity).toInt()
-        //val density = context.resources.displayMetrics.scaledDensity
-        //return sp * density
     }
 
     private fun getTextHeight(paint: Paint, text: String): Float {
@@ -125,10 +115,10 @@ class VerticalAxis(context: Context, var verticalProjection: Float, values: Floa
     }
 
     private fun worldToPixelY(y: Float): Float {
-        return height - (verticalProjection * (y-minValue) + margin)
+        return projection.worldToPixel(y)
     }
 
-    private fun drawHorizontalLine(canvas: Canvas?, startX: Float, y: Float) {
-        canvas?.drawLine(startX, y, margin.toFloat(), y, ticPaint)
+    private fun drawTic(canvas: Canvas?, startX: Float, endX: Float, y: Float) {
+        canvas?.drawLine(startX, y, endX, y, ticPaint)
     }
 }

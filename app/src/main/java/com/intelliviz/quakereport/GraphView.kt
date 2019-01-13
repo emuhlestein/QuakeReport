@@ -32,13 +32,14 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
     private var maxX: Float = 0F
     private var minY: Float = 0F
     private var maxY: Float = 0F
-    private var horizontalProjection: Float = 0F
-    private var verticalProjection: Float = 0F
+    private lateinit var horizontalProjection: HorizontalProjection
+    private lateinit var verticalProjection: VerticalProjection
     private var horizontalMargin: Float = 0F
     private var verticalMargin: Float = 0F
     private var padding: Float = 0F
     private lateinit var xValues: FloatArray
     private lateinit var yValues: FloatArray
+    private var verticalLabel: String = ""
 
     init{
         backgroundPaint = Paint()
@@ -90,6 +91,10 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         this.yValues = yValues
     }
 
+    fun setVerticalLabel(label: String) {
+        verticalLabel = label
+    }
+
     fun setMinMaxX(minX: Float, maxX: Float) {
         this.minX = minX
         this.maxX = maxX
@@ -112,14 +117,18 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         canvas?.drawColor(Color.WHITE)
         deltaX = maxX - minX
         deltaY = width.toFloat() - 1.5F * horizontalMargin
-        horizontalProjection = deltaY/deltaX
+        var horProjection = deltaY/deltaX
+
+        horizontalProjection = HorizontalProjection(horProjection, minX, horizontalMargin)
 
         deltaY = maxY - minY
         deltaX = height.toFloat() - 1.5F * verticalMargin
-        verticalProjection = deltaX/deltaY
+        var vertProjection = deltaX/deltaY
 
-        val verticalAxis = VerticalAxis(context, verticalProjection, yValues, height.toFloat())
-        val horizontalAxis = HorizontalAxis(context, horizontalProjection, xValues, width.toFloat(), height.toFloat())
+        verticalProjection = VerticalProjection(vertProjection, minY, height.toFloat(), verticalMargin)
+
+        val verticalAxis = VerticalAxis(context, verticalProjection, verticalLabel, yValues, height.toFloat())
+        val horizontalAxis = HorizontalAxis(context, horProjection, xValues, width.toFloat(), height.toFloat())
 
         canvas?.drawRect(0F, 0F, canvas.width.toFloat(), canvas.height.toFloat(), backgroundPaint)
 
@@ -146,11 +155,11 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
     }
 
     private fun worldToPixelX(x: Float): Float {
-        return horizontalProjection * (x-minX) + horizontalMargin
+        return horizontalProjection.worldToPixel(x)
     }
 
     private fun worldToPixelY(y: Float): Float {
-        return height - (verticalProjection * (y-minY) + verticalMargin)
+        return verticalProjection.worldToPixel(y)
     }
 
     private fun spToPixel(context: Context, sp: Float): Float {
