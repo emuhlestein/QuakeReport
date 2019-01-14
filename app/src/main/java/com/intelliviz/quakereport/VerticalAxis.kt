@@ -21,7 +21,6 @@ class VerticalAxis(context: Context, private var projection: VerticalProjection,
     private var maxValue: Float
     private var ticPaint: Paint = Paint()
     private var padding: Int = 0
-    private var labels: MutableList<String>
     private var format = ""
 
     companion object {
@@ -60,7 +59,6 @@ class VerticalAxis(context: Context, private var projection: VerticalProjection,
             axisInc++
         }
 
-        labels = mutableListOf()
         var maxLen = 0
         values.forEach { value ->
             val str:String = "%1.0f".format(value)
