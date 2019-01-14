@@ -126,7 +126,7 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         verticalProjection = VerticalProjection(vertProjection, minY, height.toFloat(), verticalMargin)
 
         val verticalAxis = VerticalAxis(context, verticalProjection, verticalLabel, yValues, height.toFloat())
-        val horizontalAxis = HorizontalAxis(context, horProjection, xValues, width.toFloat(), height.toFloat())
+        val horizontalAxis = HorizontalAxis(context, horizontalProjection, xValues, width.toFloat(), height.toFloat())
 
         canvas?.drawRect(0F, 0F, canvas.width.toFloat(), canvas.height.toFloat(), backgroundPaint)
 

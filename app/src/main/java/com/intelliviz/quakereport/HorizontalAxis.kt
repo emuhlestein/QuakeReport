@@ -6,23 +6,22 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.TypedValue
-import com.intelliviz.quakereport.HorizontalAxis.companion.HORIZONTAL_MARGIN_SP
-import com.intelliviz.quakereport.HorizontalAxis.companion.PADDING_SP
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 
 
-class HorizontalAxis(context: Context, var horizontalProjection: Float, values: FloatArray, var width: Float, var height: Float) {
+class HorizontalAxis(context: Context, private var projection: HorizontalProjection, values: FloatArray, var width: Float, var height: Float) {
     private var margin: Int = 0
     private var axisInc: Int = 0
     private var minValue: Float
     private var maxValue: Float
     private var ticPaint: Paint = Paint()
     private var padding: Int = 0
+    private var format = ""
 
-    object companion {
-        var HORIZONTAL_MARGIN_SP: Float = 50F
+    companion object {
+        var MARGIN_SP: Float = 50F
         var PADDING_SP: Float = 8F
     }
 
@@ -31,8 +30,7 @@ class HorizontalAxis(context: Context, var horizontalProjection: Float, values: 
         ticPaint.textSize = textSize.toFloat()
         ticPaint.color = Color.BLACK
 
-
-        margin = spToPixel(context, HORIZONTAL_MARGIN_SP)
+        margin = spToPixel(context, MARGIN_SP)
         padding = spToPixel(context, PADDING_SP)
 
         var min = values[0]
@@ -112,7 +110,7 @@ class HorizontalAxis(context: Context, var horizontalProjection: Float, values: 
     }
 
     private fun worldToPixelX(x: Float): Float {
-        return horizontalProjection * (x-minValue) + margin
+        return projection.worldToPixel(x)
     }
 
     private fun drawVerticalLine(canvas: Canvas?, x: Float, startY: Float) {
