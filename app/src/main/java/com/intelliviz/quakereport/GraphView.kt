@@ -120,13 +120,13 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         horizontalProjection = HorizontalProjection(horProjection, minX, horizontalMargin)
 
         deltaY = maxY - minY
-        deltaX = height.toFloat() - 1.5F * verticalMargin
+        deltaX = height.toFloat() - 2.0F * verticalMargin
         var vertProjection = deltaX/deltaY
 
         verticalProjection = VerticalProjection(vertProjection, minY, height.toFloat(), verticalMargin)
 
         val verticalAxis = VerticalAxis(context, verticalProjection, verticalLabel, yValues, height.toFloat())
-        val horizontalAxis = HorizontalAxis(context, horizontalProjection, xValues, width.toFloat(), height.toFloat())
+        val horizontalAxis = HorizontalAxis(context, horizontalProjection, "this is a test label", xValues, width.toFloat(), height.toFloat())
 
         canvas?.drawRect(0F, 0F, canvas.width.toFloat(), canvas.height.toFloat(), backgroundPaint)
 

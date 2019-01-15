@@ -25,7 +25,7 @@ class VerticalAxis(context: Context, private var projection: VerticalProjection,
 
     companion object {
         var MARGIN_SP: Float = 40F // the width of the margin from edge of screen to plotting area
-        var PADDING_SP: Float = 16F
+        var PADDING_SP: Float = 20F
     }
 
     init{
@@ -89,7 +89,7 @@ class VerticalAxis(context: Context, private var projection: VerticalProjection,
         val pixelY = worldToPixelY(value)
         val textHeight = getTextHeight(ticPaint, value.toString())
         val textWidth = getTextWidth(ticPaint, value.toString())
-        val str:String = "%3.0f".format(value)
+        val str:String = format.format(value)
         canvas?.drawText(str, padding.toFloat(), pixelY + textHeight / 2, ticPaint)
         drawTic(canvas, textWidth+padding, margin.toFloat(), pixelY)
     }

@@ -6,12 +6,11 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.TypedValue
-import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 
 
-class HorizontalAxis(context: Context, private var projection: HorizontalProjection, values: FloatArray, var width: Float, var height: Float) {
+class HorizontalAxis(context: Context, private var projection: HorizontalProjection, var label: String, values: FloatArray, var width: Float, var height: Float) {
     private var margin: Int = 0
     private var axisInc: Int = 0
     private var minValue: Float
@@ -21,8 +20,8 @@ class HorizontalAxis(context: Context, private var projection: HorizontalProject
     private var format = ""
 
     companion object {
-        var MARGIN_SP: Float = 50F
-        var PADDING_SP: Float = 8F
+        var MARGIN_SP: Float = 30F
+        var PADDING_SP: Float = 20F
     }
 
     init{
@@ -55,28 +54,34 @@ class HorizontalAxis(context: Context, private var projection: HorizontalProject
 
         val spTextWidth = getTextWidth(ticPaint, minValue.toInt().toString()+1)
         val slots = ((width - 2 * margin) / spTextWidth)
-        val islots = ceil(slots).toInt()
         val inc = (maxValue - minValue) / slots
         axisInc = inc.roundToInt()
         if(axisInc < inc) {
             axisInc++
         }
+
+        var maxLen = 0
+        values.forEach { value ->
+            val str:String = "%1.0f".format(value)
+            if(str.length > maxLen) {
+                maxLen = str.length
+            }
+        }
+        format = "%$maxLen.0f"
     }
 
     fun draw(canvas: Canvas?, context: Context) {
 
         val textSize = spToPixel(context, 16F)
         ticPaint.textSize = textSize.toFloat()
-        val scaledSizeInPixels = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_SP,
-                16F,
-                context.resources.displayMetrics)
-        ticPaint.textSize = scaledSizeInPixels
         val minInt = minValue.toInt()
         val maxInt = maxValue.toInt()
         for(value in minInt..maxInt step axisInc) {
             drawAxisTic(canvas, value.toFloat())
         }
+
+        val textWidth = getTextWidth(ticPaint, label)
+        canvas?.drawText(label, width / 2 - textWidth/2, height - 12, ticPaint)
 
         val Width = width.toInt()
         for(value in 0..Width step 100) {
@@ -89,8 +94,9 @@ class HorizontalAxis(context: Context, private var projection: HorizontalProject
         val textHeight = getTextHeight(ticPaint, value.toString())
         val textWidth = getTextWidth(ticPaint, value.toString())
         val ystart = height - padding
-        canvas?.drawText(value.toInt().toString(), pixelX-textWidth/2, ystart, ticPaint)
-        drawVerticalLine(canvas, pixelX, height - (padding + textHeight))
+        val str:String = format.format(value)
+        canvas?.drawText(str, pixelX-textWidth/2, ystart, ticPaint)
+        drawTic(canvas, pixelX, height - (padding + textHeight), height - (padding + margin))
     }
 
     private fun spToPixel(context: Context, sp: Float): Int {
@@ -113,7 +119,7 @@ class HorizontalAxis(context: Context, private var projection: HorizontalProject
         return projection.worldToPixel(x)
     }
 
-    private fun drawVerticalLine(canvas: Canvas?, x: Float, startY: Float) {
-        canvas?.drawLine(x, startY, x, startY-margin, ticPaint)
+    private fun drawTic(canvas: Canvas?, x: Float, startY: Float, endY: Float) {
+        canvas?.drawLine(x, startY, x, endY, ticPaint)
     }
 }
