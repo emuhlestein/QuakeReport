@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.util.Log
 import android.view.SurfaceHolder
@@ -110,18 +111,18 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
     override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
 
         Log.d("EDM", "width = $width, height = $height")
-        var canvas = holder?.lockCanvas()
+        val canvas = holder?.lockCanvas()
 
         canvas?.drawColor(Color.WHITE)
         deltaX = maxX - minX
         deltaY = width.toFloat() - 1.5F * horizontalMargin
-        var horProjection = deltaY/deltaX
+        val horProjection = deltaY/deltaX
 
         horizontalProjection = HorizontalProjection(horProjection, minX, horizontalMargin)
 
         deltaY = maxY - minY
         deltaX = height.toFloat() - 2.0F * verticalMargin
-        var vertProjection = deltaX/deltaY
+        val vertProjection = deltaX/deltaY
 
         verticalProjection = VerticalProjection(vertProjection, minY, height.toFloat(), verticalMargin)
 
@@ -130,7 +131,7 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
 
         canvas?.drawRect(0F, 0F, canvas.width.toFloat(), canvas.height.toFloat(), backgroundPaint)
 
-        var textSize = spToPixel(context, 16F)
+        val textSize = spToPixel(context, 16F)
 
         ticPaint.textSize = textSize
 
@@ -141,6 +142,8 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
 
         verticalAxis.draw(canvas, context)
         horizontalAxis.draw(canvas, context)
+
+        drawLegend(canvas)
 
         holder?.unlockCanvasAndPost(canvas)
     }
@@ -161,7 +164,7 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
     }
 
     private fun spToPixel(context: Context, sp: Float): Float {
-        var density = context.resources.displayMetrics.scaledDensity
+        val density = context.resources.displayMetrics.scaledDensity
         return sp * density
     }
 
@@ -171,11 +174,26 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         canvas?.drawCircle(pixelX, pixelY, 10F, greenPaint)
     }
 
-    private fun drawHorizontalLine(canvas: Canvas?, startX: Float, y: Float) {
-        canvas?.drawLine(startX, y, horizontalMargin, y, ticPaint)
+    private fun getTextHeight(paint: Paint, text: String): Float {
+        val bounds = Rect()
+        paint.getTextBounds(text, 0, text.length, bounds)
+        return bounds.height().toFloat()
     }
 
-    private fun drawVerticalLine(canvas: Canvas?, x: Float, startY: Float) {
-        canvas?.drawLine(x, startY, x, verticalMargin, ticPaint)
+    private fun drawLegend(canvas: Canvas?) {
+        var str = "-7"
+        var x = 100F
+        val y = verticalMargin/2
+        drawLegendItem(canvas, greenPaint, str, x, y)
+
+        str = "-8"
+        x = 200F
+        drawLegendItem(canvas, bluePaint, str, x, y)
+    }
+
+    private fun drawLegendItem(canvas: Canvas?, dotPaint: Paint, str: String, x: Float, y: Float) {
+        val textHeight = getTextHeight(ticPaint, str)
+        canvas?.drawCircle(x, y, 10F, dotPaint)
+        canvas?.drawText(str, x+20F, y+textHeight/2, ticPaint)
     }
 }
