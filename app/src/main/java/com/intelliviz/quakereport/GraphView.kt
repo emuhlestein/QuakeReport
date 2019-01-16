@@ -40,6 +40,11 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
     private lateinit var xValues: FloatArray
     private lateinit var yValues: FloatArray
     private var verticalLabel: String = ""
+    private var horizontalLabel: String = ""
+    private lateinit var spotPaint: Paint
+    //private lateinit var legendValues: FloatArray
+    //private lateinit var valueColors: MutableList<Paint>
+    private lateinit var legendValues: MutableList<Pair<Paint, Float>>
 
     init{
         backgroundPaint.color = Color.WHITE
@@ -90,8 +95,24 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         this.yValues = yValues
     }
 
+    fun setLegendValues(legendValues: MutableList<Float>, valueColors: MutableList<Paint>) {
+        this.legendValues = mutableListOf()
+        for(i in 0 until legendValues.size) {
+            this.legendValues.add(Pair(valueColors[i], legendValues[i]))
+        }
+    }
+
+
     fun setVerticalLabel(label: String) {
         verticalLabel = label
+    }
+
+    fun setHorizontalLabel(label: String) {
+        horizontalLabel = label
+    }
+
+    fun setSpotColor(paint: Paint) {
+        spotPaint = paint
     }
 
     fun setMinMaxX(minX: Float, maxX: Float) {
@@ -127,7 +148,7 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         verticalProjection = VerticalProjection(vertProjection, minY, height.toFloat(), verticalMargin)
 
         val verticalAxis = VerticalAxis(context, verticalProjection, verticalLabel, yValues, height.toFloat())
-        val horizontalAxis = HorizontalAxis(context, horizontalProjection, "this is a test label", xValues, width.toFloat(), height.toFloat())
+        val horizontalAxis = HorizontalAxis(context, horizontalProjection, horizontalLabel, xValues, width.toFloat(), height.toFloat())
 
         canvas?.drawRect(0F, 0F, canvas.width.toFloat(), canvas.height.toFloat(), backgroundPaint)
 
@@ -171,7 +192,7 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
     private fun drawDot(canvas: Canvas?, x: Float, y: Float) {
         val pixelX = worldToPixelX(x)
         val pixelY = worldToPixelY(y)
-        canvas?.drawCircle(pixelX, pixelY, 10F, greenPaint)
+        canvas?.drawCircle(pixelX, pixelY, 10F, spotPaint)
     }
 
     private fun getTextHeight(paint: Paint, text: String): Float {
@@ -180,15 +201,36 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         return bounds.height().toFloat()
     }
 
-    private fun drawLegend(canvas: Canvas?) {
-        var str = "-7"
-        var x = 100F
-        val y = verticalMargin/2
-        drawLegendItem(canvas, greenPaint, str, x, y)
+    private fun getTextWidth(paint: Paint, text: String): Float {
+        val bounds = Rect()
+        paint.getTextBounds(text, 0, text.length, bounds)
+        return bounds.width().toFloat()
+    }
 
-        str = "-8"
-        x = 200F
-        drawLegendItem(canvas, bluePaint, str, x, y)
+    private fun drawLegend(canvas: Canvas?) {
+        val textSize = spToPixel(context, 16F)
+        var x = textSize
+        val y = verticalMargin/2 * .75F
+        var label = "Magnitude:"
+        val textHeight = getTextHeight(ticPaint, label)
+        canvas?.drawText(label, x, y+textHeight/2, ticPaint)
+        var textWidth = getTextWidth(ticPaint, label)
+
+        x += (textWidth + textSize)
+        for(i in 0 until legendValues.size) {
+            var str = "-" + legendValues[i].second.toString() + ","
+            var paint = legendValues[i].first
+            drawLegendItem(canvas, paint, str, x, y)
+            x += 140F
+        }
+
+
+//        var str = "-" + "7" + ","
+//        drawLegendItem(canvas, greenPaint, str, x, y)
+//
+//        x += 100F
+//        str = "-" + "8"
+//        drawLegendItem(canvas, bluePaint, str, x, y)
     }
 
     private fun drawLegendItem(canvas: Canvas?, dotPaint: Paint, str: String, x: Float, y: Float) {

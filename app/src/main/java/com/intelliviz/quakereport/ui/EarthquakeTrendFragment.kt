@@ -1,5 +1,7 @@
 package com.intelliviz.quakereport.ui
 
+import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -32,7 +34,36 @@ class EarthquakeTrendFragment: Fragment() {
         var y: FloatArray = floatArrayOf(20F, 10F)
         var x: FloatArray = floatArrayOf(1900F, 2010F)
         earthquakeGraphView.setData(x, y)
-        earthquakeGraphView.setVerticalLabel("Magnitude")
+        earthquakeGraphView.setVerticalLabel("Number of quakes")
+        earthquakeGraphView.setHorizontalLabel("Year")
+
+        var spotPaint = Paint()
+        spotPaint.color = Color.GREEN
+        earthquakeGraphView.setSpotColor(spotPaint)
+
+        var legendValues = mutableListOf(6F, 7F, 8F, 9F)
+
+        var valueColors = mutableListOf<Paint>()
+
+        var paint = Paint()
+        paint.color = Color.BLUE
+        valueColors.add(paint)
+
+        paint = Paint()
+        paint.color = Color.GREEN
+        valueColors.add(paint)
+
+        paint = Paint()
+        paint.color = Color.MAGENTA
+        valueColors.add(paint)
+
+        paint = Paint()
+        paint.color = Color.RED
+        valueColors.add(paint)
+
+        earthquakeGraphView.setLegendValues(legendValues, valueColors)
+
+
         return view
     }
 }
