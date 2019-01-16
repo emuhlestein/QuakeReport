@@ -1,20 +1,16 @@
-package com.intelliviz.quakereport
+package com.intelliviz.quakereport.graphview
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.util.TypedValue
 import kotlin.math.roundToInt
 
 
-/**
- * Class to display a vertical axis. The min and max data values are determined and the increment to
- * evenly increment from min to max is calculated. There is a margin that extends from the edge
- * of the screen to the plotting area. In the margin is found the tic labels, the tic marks, and
- * the axis label.
- */
-class VerticalAxis(context: Context, private var projection: VerticalProjection, var label: String, values: FloatArray, var height: Float) {
+
+class HorizontalAxis(context: Context, private var projection: HorizontalProjection, var label: String, values: FloatArray, var width: Float, var height: Float) {
     private var margin: Int = 0
     private var axisInc: Int = 0
     private var minValue: Float
@@ -24,7 +20,7 @@ class VerticalAxis(context: Context, private var projection: VerticalProjection,
     private var format = ""
 
     companion object {
-        var MARGIN_SP: Float = 40F // the width of the margin from edge of screen to plotting area
+        var MARGIN_SP: Float = 30F
         var PADDING_SP: Float = 20F
     }
 
@@ -50,9 +46,14 @@ class VerticalAxis(context: Context, private var projection: VerticalProjection,
         minValue = min
         maxValue = max
 
-        val textHeight = getTextHeight(ticPaint, minValue.toString())
-        val spTextHeight = spToPixel(context, textHeight)
-        val slots = (height - 2 * margin) / spTextHeight
+        val scaledSizeInPixels = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                16F,
+                context.resources.displayMetrics)
+        ticPaint.textSize = scaledSizeInPixels
+
+        val spTextWidth = getTextWidth(ticPaint, minValue.toInt().toString()+1)
+        val slots = ((width - 2 * margin) / spTextWidth)
         val inc = (maxValue - minValue) / slots
         axisInc = inc.roundToInt()
         if(axisInc < inc) {
@@ -79,19 +80,23 @@ class VerticalAxis(context: Context, private var projection: VerticalProjection,
             drawAxisTic(canvas, value.toFloat())
         }
 
-        canvas?.save()
-        canvas?.rotate(-90F, textSize.toFloat(), height / 2)
-        canvas?.drawText(label, 0F, height / 2, ticPaint)
-        canvas?.restore()
+        val textWidth = getTextWidth(ticPaint, label)
+        canvas?.drawText(label, width / 2 - textWidth/2, height - 12, ticPaint)
+
+        val Width = width.toInt()
+        for(value in 0..Width step 100) {
+            //drawVerticalLine(canvas, value.toFloat(), height - (padding + 50))
+        }
     }
 
     private fun drawAxisTic(canvas: Canvas?, value: Float) {
-        val pixelY = worldToPixelY(value)
+        val pixelX = worldToPixelX(value)
         val textHeight = getTextHeight(ticPaint, value.toString())
         val textWidth = getTextWidth(ticPaint, value.toString())
+        val ystart = height - padding
         val str:String = format.format(value)
-        canvas?.drawText(str, padding.toFloat(), pixelY + textHeight / 2, ticPaint)
-        drawTic(canvas, textWidth+padding, margin.toFloat(), pixelY)
+        canvas?.drawText(str, pixelX-textWidth/2, ystart, ticPaint)
+        drawTic(canvas, pixelX, height - (padding + textHeight), height - (padding + margin))
     }
 
     private fun spToPixel(context: Context, sp: Float): Int {
@@ -110,11 +115,11 @@ class VerticalAxis(context: Context, private var projection: VerticalProjection,
         return bounds.width().toFloat()
     }
 
-    private fun worldToPixelY(y: Float): Float {
-        return projection.worldToPixel(y)
+    private fun worldToPixelX(x: Float): Float {
+        return projection.worldToPixel(x)
     }
 
-    private fun drawTic(canvas: Canvas?, startX: Float, endX: Float, y: Float) {
-        canvas?.drawLine(startX, y, endX, y, ticPaint)
+    private fun drawTic(canvas: Canvas?, x: Float, startY: Float, endY: Float) {
+        canvas?.drawLine(x, startY, x, endY, ticPaint)
     }
 }

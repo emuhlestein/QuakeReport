@@ -1,4 +1,4 @@
-package com.intelliviz.quakereport
+package com.intelliviz.quakereport.graphview
 
 import android.content.Context
 import android.graphics.Canvas
@@ -9,9 +9,9 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import com.intelliviz.quakereport.GraphView.companion.HORIZONTAL_MARGIN_SP
-import com.intelliviz.quakereport.GraphView.companion.PADDING_SP
-import com.intelliviz.quakereport.GraphView.companion.VERTICAL_MARGIN_SP
+import com.intelliviz.quakereport.graphview.GraphView.companion.HORIZONTAL_MARGIN_SP
+import com.intelliviz.quakereport.graphview.GraphView.companion.PADDING_SP
+import com.intelliviz.quakereport.graphview.GraphView.companion.VERTICAL_MARGIN_SP
 
 
 class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context, attributes), SurfaceHolder.Callback {

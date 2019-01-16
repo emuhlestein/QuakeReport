@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.intelliviz.quakereport.GraphView
+    <com.intelliviz.quakereport.graphview.GraphView
         android:id="@+id/earthquakeGraphView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

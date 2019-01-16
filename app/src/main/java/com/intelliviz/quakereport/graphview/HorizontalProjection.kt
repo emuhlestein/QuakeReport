@@ -1,4 +1,4 @@
-package com.intelliviz.quakereport
+package com.intelliviz.quakereport.graphview
 
 class HorizontalProjection(var projection: Float, var min: Float, var offset: Float) {
     fun worldToPixel(value: Float): Float {
