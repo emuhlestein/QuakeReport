@@ -10,6 +10,7 @@ import com.intelliviz.quakereport.db.AppDatabase
 import com.intelliviz.quakereport.db.Earthquake
 import java.io.BufferedReader
 import java.io.IOException
+import java.io.InputStream
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
@@ -31,63 +32,79 @@ class EarthquakeService : IntentService("EarthquakeService") {
 
             val baseURL = "https://earthquake.usgs.gov/fdsnws/event/1/query?"
             var url: String = baseURL + "format=geojson"
-            if (endDate != null && !endDate.isEmpty()) {
-                url = url + "&endtime=" + endDate
-            }
             if (startDate != null && !startDate.isEmpty()) {
                 url = url + "&starttime=" + startDate
+            }
+            if (endDate != null && !endDate.isEmpty()) {
+                url = url + "&endtime=" + endDate
             }
             if (minMag != null) {
                 url = url + "&minmagnitude=" + minMag
             }
             if (maxMag != null) {
-                url = url + "&maxmagnitude=" + maxMag
+                //url = url + "&maxmagnitude=" + maxMag
             }
 
             val jsonString = loadDataFromURL(url)
 
             val earthquakes: MutableList<Earthquake> = QueryUtils.extractEarthquakes(jsonString)
 
-            db?.beginTransaction()
-            try {
-                db?.earthquakeDao()?.deleteAll()
+            if(!earthquakes.isEmpty()) {
+                db?.beginTransaction()
+                try {
+                    db?.earthquakeDao()?.deleteAll()
 
-                earthquakes.forEach { earthquake ->
-                    db?.earthquakeDao()?.insertEarthquake(earthquake)
+                    earthquakes.forEach { earthquake ->
+                        db?.earthquakeDao()?.insertEarthquake(earthquake)
+                    }
+                    db?.setTransactionSuccessful()
+                } finally {
+                    db?.endTransaction()
                 }
-                db?.setTransactionSuccessful()
-            } finally {
-                db?.endTransaction()
             }
         }
     }
 
     // TODO is copied from GetEarthquakeDataAsyncTask
     fun loadDataFromURL(jsonURL: String?): String {
+        val url = URL(jsonURL)
+        val connection = url.openConnection() as HttpURLConnection
         try {
-            val url = URL(jsonURL)
-            val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "GET"
             connection.connectTimeout = 15000
-            connection.readTimeout = 15000
-            connection.doInput = true
+            connection.readTimeout = 10000
             connection.connect()
-            val br = BufferedReader(InputStreamReader(connection.inputStream))
+            var resCode = connection.responseCode
+            var inStream: InputStream? = null
+            if(resCode == HttpURLConnection.HTTP_OK) {
+                inStream = connection.inputStream
 
-            val jsonData = StringBuffer()
-            var line: String?
-            do {
-                line = br.readLine()
-                if(line == null) { break }
-                jsonData.append(line + "\n")
-            } while(true)
-            return jsonData.toString()
+                val br = BufferedReader(InputStreamReader(inStream))
+
+                val jsonData = StringBuffer()
+                var line: String?
+                do {
+                    line = br.readLine()
+                    if (line == null) {
+                        break
+                    }
+                    jsonData.append(line + "\n")
+                } while (true)
+
+                return jsonData.toString()
+            } else if(resCode == HttpURLConnection.HTTP_BAD_REQUEST) {
+                return "ERROR"
+            } else {
+                return "ERROR"
+            }
         } catch(e: MalformedURLException) {
             e.printStackTrace()
             return "ERROR"
         } catch(e: IOException) {
             e.printStackTrace()
             return "ERROR"
+        } finally {
+            connection.disconnect()
         }
     }
 
