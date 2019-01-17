@@ -1,5 +1,7 @@
 package com.intelliviz.quakereport.ui
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
@@ -7,13 +9,16 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.intelliviz.quakereport.EarthquakeTrendViewModel
+import com.intelliviz.quakereport.QueryPreferences
 import com.intelliviz.quakereport.R
+import com.intelliviz.quakereport.db.Earthquake
 import com.intelliviz.quakereport.graphview.GraphView
+import java.util.*
 
 class EarthquakeTrendFragment: Fragment() {
-
+    private lateinit var viewModel: EarthquakeTrendViewModel
     companion object {
-
         fun newInstance(): EarthquakeTrendFragment {
             val fragment = EarthquakeTrendFragment()
             return fragment
@@ -62,6 +67,20 @@ class EarthquakeTrendFragment: Fragment() {
         valueColors.add(paint)
 
         earthquakeGraphView.setLegendValues(legendValues, valueColors)
+
+        val earthquakeObserver = Observer<List<Earthquake>> { earthquakes ->
+            val earthquakeData =  ArrayList<Earthquake>(earthquakes)
+            //adapter.addAll(earthquakeData)
+        }
+
+        val year: Int = QueryPreferences.getYear(context!!)
+        val minMag: Int = QueryPreferences.getMinMag(context!!)
+        val maxMag: Int = QueryPreferences.getMaxMag(context!!)
+
+        val factory: EarthquakeTrendViewModel.Factory = EarthquakeTrendViewModel.Factory(activity!!.application, year, minMag, maxMag)
+        viewModel = ViewModelProviders.of(this, factory).get(EarthquakeTrendViewModel::class.java)
+        viewModel.getEarthquakes()?.observe(this, earthquakeObserver)
+        viewModel.loadEarthquakes(year, minMag, maxMag)
 
 
         return view

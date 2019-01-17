@@ -15,44 +15,50 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 
+const val ACTION_EARTHQUAKE_TREND = "action earthquake trend"
+
 class EarthquakeService : IntentService("EarthquakeService") {
     override fun onHandleIntent(intent: Intent?) {
-        val db = AppDatabase.getAppDataBase(this)
+        if(intent?.action == ACTION_EARTHQUAKE_TREND) {
+            handleEarthquakeTrend()
+        } else {
+            val db = AppDatabase.getAppDataBase(this)
 
-        val endDate = intent?.getStringExtra(EXTRA_END_DATE)
-        val startDate = intent?.getStringExtra(EXTRA_START_DATE)
-        val minMag = intent?.getIntExtra(EXTRA_MIN_MAG, 0)
-        val maxMag = intent?.getIntExtra(EXTRA_MAX_MAG, 0)
+            val endDate = intent?.getStringExtra(EXTRA_END_DATE)
+            val startDate = intent?.getStringExtra(EXTRA_START_DATE)
+            val minMag = intent?.getIntExtra(EXTRA_MIN_MAG, 0)
+            val maxMag = intent?.getIntExtra(EXTRA_MAX_MAG, 0)
 
-        val baseURL = "https://earthquake.usgs.gov/fdsnws/event/1/query?"
-        var url: String = baseURL + "format=geojson"
-        if(endDate != null && !endDate.isEmpty()) {
-            url = url + "&endtime=" + endDate
-        }
-        if(startDate != null && !startDate.isEmpty()) {
-            url = url + "&starttime=" + startDate
-        }
-        if(minMag != null) {
-            url = url + "&minmagnitude=" + minMag
-        }
-        if(maxMag != null) {
-            url = url + "&maxmagnitude=" + maxMag
-        }
-
-        val jsonString = loadDataFromURL(url)
-
-        val earthquakes: MutableList<Earthquake> = QueryUtils.extractEarthquakes(jsonString)
-
-        db?.beginTransaction()
-        try {
-            db?.earthquakeDao()?.deleteAll()
-
-            earthquakes.forEach { earthquake ->
-                db?.earthquakeDao()?.insertEarthquake(earthquake)
+            val baseURL = "https://earthquake.usgs.gov/fdsnws/event/1/query?"
+            var url: String = baseURL + "format=geojson"
+            if (endDate != null && !endDate.isEmpty()) {
+                url = url + "&endtime=" + endDate
             }
-            db?.setTransactionSuccessful()
-        }finally {
-            db?.endTransaction()
+            if (startDate != null && !startDate.isEmpty()) {
+                url = url + "&starttime=" + startDate
+            }
+            if (minMag != null) {
+                url = url + "&minmagnitude=" + minMag
+            }
+            if (maxMag != null) {
+                url = url + "&maxmagnitude=" + maxMag
+            }
+
+            val jsonString = loadDataFromURL(url)
+
+            val earthquakes: MutableList<Earthquake> = QueryUtils.extractEarthquakes(jsonString)
+
+            db?.beginTransaction()
+            try {
+                db?.earthquakeDao()?.deleteAll()
+
+                earthquakes.forEach { earthquake ->
+                    db?.earthquakeDao()?.insertEarthquake(earthquake)
+                }
+                db?.setTransactionSuccessful()
+            } finally {
+                db?.endTransaction()
+            }
         }
     }
 
@@ -83,5 +89,9 @@ class EarthquakeService : IntentService("EarthquakeService") {
             e.printStackTrace()
             return "ERROR"
         }
+    }
+
+    fun handleEarthquakeTrend() {
+
     }
 }

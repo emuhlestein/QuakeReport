@@ -12,8 +12,10 @@ object QueryPreferences {
     val MIN_MAG: String = "MinMag"
     val MAX_MAG: String = "MaxMag"
     val NUM_DAYS: String = "NumDays"
+    val YEAR: String = "year"
     val MIN_MAG_DEFAULT: Int = 1
     val NUM_DAYS_DEFAULT: Int = 30
+    val YEAR_DEFAULT: Int = 1900
 
     fun getStartDate(context: Context): String {
         val currentDate = getCurrentDate(0)
@@ -64,6 +66,16 @@ object QueryPreferences {
     fun setNumDays(context: Context, maxMag: Int) {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         editor.putInt(NUM_DAYS, maxMag)
+        editor.apply()
+    }
+
+    fun getYear(context: Context): Int {
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(YEAR, YEAR_DEFAULT)
+    }
+
+    fun setYear(context: Context, year: Int) {
+        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        editor.putInt(YEAR, year)
         editor.apply()
     }
 

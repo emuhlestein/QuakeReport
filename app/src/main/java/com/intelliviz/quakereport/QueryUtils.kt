@@ -14,6 +14,7 @@ object QueryUtils {
     val EXTRA_END_DATE = "end_date"
     val EXTRA_MIN_MAG = "min_mag"
     val EXTRA_MAX_MAG = "max_mag"
+    val EXTRA_YEAR = "year"
     val EXTRA_NUM_DAYS = "num_days"
 
     /**
