@@ -18,6 +18,6 @@ interface EarthquakeDao {
     @Query("DELETE FROM Earthquake")
     fun deleteAll()
 
-    @Query("SELECT * FROM Earthquake")
+    @Query("SELECT * FROM Earthquake ORDER BY magnitude DESC")
     fun getEarthquakes(): LiveData<List<Earthquake>>
 }
