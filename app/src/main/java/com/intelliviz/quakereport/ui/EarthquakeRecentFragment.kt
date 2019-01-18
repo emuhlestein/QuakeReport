@@ -61,7 +61,7 @@ class EarthquakeRecentFragment: Fragment() {
 
         val factory: EarthquakeRecentViewModel.Factory = EarthquakeRecentViewModel.Factory(activity!!.application, numDays, minMag, maxMag)
         viewModel = ViewModelProviders.of(this, factory).get(EarthquakeRecentViewModel::class.java)
-        viewModel.getEarthquakes()?.observe(this, earthquakeObserver)
+        viewModel.getEarthquakes()?.observe(viewLifecycleOwner, earthquakeObserver)
         //viewModel.loadEarthquakes(url)
 
         viewModel.loadEarthquakes(numDays, minMag, maxMag)

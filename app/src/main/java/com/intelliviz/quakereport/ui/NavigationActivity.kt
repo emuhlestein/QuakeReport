@@ -132,7 +132,7 @@ class NavigationActivity : AppCompatActivity(),
         val ft: FragmentTransaction
         ft = fm.beginTransaction()
         handleAnimation(ft, oldTag, fragmentTag)
-        ft.replace(R.id.content_frame, fragment, fragmentTag)
+        ft.replace(R.id.content_frame, fragment!!, fragmentTag)
         ft.commit()
     }
 

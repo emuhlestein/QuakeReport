@@ -79,7 +79,7 @@ class EarthquakeTrendFragment: Fragment() {
 
         val factory: EarthquakeTrendViewModel.Factory = EarthquakeTrendViewModel.Factory(activity!!.application, year, minMag, maxMag)
         viewModel = ViewModelProviders.of(this, factory).get(EarthquakeTrendViewModel::class.java)
-        viewModel.getEarthquakes()?.observe(this, earthquakeObserver)
+        viewModel.getEarthquakes()?.observe(viewLifecycleOwner, earthquakeObserver)
         viewModel.loadEarthquakes(year, minMag, maxMag)
 
 

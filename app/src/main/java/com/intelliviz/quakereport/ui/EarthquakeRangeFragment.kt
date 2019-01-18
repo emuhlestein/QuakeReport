@@ -62,7 +62,7 @@ class EarthquakeRangeFragment: Fragment() {
 
         val factory: EarthquakeRangeViewModel.Factory = EarthquakeRangeViewModel.Factory(activity!!.application, endDate, startDate, minMag, maxMag)
         viewModel = ViewModelProviders.of(this, factory).get(EarthquakeRangeViewModel::class.java)
-        viewModel.getEarthquakes()?.observe(this, earthquakeObserver)
+        viewModel.getEarthquakes()?.observe(viewLifecycleOwner, earthquakeObserver)
         //viewModel.loadEarthquakes(url)
 
         viewModel.loadEarthquakes(endDate, startDate, minMag, maxMag)
