@@ -14,7 +14,7 @@ import com.intelliviz.quakereport.R
 import kotlinx.android.synthetic.main.activity_navigation.*
 
 class NavigationActivity : AppCompatActivity(),
-        EarthquakeRangeOptionsDialog.OnOptionsSelectedListener,
+        EarthquakeOptionsDialog.OnOptionsSelectedListener,
         EarthquakeRecentOptionsDialog.OnOptionsSelectedListener {
 
     var fragment: Fragment? = null
@@ -57,7 +57,7 @@ class NavigationActivity : AppCompatActivity(),
                     val endDate = QueryPreferences.getEndDate(this)
                     val minMag = QueryPreferences.getMinMag(this)
                     val maxMag = QueryPreferences.getMaxMag(this)
-                    val dialog = EarthquakeRangeOptionsDialog.newInstance(0, startDate, endDate, minMag, maxMag)
+                    val dialog = EarthquakeOptionsDialog.newInstance(0, startDate, endDate, minMag, maxMag)
                     dialog.show(supportFragmentManager, "options")
                 } else if(fragment?.tag == RECENT_FRAG_TAG) {
                     val numDays = QueryPreferences.getNumDays(this)

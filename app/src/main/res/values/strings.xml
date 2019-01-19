@@ -8,11 +8,12 @@
     <string name="max_mag">Max Magnitude</string>
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
-    <string name="range">Range</string>
     <string name="recent">Recent</string>
     <string name="trend">Trend</string>
     <string name="days_label">days</string>
     <string name="last_label">Last</string>
+    <string name="range">Date Range</string>
+    <string name="earthquake_options">Earthquake Options</string>
 
     <string-array name="magnitudes">
         <item>1</item>

@@ -7,14 +7,11 @@ import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.Button
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import com.intelliviz.quakereport.R
-import kotlinx.android.synthetic.main.earthquake_range_options.*
+import kotlinx.android.synthetic.main.earthquake_options.*
 
-class EarthquakeRangeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelectedListener {
+class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelectedListener {
 
     var minMagSpinner: Spinner? = null
     var maxMagSpinner: Spinner? = null
@@ -35,14 +32,14 @@ class EarthquakeRangeOptionsDialog : DialogFragment(), DatePickerFragment.OnDate
         const val EXTRA_MIN_MAG = "min_mag"
         const val EXTRA_MAX_MAG = "max_mag"
 
-        fun newInstance(id: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int): EarthquakeRangeOptionsDialog {
+        fun newInstance(id: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int): EarthquakeOptionsDialog {
             val args = Bundle()
             args.putInt(ARG_ID, id)
             args.putString(ARG_START_DATE, startDate)
             args.putString(ARG_END_DATE, endDate)
             args.putInt(ARG_MIN_MAG, minMag)
             args.putInt(ARG_MAX_MAG, maxMag)
-            val fragment = EarthquakeRangeOptionsDialog()
+            val fragment = EarthquakeOptionsDialog()
             fragment.arguments = args
             return fragment
         }
@@ -53,14 +50,26 @@ class EarthquakeRangeOptionsDialog : DialogFragment(), DatePickerFragment.OnDate
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.earthquake_range_options, container, false)
+        val view = inflater.inflate(R.layout.earthquake_options, container, false)
 
         val startDate = arguments!!.getString(ARG_START_DATE)
         val endDate = arguments!!.getString(ARG_END_DATE)
         val minMag = arguments!!.getInt(ARG_MIN_MAG)
         val maxMag = arguments!!.getInt(ARG_MAX_MAG)
 
-        val startDateButton = view.findViewById<View>(R.id.start_date_button) as Button
+        val rangeButton = view.findViewById<View>(R.id.range_button)
+        val recentButton = view.findViewById<View>(R.id.recent_button)
+        val startDateButton = view.findViewById<View>(R.id.start_date_layout) as LinearLayout
+        val endDateButton = view.findViewById<View>(R.id.end_date_layout) as LinearLayout
+        recentButton.setOnClickListener {
+            startDateButton.visibility = View.VISIBLE
+            endDateButton.visibility = View.VISIBLE
+        }
+
+        rangeButton.setOnClickListener {
+            startDateButton.visibility = View.GONE
+            endDateButton.visibility = View.GONE
+        }
 
         magnitudes = resources.getStringArray(R.array.magnitudes)
 
@@ -71,7 +80,7 @@ class EarthquakeRangeOptionsDialog : DialogFragment(), DatePickerFragment.OnDate
             newFragment.show(activity!!.supportFragmentManager, "date picker")
         }
 
-        val endDateButton = view.findViewById<View>(R.id.end_date_button) as Button
+
         endDateButton.setOnClickListener {
             val eDate = end_date_text_view.text.toString()
             val newFragment = DatePickerFragment.newInstance(END_DATE, eDate)
@@ -171,7 +180,7 @@ class EarthquakeRangeOptionsDialog : DialogFragment(), DatePickerFragment.OnDate
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         } else {
             if(activity is OnOptionsSelectedListener) {
-                //var listener: EarthquakeRangeOptionsDialog.OnOptionsSelectedListener? = null
+                //var listener: EarthquakeOptionsDialog.OnOptionsSelectedListener? = null
                 val listener = activity as OnOptionsSelectedListener
                 listener.onOptionsSelected(startDate, endDate, minMag, maxMag)
             }

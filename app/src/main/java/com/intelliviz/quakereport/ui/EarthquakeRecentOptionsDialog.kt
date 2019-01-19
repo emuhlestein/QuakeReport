@@ -121,7 +121,7 @@ class EarthquakeRecentOptionsDialog : DialogFragment(){
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         } else {
             if(activity is OnOptionsSelectedListener) {
-                //var listener: EarthquakeRangeOptionsDialog.OnOptionsSelectedListener? = null
+                //var listener: EarthquakeOptionsDialog.OnOptionsSelectedListener? = null
                 val listener = activity as OnOptionsSelectedListener
                 listener.onOptionsSelected(numDays, minMag, maxMag)
             }
