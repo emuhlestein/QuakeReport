@@ -16,6 +16,20 @@ object QueryPreferences {
     val MIN_MAG_DEFAULT: Int = 1
     val NUM_DAYS_DEFAULT: Int = 30
     val YEAR_DEFAULT: Int = 1900
+    val MODE_DEFAULT: Int = 0
+    val MODE: String = "mode"
+    val RECENT: Int = 0
+    val RANGE: Int = 1
+
+    fun getMode(context: Context): Int {
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(MODE, MODE_DEFAULT)
+    }
+
+    fun setMode(context: Context, mode: Int) {
+        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        editor.putInt(MODE, mode)
+        editor.apply()
+    }
 
     fun getStartDate(context: Context): String {
         val currentDate = getCurrentDate(0)

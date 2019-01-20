@@ -57,7 +57,8 @@ class NavigationActivity : AppCompatActivity(),
                     val endDate = QueryPreferences.getEndDate(this)
                     val minMag = QueryPreferences.getMinMag(this)
                     val maxMag = QueryPreferences.getMaxMag(this)
-                    val dialog = EarthquakeOptionsDialog.newInstance(0, startDate, endDate, minMag, maxMag)
+                    val numDays = QueryPreferences.getNumDays(this)
+                    val dialog = EarthquakeOptionsDialog.newInstance(0, startDate, endDate, minMag, maxMag, numDays)
                     dialog.show(supportFragmentManager, "options")
                 } else if(fragment?.tag == RECENT_FRAG_TAG) {
                     val numDays = QueryPreferences.getNumDays(this)

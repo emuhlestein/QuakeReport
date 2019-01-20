@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.intelliviz.quakereport.QueryPreferences
 import com.intelliviz.quakereport.R
 import kotlinx.android.synthetic.main.earthquake_options.*
 
@@ -23,22 +24,26 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
         private const val ARG_END_DATE = "end_date"
         private const val ARG_MIN_MAG = "min_mag"
         private const val ARG_MAX_MAG = "max_mag"
+        private const val ARG_NUM_DAYS = "num_days"
+        private const val ARG_MODE = "mode"
         private const val START_DATE: Int = 1
         private const val END_DATE: Int = 2
         private const val DATE_REQUEST: Int = 3
 
-        const val EXTRA_END_DATE = "end_date"
-        const val EXTRA_START_DATE = "start_date"
-        const val EXTRA_MIN_MAG = "min_mag"
-        const val EXTRA_MAX_MAG = "max_mag"
+        const val EXTRA_END_DATE = ARG_END_DATE
+        const val EXTRA_START_DATE = ARG_START_DATE
+        const val EXTRA_MIN_MAG = ARG_MIN_MAG
+        const val EXTRA_MAX_MAG = ARG_MAX_MAG
+        const val EXTRA_NUM_DAYS = ARG_NUM_DAYS
 
-        fun newInstance(id: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int): EarthquakeOptionsDialog {
+        fun newInstance(mode: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int, numDays: Int): EarthquakeOptionsDialog {
             val args = Bundle()
-            args.putInt(ARG_ID, id)
+            args.putInt(ARG_MODE, mode)
             args.putString(ARG_START_DATE, startDate)
             args.putString(ARG_END_DATE, endDate)
             args.putInt(ARG_MIN_MAG, minMag)
             args.putInt(ARG_MAX_MAG, maxMag)
+            args.putInt(ARG_NUM_DAYS, numDays)
             val fragment = EarthquakeOptionsDialog()
             fragment.arguments = args
             return fragment
@@ -52,23 +57,43 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.earthquake_options, container, false)
 
+        val mode = arguments!!.getInt(ARG_MODE)
         val startDate = arguments!!.getString(ARG_START_DATE)
         val endDate = arguments!!.getString(ARG_END_DATE)
         val minMag = arguments!!.getInt(ARG_MIN_MAG)
         val maxMag = arguments!!.getInt(ARG_MAX_MAG)
+        val numDays = arguments!!.getInt(ARG_NUM_DAYS)
 
-        val rangeButton = view.findViewById<View>(R.id.range_button)
-        val recentButton = view.findViewById<View>(R.id.recent_button)
-        val startDateButton = view.findViewById<View>(R.id.start_date_layout) as LinearLayout
-        val endDateButton = view.findViewById<View>(R.id.end_date_layout) as LinearLayout
+        val modeGroup =  view.findViewById<View>(R.id.modeRadioGroup) as RadioGroup
+        val rangeButton = view.findViewById<View>(R.id.range_button) as RadioButton
+        val recentButton = view.findViewById<View>(R.id.recent_button) as RadioButton
+        val startDateButton = view.findViewById<View>(R.id.start_date_button) as Button
+        val endDateButton = view.findViewById<View>(R.id.end_date_button) as Button
+        val startDateLayout = view.findViewById<View>(R.id.start_date_layout) as LinearLayout
+        val endDateLayout = view.findViewById<View>(R.id.end_date_layout) as LinearLayout
+        val lastNumDaysLayout = view.findViewById<View>(R.id.last_num_days_layout) as LinearLayout
+
+        if(mode == QueryPreferences.RANGE) {
+            modeGroup.check(R.id.range_button)
+            startDateLayout.visibility = View.VISIBLE
+            endDateLayout.visibility = View.VISIBLE
+            lastNumDaysLayout.visibility = View.GONE
+        } else {
+            modeGroup.check(R.id.recent_button)
+            startDateLayout.visibility = View.GONE
+            endDateLayout.visibility = View.GONE
+            lastNumDaysLayout.visibility = View.VISIBLE
+        }
         recentButton.setOnClickListener {
-            startDateButton.visibility = View.VISIBLE
-            endDateButton.visibility = View.VISIBLE
+            startDateLayout.visibility = View.GONE
+            endDateLayout.visibility = View.GONE
+            lastNumDaysLayout.visibility = View.VISIBLE
         }
 
         rangeButton.setOnClickListener {
-            startDateButton.visibility = View.GONE
-            endDateButton.visibility = View.GONE
+            startDateLayout.visibility = View.VISIBLE
+            endDateLayout.visibility = View.VISIBLE
+            lastNumDaysLayout.visibility = View.GONE
         }
 
         magnitudes = resources.getStringArray(R.array.magnitudes)
@@ -79,7 +104,6 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
             newFragment.setTargetFragment(this, DATE_REQUEST)
             newFragment.show(activity!!.supportFragmentManager, "date picker")
         }
-
 
         endDateButton.setOnClickListener {
             val eDate = end_date_text_view.text.toString()
