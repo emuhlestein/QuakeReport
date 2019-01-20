@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.intelliviz.quakereport.QueryPreferences
+import com.intelliviz.quakereport.QueryPreferences.MODE_RANGE
+import com.intelliviz.quakereport.QueryPreferences.MODE_RECENT
 import com.intelliviz.quakereport.R
 import kotlinx.android.synthetic.main.earthquake_options.*
 
@@ -30,6 +32,7 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
         private const val END_DATE: Int = 2
         private const val DATE_REQUEST: Int = 3
 
+        const val EXTRA_MODE = ARG_MODE
         const val EXTRA_END_DATE = ARG_END_DATE
         const val EXTRA_START_DATE = ARG_START_DATE
         const val EXTRA_MIN_MAG = ARG_MIN_MAG
@@ -51,7 +54,7 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
     }
 
     interface OnOptionsSelectedListener {
-        fun onOptionsSelected(startDate: String, endDate: String, minMag: Int, maxMag: Int)
+        fun onOptionsSelected(mode: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int, numDays: Int)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -72,8 +75,9 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
         val startDateLayout = view.findViewById<View>(R.id.start_date_layout) as LinearLayout
         val endDateLayout = view.findViewById<View>(R.id.end_date_layout) as LinearLayout
         val lastNumDaysLayout = view.findViewById<View>(R.id.last_num_days_layout) as LinearLayout
+        val lastNumDays = view.findViewById<View>(R.id.last_num_days) as EditText
 
-        if(mode == QueryPreferences.RANGE) {
+        if(mode == QueryPreferences.MODE_RANGE) {
             modeGroup.check(R.id.range_button)
             startDateLayout.visibility = View.VISIBLE
             endDateLayout.visibility = View.VISIBLE
@@ -83,6 +87,7 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
             startDateLayout.visibility = View.GONE
             endDateLayout.visibility = View.GONE
             lastNumDaysLayout.visibility = View.VISIBLE
+            lastNumDays.setText(numDays.toString())
         }
         recentButton.setOnClickListener {
             startDateLayout.visibility = View.GONE
@@ -120,16 +125,21 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
 
         val okButton = view.findViewById<View>(R.id.ok_button) as Button
         okButton.setOnClickListener {
+            var mode = MODE_RANGE
+            if(recentButton.isChecked) {
+                mode = MODE_RECENT
+            }
             val minmag = min_mag_spinner.selectedItem.toString().toInt()
             val maxmag = max_mag_spinner.selectedItem.toString().toInt()
             val startdate = start_date_text_view.text.toString()
             val enddate = end_date_text_view.text.toString()
+            val numDays = lastNumDays.text.toString()
             val intent = Intent()
             intent.putExtra(EXTRA_START_DATE, startdate)
             intent.putExtra(EXTRA_END_DATE, enddate)
             intent.putExtra(EXTRA_MIN_MAG, minmag)
             intent.putExtra(EXTRA_MAX_MAG, maxmag)
-            sendResult(startdate, enddate, minmag, maxmag)
+            sendResult(mode, startdate, enddate, minmag, maxmag, numDays.toInt())
             dismiss()
         }
 
@@ -194,19 +204,21 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
         }
     }
 
-    fun sendResult(startDate: String, endDate: String, minMag: Int, maxMag: Int) {
+    fun sendResult(mode: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int, numDays: Int) {
         if(targetFragment != null) {
             val intent = Intent()
+            intent.putExtra(EXTRA_MODE, mode)
             intent.putExtra(EXTRA_START_DATE, startDate)
             intent.putExtra(EXTRA_END_DATE, endDate)
             intent.putExtra(EXTRA_MIN_MAG, minMag)
             intent.putExtra(EXTRA_MAX_MAG, maxMag)
+            intent.putExtra(EXTRA_NUM_DAYS, numDays)
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         } else {
             if(activity is OnOptionsSelectedListener) {
                 //var listener: EarthquakeOptionsDialog.OnOptionsSelectedListener? = null
                 val listener = activity as OnOptionsSelectedListener
-                listener.onOptionsSelected(startDate, endDate, minMag, maxMag)
+                listener.onOptionsSelected(mode, startDate, endDate, minMag, maxMag, numDays)
             }
         }
     }

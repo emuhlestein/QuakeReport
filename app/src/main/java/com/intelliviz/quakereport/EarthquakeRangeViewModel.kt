@@ -38,6 +38,22 @@ class EarthquakeRangeViewModel(application: Application, endDate: String?, start
         getApplication<Application>().startService(intent)
     }
 
+    fun loadEarthquakes(numDays: Int?, minMag: Int?, maxMag: Int?) {
+        val intent = createIntent(numDays, minMag, maxMag)
+        getApplication<Application>().startService(intent)
+    }
+
+    private fun createIntent(numDays: Int?, minMag: Int?, maxMag: Int?): Intent {
+        val intent = Intent(getApplication(), EarthquakeService::class.java)
+        val endDate = QueryPreferences.getCurrentDate()
+        val startDate = QueryPreferences.getCurrentDate(numDays!!)
+        intent.putExtra(QueryUtils.EXTRA_START_DATE, startDate)
+        intent.putExtra(QueryUtils.EXTRA_END_DATE, endDate)
+        intent.putExtra(QueryUtils.EXTRA_MIN_MAG, minMag)
+        intent.putExtra(QueryUtils.EXTRA_MAX_MAG, maxMag)
+        return intent
+    }
+
     private fun createIntent(endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?): Intent {
         val intent = Intent(getApplication(), EarthquakeService::class.java)
         intent.putExtra(EXTRA_START_DATE, startDate)

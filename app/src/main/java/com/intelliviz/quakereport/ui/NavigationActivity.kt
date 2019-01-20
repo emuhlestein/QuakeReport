@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.intelliviz.quakereport.QueryPreferences
+import com.intelliviz.quakereport.QueryPreferences.MODE_RANGE
 import com.intelliviz.quakereport.R
 import kotlinx.android.synthetic.main.activity_navigation.*
 
@@ -53,12 +54,13 @@ class NavigationActivity : AppCompatActivity(),
         when (item.itemId) {
             R.id.options_item -> {
                 if(fragment?.tag == RANGE_FRAG_TAG) {
+                    val mode = QueryPreferences.getMode(this)
                     val startDate = QueryPreferences.getStartDate(this)
                     val endDate = QueryPreferences.getEndDate(this)
                     val minMag = QueryPreferences.getMinMag(this)
                     val maxMag = QueryPreferences.getMaxMag(this)
                     val numDays = QueryPreferences.getNumDays(this)
-                    val dialog = EarthquakeOptionsDialog.newInstance(0, startDate, endDate, minMag, maxMag, numDays)
+                    val dialog = EarthquakeOptionsDialog.newInstance(mode, startDate, endDate, minMag, maxMag, numDays)
                     dialog.show(supportFragmentManager, "options")
                 } else if(fragment?.tag == RECENT_FRAG_TAG) {
                     val numDays = QueryPreferences.getNumDays(this)
@@ -73,7 +75,7 @@ class NavigationActivity : AppCompatActivity(),
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onOptionsSelected(startDate: String, endDate: String, minMag: Int, maxMag: Int) {
+    override fun onOptionsSelected(mode: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int, numDays: Int) {
         QueryPreferences.setStartDate(this, startDate)
         QueryPreferences.setEndDate(this, endDate)
         QueryPreferences.setMinMag(this, minMag)
@@ -81,7 +83,11 @@ class NavigationActivity : AppCompatActivity(),
         val tempFragment = fragment
         if(tempFragment is EarthquakeRangeFragment) {
             fragment?.let {
-                tempFragment.loadEarthquakes(startDate, endDate, minMag, maxMag)
+                if(mode == MODE_RANGE) {
+                    tempFragment.loadEarthquakes(startDate, endDate, minMag, maxMag)
+                } else {
+                    tempFragment.loadEarthquakes(minMag, maxMag, numDays)
+                }
             }
         }
     }

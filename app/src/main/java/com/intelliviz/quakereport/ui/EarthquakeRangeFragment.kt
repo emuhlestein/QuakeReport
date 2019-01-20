@@ -73,4 +73,7 @@ class EarthquakeRangeFragment: Fragment() {
         viewModel.loadEarthquakes(endDate, startDate, minMag, maxMag)
     }
 
+    fun loadEarthquakes(minMag: Int, maxMag: Int, numDays: Int) {
+        viewModel.loadEarthquakes(numDays, minMag, maxMag)
+    }
 }
