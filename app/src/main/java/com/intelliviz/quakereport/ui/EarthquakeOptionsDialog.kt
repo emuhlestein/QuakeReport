@@ -87,8 +87,10 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
             startDateLayout.visibility = View.GONE
             endDateLayout.visibility = View.GONE
             lastNumDaysLayout.visibility = View.VISIBLE
-            lastNumDays.setText(numDays.toString())
         }
+
+        lastNumDays.setText(numDays.toString())
+
         recentButton.setOnClickListener {
             startDateLayout.visibility = View.GONE
             endDateLayout.visibility = View.GONE
