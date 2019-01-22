@@ -14,6 +14,7 @@ import android.widget.Toast
 import com.intelliviz.quakereport.EarthquakeAdapter
 import com.intelliviz.quakereport.EarthquakeRangeViewModel
 import com.intelliviz.quakereport.QueryPreferences
+import com.intelliviz.quakereport.QueryPreferences.MODE_RANGE
 import com.intelliviz.quakereport.R
 import com.intelliviz.quakereport.db.Earthquake
 import kotlinx.android.synthetic.main.earthquake_range_fragment.*
@@ -54,15 +55,21 @@ class EarthquakeMainActivity : AppCompatActivity(),
             adapter.addAll(earthquakeData)
         }
 
+        val mode: Int = QueryPreferences.getMode(this)
         val endDate: String = QueryPreferences.getEndDate(this)
         val startDate: String = QueryPreferences.getStartDate(this)
         val minMag: Int = QueryPreferences.getMinMag(this)
         val maxMag: Int = QueryPreferences.getMaxMag(this)
+        val numDays: Int = QueryPreferences.getNumDays(this)
 
         val factory: EarthquakeRangeViewModel.Factory = EarthquakeRangeViewModel.Factory(this.application, endDate, startDate, minMag, maxMag)
         viewModel = ViewModelProviders.of(this, factory).get(EarthquakeRangeViewModel::class.java)
         viewModel.getEarthquakes()?.observe(this, earthquakeObserver)
-        viewModel.loadEarthquakes(endDate, startDate, minMag, maxMag)
+        if(mode == MODE_RANGE) {
+            viewModel.loadEarthquakes(endDate, startDate, minMag, maxMag)
+        } else {
+            viewModel.loadEarthquakes(minMag, maxMag, numDays)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -89,10 +96,12 @@ class EarthquakeMainActivity : AppCompatActivity(),
     }
 
     override fun onOptionsSelected(mode: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int, numDays: Int) {
+        QueryPreferences.setMode(this, mode)
         QueryPreferences.setStartDate(this, startDate)
         QueryPreferences.setEndDate(this, endDate)
         QueryPreferences.setMinMag(this, minMag)
         QueryPreferences.setMaxMag(this, maxMag)
+        QueryPreferences.setNumDays(this, numDays)
         if (mode == QueryPreferences.MODE_RANGE) {
             viewModel.loadEarthquakes(startDate, endDate, minMag, maxMag)
         } else {

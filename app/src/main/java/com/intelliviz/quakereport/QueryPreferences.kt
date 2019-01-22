@@ -77,9 +77,9 @@ object QueryPreferences {
         return PreferenceManager.getDefaultSharedPreferences(context).getInt(NUM_DAYS, NUM_DAYS_DEFAULT)
     }
 
-    fun setNumDays(context: Context, maxMag: Int) {
+    fun setNumDays(context: Context, numDays: Int) {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-        editor.putInt(NUM_DAYS, maxMag)
+        editor.putInt(NUM_DAYS, numDays)
         editor.apply()
     }
 

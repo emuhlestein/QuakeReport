@@ -38,7 +38,7 @@ class EarthquakeRangeViewModel(application: Application, endDate: String?, start
         getApplication<Application>().startService(intent)
     }
 
-    fun loadEarthquakes(numDays: Int?, minMag: Int?, maxMag: Int?) {
+    fun loadEarthquakes(minMag: Int?, maxMag: Int?, numDays: Int?) {
         val intent = createIntent(numDays, minMag, maxMag)
         getApplication<Application>().startService(intent)
     }
