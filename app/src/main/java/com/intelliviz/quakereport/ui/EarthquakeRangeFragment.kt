@@ -11,7 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.intelliviz.quakereport.EarthquakeAdapter
-import com.intelliviz.quakereport.EarthquakeRangeViewModel
+import com.intelliviz.quakereport.EarthquakeViewModel
 import com.intelliviz.quakereport.QueryPreferences
 import com.intelliviz.quakereport.R
 import com.intelliviz.quakereport.db.Earthquake
@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.earthquake_range_fragment.*
 import java.util.*
 
 class EarthquakeRangeFragment: Fragment() {
-    private lateinit var viewModel: EarthquakeRangeViewModel
+    private lateinit var viewModel: EarthquakeViewModel
     companion object {
 
         fun newInstance(): EarthquakeRangeFragment {
@@ -60,8 +60,8 @@ class EarthquakeRangeFragment: Fragment() {
         val minMag: Int = QueryPreferences.getMinMag(context!!)
         val maxMag: Int = QueryPreferences.getMaxMag(context!!)
 
-        val factory: EarthquakeRangeViewModel.Factory = EarthquakeRangeViewModel.Factory(activity!!.application, endDate, startDate, minMag, maxMag)
-        viewModel = ViewModelProviders.of(this, factory).get(EarthquakeRangeViewModel::class.java)
+        val factory: EarthquakeViewModel.Factory = EarthquakeViewModel.Factory(activity!!.application, endDate, startDate, minMag, maxMag)
+        viewModel = ViewModelProviders.of(this, factory).get(EarthquakeViewModel::class.java)
         viewModel.getEarthquakes()?.observe(viewLifecycleOwner, earthquakeObserver)
         //viewModel.loadEarthquakes(url)
 

@@ -3,8 +3,7 @@ package com.intelliviz.quakereport
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import java.text.SimpleDateFormat
-import java.util.*
+import com.intelliviz.quakereport.QueryUtils.getCurrentDate
 
 object QueryPreferences {
     val START_DATE: String = "StartDate"
@@ -13,7 +12,8 @@ object QueryPreferences {
     val MAX_MAG: String = "MaxMag"
     val NUM_DAYS: String = "NumDays"
     val YEAR: String = "year"
-    val MIN_MAG_DEFAULT: Int = 1
+    val MIN_MAG_DEFAULT: Int = 6
+    val MAX_MAG_DEFAULT: Int = 7
     val NUM_DAYS_DEFAULT: Int = 30
     val YEAR_DEFAULT: Int = 1900
     val MODE: String = "mode"
@@ -32,7 +32,7 @@ object QueryPreferences {
     }
 
     fun getStartDate(context: Context): String {
-        val currentDate = getCurrentDate(0)
+        val currentDate: String = getCurrentDate(0)
         return PreferenceManager.getDefaultSharedPreferences(context).getString(START_DATE, currentDate)
     }
 
@@ -64,7 +64,7 @@ object QueryPreferences {
     }
 
     fun getMaxMag(context: Context): Int {
-        return PreferenceManager.getDefaultSharedPreferences(context).getInt(MAX_MAG, MIN_MAG_DEFAULT)
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(MAX_MAG, MAX_MAG_DEFAULT)
     }
 
     fun setMaxMag(context: Context, maxMag: Int) {
@@ -93,21 +93,4 @@ object QueryPreferences {
         editor.apply()
     }
 
-    fun getCurrentDate(): String {
-       return getCurrentDate(0)
-    }
-
-    fun getCurrentDate(numDays: Int): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
-        val currentDate = Date()
-        var currentFormattedDate = dateFormat.format(currentDate)
-        if(numDays > 0) {
-            val c: Calendar = Calendar.getInstance()
-            c.time = dateFormat.parse(currentFormattedDate)
-            c.add(Calendar.DATE, -numDays)
-            currentFormattedDate = dateFormat.format(c.time)
-        }
-
-        return currentFormattedDate
-    }
 }

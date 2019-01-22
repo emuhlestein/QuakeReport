@@ -13,7 +13,7 @@ import com.intelliviz.quakereport.QueryUtils.EXTRA_START_DATE
 import com.intelliviz.quakereport.db.Earthquake
 
 
-class EarthquakeRangeViewModel(application: Application, endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?): AndroidViewModel(application) {
+class EarthquakeViewModel(application: Application, endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?): AndroidViewModel(application) {
     private var repo: EarthquakeRepository? = null
     init {
         repo = EarthquakeRepository(application)
@@ -69,7 +69,7 @@ class EarthquakeRangeViewModel(application: Application, endDate: String?, start
                   private val maxMag: Int?) : ViewModelProvider.NewInstanceFactory() {
 
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return EarthquakeRangeViewModel(mApplication, endDate, startDate,  minMag, maxMag) as T
+            return EarthquakeViewModel(mApplication, endDate, startDate,  minMag, maxMag) as T
         }
     }
 }

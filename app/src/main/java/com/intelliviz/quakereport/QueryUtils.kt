@@ -68,4 +68,23 @@ object QueryUtils {
         val timeFormatter = SimpleDateFormat("h:mm a")
         return timeFormatter.format(dateObject)
     }
+
+
+    fun getCurrentDate(): String {
+        return getCurrentDate(0)
+    }
+
+    fun getCurrentDate(numDays: Int): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val currentDate = Date()
+        var currentFormattedDate = dateFormat.format(currentDate)
+        if(numDays > 0) {
+            val c: Calendar = Calendar.getInstance()
+            c.time = dateFormat.parse(currentFormattedDate)
+            c.add(Calendar.DATE, -numDays)
+            currentFormattedDate = dateFormat.format(c.time)
+        }
+
+        return currentFormattedDate
+    }
 }

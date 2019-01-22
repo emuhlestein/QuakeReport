@@ -12,7 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.intelliviz.quakereport.EarthquakeAdapter
-import com.intelliviz.quakereport.EarthquakeRangeViewModel
+import com.intelliviz.quakereport.EarthquakeViewModel
 import com.intelliviz.quakereport.QueryPreferences
 import com.intelliviz.quakereport.QueryPreferences.MODE_RANGE
 import com.intelliviz.quakereport.R
@@ -22,7 +22,7 @@ import java.util.*
 
 class EarthquakeMainActivity : AppCompatActivity(),
         EarthquakeOptionsDialog.OnOptionsSelectedListener {
-    private lateinit var viewModel: EarthquakeRangeViewModel
+    private lateinit var viewModel: EarthquakeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +62,8 @@ class EarthquakeMainActivity : AppCompatActivity(),
         val maxMag: Int = QueryPreferences.getMaxMag(this)
         val numDays: Int = QueryPreferences.getNumDays(this)
 
-        val factory: EarthquakeRangeViewModel.Factory = EarthquakeRangeViewModel.Factory(this.application, endDate, startDate, minMag, maxMag)
-        viewModel = ViewModelProviders.of(this, factory).get(EarthquakeRangeViewModel::class.java)
+        val factory: EarthquakeViewModel.Factory = EarthquakeViewModel.Factory(this.application, endDate, startDate, minMag, maxMag)
+        viewModel = ViewModelProviders.of(this, factory).get(EarthquakeViewModel::class.java)
         viewModel.getEarthquakes()?.observe(this, earthquakeObserver)
         if(mode == MODE_RANGE) {
             viewModel.loadEarthquakes(endDate, startDate, minMag, maxMag)
