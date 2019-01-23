@@ -34,13 +34,15 @@ class EarthquakeViewModel(application: Application, endDate: String?, startDate:
     fun getEarthquakes() = earthquakes
 
     fun loadEarthquakes(endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?) {
-        val intent = createIntent(endDate, startDate, minMag, maxMag)
-        getApplication<Application>().startService(intent)
+        repo?.loadEarthquakes(getApplication(), endDate, startDate, minMag, maxMag)
+//        val intent = createIntent(endDate, startDate, minMag, maxMag)
+//        getApplication<Application>().startService(intent)
     }
 
     fun loadEarthquakes(minMag: Int?, maxMag: Int?, numDays: Int?) {
-        val intent = createIntent(numDays, minMag, maxMag)
-        getApplication<Application>().startService(intent)
+        repo?.loadEarthquakes(getApplication(), minMag, maxMag, numDays)
+//        val intent = createIntent(numDays, minMag, maxMag)
+//        getApplication<Application>().startService(intent)
     }
 
     private fun createIntent(numDays: Int?, minMag: Int?, maxMag: Int?): Intent {
