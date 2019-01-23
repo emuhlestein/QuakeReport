@@ -45,8 +45,9 @@ class EarthquakeViewModel(application: Application, endDate: String?, startDate:
 
     private fun createIntent(numDays: Int?, minMag: Int?, maxMag: Int?): Intent {
         val intent = Intent(getApplication(), EarthquakeService::class.java)
-        val endDate = QueryPreferences.getCurrentDate()
-        val startDate = QueryPreferences.getCurrentDate(numDays!!)
+
+        val endDate = QueryUtils.getCurrentDate()
+        val startDate = QueryUtils.getCurrentDate(numDays!!)
         intent.putExtra(QueryUtils.EXTRA_START_DATE, startDate)
         intent.putExtra(QueryUtils.EXTRA_END_DATE, endDate)
         intent.putExtra(QueryUtils.EXTRA_MIN_MAG, minMag)

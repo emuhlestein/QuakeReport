@@ -10,9 +10,10 @@ import android.content.Context
 import com.intelliviz.quakereport.QueryPreferences
 import com.intelliviz.quakereport.QueryUtils
 
-@Database(entities = [Earthquake::class], version = 1)
+@Database(entities = [Earthquake::class, EarthquakeQuery::class], version = 1)
 abstract class AppDatabase : RoomDatabase(){
     abstract fun earthquakeDao(): EarthquakeDao
+    abstract fun earthquakeQueryDao(): EarthquakeQueryDao
 
     companion object {
         var INSTANCE: AppDatabase? = null
@@ -41,6 +42,7 @@ abstract class AppDatabase : RoomDatabase(){
                 values.put(EarthquakeQueryConstant.END_DATE, endDate)
                 values.put(EarthquakeQueryConstant.MIN_MAGNITUDE, QueryPreferences.MIN_MAG_DEFAULT)
                 values.put(EarthquakeQueryConstant.MAX_MAGNITUDE, QueryPreferences.MAX_MAG_DEFAULT)
+                values.put(EarthquakeQueryConstant.NUM_DAYS, 30)
                 db.insert(EarthquakeQueryConstant.TABLE_NAME, OnConflictStrategy.IGNORE, values)
             }
         }

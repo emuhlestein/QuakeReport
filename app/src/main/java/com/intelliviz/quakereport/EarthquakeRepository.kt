@@ -32,8 +32,10 @@ class EarthquakeRepository(context: Context) {
 
     private fun createIntent(application: Application, numDays: Int?, minMag: Int?, maxMag: Int?): Intent {
         val intent = Intent(application, EarthquakeService::class.java)
-        val endDate = QueryPreferences.getCurrentDate()
-        val startDate = QueryPreferences.getCurrentDate(numDays!!)
+        intent.action = ACTION_EARTHQUAKE_RECENT
+        val endDate = QueryUtils.getCurrentDate()
+        val startDate = QueryUtils.getCurrentDate(numDays!!)
+        intent.putExtra(QueryUtils.EXTRA_NUM_DAYS, numDays)
         intent.putExtra(QueryUtils.EXTRA_START_DATE, startDate)
         intent.putExtra(QueryUtils.EXTRA_END_DATE, endDate)
         intent.putExtra(QueryUtils.EXTRA_MIN_MAG, minMag)
@@ -43,6 +45,7 @@ class EarthquakeRepository(context: Context) {
 
     private fun createIntent(application: Application, endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?): Intent {
         val intent = Intent(application, EarthquakeService::class.java)
+        intent.action = ACTION_EARTHQUAKE_RANGE
         intent.putExtra(QueryUtils.EXTRA_START_DATE, startDate)
         intent.putExtra(QueryUtils.EXTRA_END_DATE, endDate)
         intent.putExtra(QueryUtils.EXTRA_MIN_MAG, minMag)

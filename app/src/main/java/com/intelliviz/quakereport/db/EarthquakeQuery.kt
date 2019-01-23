@@ -30,10 +30,10 @@ data class EarthquakeQuery(
         val mode: Int,
 
         @ColumnInfo(name = MIN_MAGNITUDE)
-        val minMagnitude: Double,
+        val minMagnitude: Int,
 
         @ColumnInfo(name = MAX_MAGNITUDE)
-        val maxMagnitude: Double,
+        val maxMagnitude: Int,
 
         @ColumnInfo(name = START_DATE)
         val startDate: String,
@@ -42,4 +42,4 @@ data class EarthquakeQuery(
         val endDate: String,
 
         @ColumnInfo(name = NUM_DAYS)
-        val numDays: String)
+        val numDays: Int)
