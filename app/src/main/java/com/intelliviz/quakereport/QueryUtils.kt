@@ -10,6 +10,7 @@ import kotlin.collections.ArrayList
 
 object QueryUtils {
 
+    val EXTRA_MODE = "mode"
     val EXTRA_START_DATE = "start_date"
     val EXTRA_END_DATE = "end_date"
     val EXTRA_MIN_MAG = "min_mag"

@@ -5,10 +5,11 @@ import android.content.Intent
 import com.intelliviz.quakereport.QueryUtils.EXTRA_END_DATE
 import com.intelliviz.quakereport.QueryUtils.EXTRA_MAX_MAG
 import com.intelliviz.quakereport.QueryUtils.EXTRA_MIN_MAG
+import com.intelliviz.quakereport.QueryUtils.EXTRA_NUM_DAYS
 import com.intelliviz.quakereport.QueryUtils.EXTRA_START_DATE
 import com.intelliviz.quakereport.db.AppDatabase
 import com.intelliviz.quakereport.db.Earthquake
-import com.intelliviz.quakereport.db.EarthquakeQuery
+import com.intelliviz.quakereport.ui.EarthquakeOptionsDialog.Companion.EXTRA_MODE
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -75,35 +76,13 @@ class EarthquakeService : IntentService("EarthquakeService") {
     }
 
     private fun handleRecentEarthquake(intent: Intent) {
-        val numDays = intent.getIntExtra(EXTRA_END_DATE, 0)
-        val endDate = intent.getStringExtra(EXTRA_END_DATE)
-        val startDate = intent.getStringExtra(EXTRA_START_DATE)
-        val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 0)
-        val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 0)
-        val db = AppDatabase.getAppDataBase(this)
-        val query: EarthquakeQuery? = db?.earthquakeQueryDao()?.get()
-
-        if(numDays != query?.numDays ||
-           endDate != query?.endDate ||
-           startDate != query?.startDate ||
-                        minMag != query.minMagnitude ||
-                        maxMag != query.maxMagnitude ) {
+        if(needToDownloadRecent(intent)) {
             getRangeEarthquake(intent)
         }
     }
 
     private fun handleRangeEarthquake(intent: Intent) {
-        val endDate = intent.getStringExtra(EXTRA_END_DATE)
-        val startDate = intent.getStringExtra(EXTRA_START_DATE)
-        val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 0)
-        val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 0)
-        val db = AppDatabase.getAppDataBase(this)
-        val query: EarthquakeQuery? = db?.earthquakeQueryDao()?.get()
-
-        if(endDate != query?.endDate ||
-           startDate != query?.startDate ||
-           minMag != query?.minMagnitude ||
-           maxMag != query?.maxMagnitude ) {
+        if(needToDownloadRange(intent)) {
             getRangeEarthquake(intent)
         }
     }
@@ -154,8 +133,51 @@ class EarthquakeService : IntentService("EarthquakeService") {
         }
     }
 
-    private fun needToReloadRecent(intent: Intent, query: EarthquakeQuery) {
+    private fun needToDownloadRange(intent: Intent): Boolean {
+        val mode = intent.getIntExtra(EXTRA_MODE, 0)
+        val endDate = intent.getStringExtra(EXTRA_END_DATE)
+        val startDate = intent.getStringExtra(EXTRA_START_DATE)
+        val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 0)
+        val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 0)
+        val currentMode = QueryPreferences.getMode(this)
+        val currentMinMag = QueryPreferences.getMinMag(this)
+        val currentMaxMag = QueryPreferences.getMaxMag(this)
+        val currentEndDate = QueryPreferences.getEndDate(this)
+        val currentStartDate = QueryPreferences.getStartDate(this)
 
+        return if(mode != currentMode ||
+                endDate != currentEndDate || startDate != currentStartDate ||
+                minMag != currentMinMag || maxMag != currentMaxMag) {
+            QueryPreferences.setMode(this, mode)
+            QueryPreferences.setMinMag(this, minMag)
+            QueryPreferences.setMaxMag(this, maxMag)
+            QueryPreferences.setStartDate(this, startDate)
+            QueryPreferences.setEndDate(this, endDate)
+            true
+        } else {
+            false
+        }
+    }
 
+    private fun needToDownloadRecent(intent: Intent): Boolean {
+        val mode = intent.getIntExtra(EXTRA_MODE, 0)
+        val numDays = intent.getIntExtra(EXTRA_NUM_DAYS, 0)
+        val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 0)
+        val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 0)
+        val currentMode = QueryPreferences.getMode(this)
+        val currentMinMag = QueryPreferences.getMinMag(this)
+        val currentMaxMag = QueryPreferences.getMaxMag(this)
+        val currentNumDays = QueryPreferences.getNumDays(this)
+
+        return if(mode != currentMode || numDays != currentNumDays ||
+                minMag != currentMinMag || maxMag != currentMaxMag) {
+            QueryPreferences.setMode(this, mode)
+            QueryPreferences.setMinMag(this, minMag)
+            QueryPreferences.setMaxMag(this, maxMag)
+            QueryPreferences.setNumDays(this, numDays)
+            true
+        } else {
+            false
+        }
     }
 }

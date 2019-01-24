@@ -20,21 +20,22 @@ class EarthquakeRepository(context: Context) {
         return earthquakeDao.getEarthquakes()
     }
 
-    fun loadEarthquakes(application: Application, endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?) {
-        val intent = createIntent(application, endDate, startDate, minMag, maxMag)
+    fun loadEarthquakes(application: Application, mode: Int, endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?) {
+        val intent = createIntent(application, mode, endDate, startDate, minMag, maxMag)
         application.startService(intent)
     }
 
-    fun loadEarthquakes(application: Application, minMag: Int?, maxMag: Int?, numDays: Int?) {
-        val intent = createIntent(application, numDays, minMag, maxMag)
+    fun loadEarthquakes(application: Application, mode: Int, minMag: Int?, maxMag: Int?, numDays: Int?) {
+        val intent = createIntent(application, mode, minMag, maxMag, numDays)
         application.startService(intent)
     }
 
-    private fun createIntent(application: Application, numDays: Int?, minMag: Int?, maxMag: Int?): Intent {
+    private fun createIntent(application: Application, mode: Int, minMag: Int?, maxMag: Int?, numDays: Int?): Intent {
         val intent = Intent(application, EarthquakeService::class.java)
         intent.action = ACTION_EARTHQUAKE_RECENT
         val endDate = QueryUtils.getCurrentDate()
         val startDate = QueryUtils.getCurrentDate(numDays!!)
+        intent.putExtra(QueryUtils.EXTRA_MODE, mode)
         intent.putExtra(QueryUtils.EXTRA_NUM_DAYS, numDays)
         intent.putExtra(QueryUtils.EXTRA_START_DATE, startDate)
         intent.putExtra(QueryUtils.EXTRA_END_DATE, endDate)
@@ -43,9 +44,10 @@ class EarthquakeRepository(context: Context) {
         return intent
     }
 
-    private fun createIntent(application: Application, endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?): Intent {
+    private fun createIntent(application: Application, mode: Int, endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?): Intent {
         val intent = Intent(application, EarthquakeService::class.java)
         intent.action = ACTION_EARTHQUAKE_RANGE
+        intent.putExtra(QueryUtils.EXTRA_MODE, mode)
         intent.putExtra(QueryUtils.EXTRA_START_DATE, startDate)
         intent.putExtra(QueryUtils.EXTRA_END_DATE, endDate)
         intent.putExtra(QueryUtils.EXTRA_MIN_MAG, minMag)

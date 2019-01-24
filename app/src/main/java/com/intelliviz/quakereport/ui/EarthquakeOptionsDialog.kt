@@ -103,6 +103,12 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
             lastNumDaysLayout.visibility = View.GONE
         }
 
+        if(mode == MODE_RANGE) {
+            modeGroup.check(R.id.range_button)
+        } else {
+            modeGroup.check(R.id.recent_button)
+        }
+
         magnitudes = resources.getStringArray(R.array.magnitudes)
 
         startDateButton.setOnClickListener {
