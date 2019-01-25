@@ -6,20 +6,20 @@ import android.preference.PreferenceManager
 import com.intelliviz.quakereport.QueryUtils.getCurrentDate
 
 object QueryPreferences {
-    val START_DATE: String = "StartDate"
-    val END_DATE: String = "EndDate"
-    val MIN_MAG: String = "MinMag"
-    val MAX_MAG: String = "MaxMag"
-    val NUM_DAYS: String = "NumDays"
-    val YEAR: String = "year"
-    val MIN_MAG_DEFAULT: Int = 6
-    val MAX_MAG_DEFAULT: Int = 7
-    val NUM_DAYS_DEFAULT: Int = 30
-    val YEAR_DEFAULT: Int = 1900
-    val MODE: String = "mode"
-    val MODE_RECENT: Int = 0
-    val MODE_RANGE: Int = 1
-    val MODE_DEFAULT: Int = MODE_RANGE
+    private const val START_DATE: String = "StartDate"
+    private const val END_DATE: String = "EndDate"
+    private const val MIN_MAG: String = "MinMag"
+    private const val MAX_MAG: String = "MaxMag"
+    private const val NUM_DAYS: String = "NumDays"
+    private const val YEAR: String = "year"
+    private const val MIN_MAG_DEFAULT: Int = 6
+    private const val MAX_MAG_DEFAULT: Int = 7
+    private const val NUM_DAYS_DEFAULT: Int = 30
+    private const val YEAR_DEFAULT: Int = 1900
+    private const val MODE: String = "mode"
+    private const val MODE_RECENT: Int = 0
+    private const val MODE_RANGE: Int = 1
+    private const val MODE_DEFAULT: Int = MODE_RANGE
 
     fun getMode(context: Context): Int {
         return PreferenceManager.getDefaultSharedPreferences(context).getInt(MODE, MODE_DEFAULT)

@@ -10,13 +10,13 @@ import kotlin.collections.ArrayList
 
 object QueryUtils {
 
-    val EXTRA_MODE = "mode"
-    val EXTRA_START_DATE = "start_date"
-    val EXTRA_END_DATE = "end_date"
-    val EXTRA_MIN_MAG = "min_mag"
-    val EXTRA_MAX_MAG = "max_mag"
-    val EXTRA_YEAR = "year"
-    val EXTRA_NUM_DAYS = "num_days"
+    const val EXTRA_MODE = "mode"
+    const val EXTRA_START_DATE = "start_date"
+    const val EXTRA_END_DATE = "end_date"
+    const val EXTRA_MIN_MAG = "min_mag"
+    const val EXTRA_MAX_MAG = "max_mag"
+    const val EXTRA_YEAR = "year"
+    const val EXTRA_NUM_DAYS = "num_days"
 
     /**
      * Return a list of [Earthquake] objects that has been built up from
@@ -43,7 +43,7 @@ object QueryUtils {
                 val dateString = getDateToDisplay(time)
                 val timeString = getTimeToDisplay(time)
                 val tokens: List<String> = place.split(",")
-                if(tokens.size == 0) {
+                if(tokens.isEmpty()) {
                     earthquakes.add(Earthquake(0, mag, "", "", dateString, timeString, url))
                 } else if(tokens.size == 1) {
                     earthquakes.add(Earthquake(0, mag, tokens[0], "", dateString, timeString, url))
