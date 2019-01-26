@@ -1,7 +1,7 @@
 package com.intelliviz.quakereport
 
 import android.util.Log
-import com.intelliviz.quakereport.db.Earthquake
+import com.intelliviz.quakereport.db.EarthquakeEntity
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -19,16 +19,16 @@ object QueryUtils {
     const val EXTRA_NUM_DAYS = "num_days"
 
     /**
-     * Return a list of [Earthquake] objects that has been built up from
+     * Return a list of [EarthquakeEntity] objects that has been built up from
      * parsing a JSON response.
      */
-    fun extractEarthquakes(jsonStringResult: String?): MutableList<Earthquake> {
+    fun extractEarthquakes(jsonStringResult: String?): MutableList<EarthquakeEntity> {
         if (jsonStringResult == null || jsonStringResult.isEmpty()) {
             return Collections.emptyList()
         }
 
         // Create an empty ArrayList that we can start adding earthquakes to
-        val earthquakes = ArrayList<Earthquake>()
+        val earthquakes = ArrayList<EarthquakeEntity>()
         try {
             val jsonObject = JSONObject(jsonStringResult)
             val jsonEarthquakes = jsonObject.getJSONArray("features")
@@ -44,11 +44,11 @@ object QueryUtils {
                 val timeString = getTimeToDisplay(time)
                 val tokens: List<String> = place.split(",")
                 if(tokens.isEmpty()) {
-                    earthquakes.add(Earthquake(0, mag, "", "", dateString, timeString, url))
+                    earthquakes.add(EarthquakeEntity(0, mag, "", "", dateString, timeString, url))
                 } else if(tokens.size == 1) {
-                    earthquakes.add(Earthquake(0, mag, tokens[0], "", dateString, timeString, url))
+                    earthquakes.add(EarthquakeEntity(0, mag, tokens[0], "", dateString, timeString, url))
                 } else {
-                    earthquakes.add(Earthquake(0, mag, tokens[0], tokens[1], dateString, timeString, url))
+                    earthquakes.add(EarthquakeEntity(0, mag, tokens[0], tokens[1], dateString, timeString, url))
                 }
             }
         } catch (e: JSONException) {

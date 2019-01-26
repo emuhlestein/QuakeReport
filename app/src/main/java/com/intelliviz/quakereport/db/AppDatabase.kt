@@ -1,16 +1,14 @@
 package com.intelliviz.quakereport.db
 
 import android.arch.persistence.db.SupportSQLiteDatabase
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.*
 import android.content.ContentValues
 import android.content.Context
 import com.intelliviz.quakereport.QueryPreferences
 import com.intelliviz.quakereport.QueryUtils
 
-@Database(entities = [Earthquake::class, EarthquakeQuery::class], version = 1)
+@Database(entities = [EarthquakeEntity::class, EarthquakeQuery::class], version = 1)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase(){
     abstract fun earthquakeDao(): EarthquakeDao
     abstract fun earthquakeQueryDao(): EarthquakeQueryDao

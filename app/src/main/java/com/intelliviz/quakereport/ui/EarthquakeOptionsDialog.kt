@@ -133,21 +133,21 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
 
         val okButton = view.findViewById<View>(R.id.ok_button) as Button
         okButton.setOnClickListener {
-            var mode = MODE_RANGE
+            var newMode = MODE_RANGE
             if(recentButton.isChecked) {
-                mode = MODE_RECENT
+                newMode = MODE_RECENT
             }
             val minmag = min_mag_spinner.selectedItem.toString().toInt()
             val maxmag = max_mag_spinner.selectedItem.toString().toInt()
             val startdate = start_date_text_view.text.toString()
             val enddate = end_date_text_view.text.toString()
-            val numDays = lastNumDays.text.toString()
+            val newNumDays = lastNumDays.text.toString().toInt()
             val intent = Intent()
             intent.putExtra(EXTRA_START_DATE, startdate)
             intent.putExtra(EXTRA_END_DATE, enddate)
             intent.putExtra(EXTRA_MIN_MAG, minmag)
             intent.putExtra(EXTRA_MAX_MAG, maxmag)
-            sendResult(mode, startdate, enddate, minmag, maxmag, numDays.toInt())
+            sendResult(newMode, startdate, enddate, minmag, maxmag, newNumDays)
             dismiss()
         }
 

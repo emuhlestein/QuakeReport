@@ -5,8 +5,8 @@ import android.arch.lifecycle.LiveData
 import android.content.Context
 import android.content.Intent
 import com.intelliviz.quakereport.db.AppDatabase
-import com.intelliviz.quakereport.db.Earthquake
 import com.intelliviz.quakereport.db.EarthquakeDao
+import com.intelliviz.quakereport.db.EarthquakeEntity
 
 class EarthquakeRepository(context: Context) {
     private val earthquakeDao: EarthquakeDao
@@ -16,7 +16,13 @@ class EarthquakeRepository(context: Context) {
         earthquakeDao = db?.earthquakeDao()!!
     }
 
-    fun getEarthquakes(): LiveData<List<Earthquake>> {
+    fun getEarthquakes(): LiveData<List<EarthquakeEntity>> {
+        return earthquakeDao.getEarthquakes()
+    }
+
+    fun getEarthquakes(sortField: String): LiveData<List<EarthquakeEntity>> {
+        val listLD: LiveData<List<EarthquakeEntity>> = earthquakeDao.getEarthquakes()
+        val list: List<EarthquakeEntity>? = listLD.value
         return earthquakeDao.getEarthquakes()
     }
 

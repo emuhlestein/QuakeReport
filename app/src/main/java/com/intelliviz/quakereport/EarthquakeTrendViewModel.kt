@@ -6,7 +6,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Intent
-import com.intelliviz.quakereport.db.Earthquake
+import com.intelliviz.quakereport.db.EarthquakeEntity
 
 class EarthquakeTrendViewModel(application: Application, year: Int?, minMag: Int?, maxMag: Int?): AndroidViewModel(application) {
     private var repo: EarthquakeRepository? = null
@@ -16,7 +16,7 @@ class EarthquakeTrendViewModel(application: Application, year: Int?, minMag: Int
         requestEarthquakes(year, minMag, maxMag)
     }
 
-    private var earthquakes: LiveData<List<Earthquake>>? = null
+    private var earthquakes: LiveData<List<EarthquakeEntity>>? = null
 
     private fun subscriberToDatabaseChanges() {
         earthquakes = repo?.getEarthquakes()

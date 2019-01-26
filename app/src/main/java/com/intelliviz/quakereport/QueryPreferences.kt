@@ -12,13 +12,13 @@ object QueryPreferences {
     private const val MAX_MAG: String = "MaxMag"
     private const val NUM_DAYS: String = "NumDays"
     private const val YEAR: String = "year"
-    private const val MIN_MAG_DEFAULT: Int = 6
-    private const val MAX_MAG_DEFAULT: Int = 7
+    const val MIN_MAG_DEFAULT: Int = 6
+    const val MAX_MAG_DEFAULT: Int = 7
     private const val NUM_DAYS_DEFAULT: Int = 30
     private const val YEAR_DEFAULT: Int = 1900
-    private const val MODE: String = "mode"
-    private const val MODE_RECENT: Int = 0
-    private const val MODE_RANGE: Int = 1
+    const val MODE: String = "mode"
+    const val MODE_RECENT: Int = 0
+    const val MODE_RANGE: Int = 1
     private const val MODE_DEFAULT: Int = MODE_RANGE
 
     fun getMode(context: Context): Int {

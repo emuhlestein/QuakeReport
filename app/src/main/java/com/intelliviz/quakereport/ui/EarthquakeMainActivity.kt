@@ -11,12 +11,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import com.intelliviz.quakereport.EarthquakeAdapter
-import com.intelliviz.quakereport.EarthquakeViewModel
-import com.intelliviz.quakereport.QueryPreferences
+import com.intelliviz.quakereport.*
 import com.intelliviz.quakereport.QueryPreferences.MODE_RANGE
-import com.intelliviz.quakereport.R
-import com.intelliviz.quakereport.db.Earthquake
 import kotlinx.android.synthetic.main.earthquake_range_fragment.*
 import java.util.*
 
@@ -52,6 +48,8 @@ class EarthquakeMainActivity : AppCompatActivity(),
                 earthquakeListView.visibility = View.VISIBLE
                 emptyView.visibility = View.GONE
             }
+
+            //var sortedList = earthquakeData.sortedWith(compareBy({e.}))
             adapter.addAll(earthquakeData)
         }
 
@@ -62,9 +60,11 @@ class EarthquakeMainActivity : AppCompatActivity(),
         val maxMag: Int = QueryPreferences.getMaxMag(this)
         val numDays: Int = QueryPreferences.getNumDays(this)
 
-        val factory: EarthquakeViewModel.Factory = EarthquakeViewModel.Factory(this.application, mode, endDate, startDate, minMag, maxMag)
+        val factory: EarthquakeViewModel.Factory = EarthquakeViewModel.Factory(application)
         viewModel = ViewModelProviders.of(this, factory).get(EarthquakeViewModel::class.java)
-        viewModel.getEarthquakes()?.observe(this, earthquakeObserver)
+        viewModel.init(mode, endDate, startDate, minMag, maxMag, numDays)
+        viewModel.earthquakes?.observe(this, earthquakeObserver)
+
         if(mode == MODE_RANGE) {
             viewModel.loadEarthquakes(mode, endDate, startDate, minMag, maxMag)
         } else {

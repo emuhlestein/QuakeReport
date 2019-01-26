@@ -8,7 +8,7 @@ import com.intelliviz.quakereport.QueryUtils.EXTRA_MIN_MAG
 import com.intelliviz.quakereport.QueryUtils.EXTRA_NUM_DAYS
 import com.intelliviz.quakereport.QueryUtils.EXTRA_START_DATE
 import com.intelliviz.quakereport.db.AppDatabase
-import com.intelliviz.quakereport.db.Earthquake
+import com.intelliviz.quakereport.db.EarthquakeEntity
 import com.intelliviz.quakereport.ui.EarthquakeOptionsDialog.Companion.EXTRA_MODE
 import java.io.BufferedReader
 import java.io.IOException
@@ -42,7 +42,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
             connection.readTimeout = 10000
             connection.connect()
             val resCode = connection.responseCode
-            var inStream: InputStream? = null
+            var inStream: InputStream?
             if(resCode == HttpURLConnection.HTTP_OK) {
                 inStream = connection.inputStream
 
@@ -107,16 +107,14 @@ class EarthquakeService : IntentService("EarthquakeService") {
         if (endDate != null && !endDate.isEmpty()) {
             url = url + "&endtime=" + endDate
         }
-        if (minMag != null) {
-            url = url + "&minmagnitude=" + minMag
-        }
-        if (maxMag != null) {
-            url = url + "&maxmagnitude=" + maxMag
-        }
+
+        url = url + "&minmagnitude=" + minMag
+        url = url + "&maxmagnitude=" + maxMag
+
 
         val jsonString = loadDataFromURL(url)
 
-        val earthquakes: MutableList<Earthquake> = QueryUtils.extractEarthquakes(jsonString)
+        val earthquakes: MutableList<EarthquakeEntity> = QueryUtils.extractEarthquakes(jsonString)
 
         if(!earthquakes.isEmpty()) {
             db?.beginTransaction()
