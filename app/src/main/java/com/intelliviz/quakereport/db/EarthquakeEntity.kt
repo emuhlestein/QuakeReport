@@ -14,6 +14,5 @@ data class EarthquakeEntity(
         val magnitude: Double,
         val distance: String,
         val city: String,
-        val date: String,
-        val time: String,
+        val date: Long,
         val url: String)

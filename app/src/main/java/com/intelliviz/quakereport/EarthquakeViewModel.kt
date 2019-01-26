@@ -57,7 +57,9 @@ class EarthquakeViewModel(application: Application): AndroidViewModel(applicatio
     }
 
     private fun mapper(ee: EarthquakeEntity): Earthquake {
-        return Earthquake(ee.magnitude, ee.distance, ee.city, ee.date, ee.time, ee.url)
+        var displayDate = QueryUtils.getDateToDisplay(ee.date)
+        var displayTime = QueryUtils.getTimeToDisplay(ee.date)
+        return Earthquake(ee.magnitude, ee.distance, ee.city, displayDate, displayTime, ee.url)
     }
 
     fun loadEarthquakes(mode: Int, sort: Int, startDate: String?, endDate: String?, minMag: Int?, maxMag: Int?) {

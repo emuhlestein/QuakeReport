@@ -40,15 +40,15 @@ object QueryUtils {
                 val place = properties.getString("place")
                 val time = properties.getLong("time")
                 val url = properties.getString("url")
-                val dateString = getDateToDisplay(time)
-                val timeString = getTimeToDisplay(time)
+//                val dateString = getDateToDisplay(time)
+//                val timeString = getTimeToDisplay(time)
                 val tokens: List<String> = place.split(",")
                 if(tokens.isEmpty()) {
-                    earthquakes.add(EarthquakeEntity(0, mag, "", "", dateString, timeString, url))
+                    earthquakes.add(EarthquakeEntity(0, mag, "", "", time, url))
                 } else if(tokens.size == 1) {
-                    earthquakes.add(EarthquakeEntity(0, mag, tokens[0], "", dateString, timeString, url))
+                    earthquakes.add(EarthquakeEntity(0, mag, tokens[0], "", time, url))
                 } else {
-                    earthquakes.add(EarthquakeEntity(0, mag, tokens[0], tokens[1], dateString, timeString, url))
+                    earthquakes.add(EarthquakeEntity(0, mag, tokens[0], tokens[1], time, url))
                 }
             }
         } catch (e: JSONException) {
@@ -69,7 +69,6 @@ object QueryUtils {
         val timeFormatter = SimpleDateFormat("h:mm a")
         return timeFormatter.format(dateObject)
     }
-
 
     fun getCurrentDate(): String {
         return getCurrentDate(0)
