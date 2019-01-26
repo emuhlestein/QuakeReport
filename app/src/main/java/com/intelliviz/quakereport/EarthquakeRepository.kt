@@ -20,14 +20,8 @@ class EarthquakeRepository(context: Context) {
         return earthquakeDao.getEarthquakes()
     }
 
-    fun getEarthquakes(sortField: String): LiveData<List<EarthquakeEntity>> {
-        val listLD: LiveData<List<EarthquakeEntity>> = earthquakeDao.getEarthquakes()
-        val list: List<EarthquakeEntity>? = listLD.value
-        return earthquakeDao.getEarthquakes()
-    }
-
-    fun loadEarthquakes(application: Application, mode: Int, endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?) {
-        val intent = createIntent(application, mode, endDate, startDate, minMag, maxMag)
+    fun loadEarthquakes(application: Application, mode: Int, startDate: String?, endDate: String?, minMag: Int?, maxMag: Int?) {
+        val intent = createIntent(application, mode, startDate, endDate, minMag, maxMag)
         application.startService(intent)
     }
 
@@ -50,7 +44,7 @@ class EarthquakeRepository(context: Context) {
         return intent
     }
 
-    private fun createIntent(application: Application, mode: Int, endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?): Intent {
+    private fun createIntent(application: Application, mode: Int, startDate: String?, endDate: String?, minMag: Int?, maxMag: Int?): Intent {
         val intent = Intent(application, EarthquakeService::class.java)
         intent.action = ACTION_EARTHQUAKE_RANGE
         intent.putExtra(QueryUtils.EXTRA_MODE, mode)

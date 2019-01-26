@@ -54,6 +54,7 @@ class EarthquakeMainActivity : AppCompatActivity(),
         }
 
         val mode: Int = QueryPreferences.getMode(this)
+        val sort: Int = QueryPreferences.getSort(this)
         val endDate: String = QueryPreferences.getEndDate(this)
         val startDate: String = QueryPreferences.getStartDate(this)
         val minMag: Int = QueryPreferences.getMinMag(this)
@@ -62,13 +63,13 @@ class EarthquakeMainActivity : AppCompatActivity(),
 
         val factory: EarthquakeViewModel.Factory = EarthquakeViewModel.Factory(application)
         viewModel = ViewModelProviders.of(this, factory).get(EarthquakeViewModel::class.java)
-        viewModel.init(mode, endDate, startDate, minMag, maxMag, numDays)
+        viewModel.init(mode, sort, startDate, endDate, minMag, maxMag, numDays)
         viewModel.earthquakes?.observe(this, earthquakeObserver)
 
         if(mode == MODE_RANGE) {
-            viewModel.loadEarthquakes(mode, endDate, startDate, minMag, maxMag)
+            viewModel.loadEarthquakes(mode, sort, endDate, startDate, minMag, maxMag)
         } else {
-            viewModel.loadEarthquakes(mode, minMag, maxMag, numDays)
+            viewModel.loadEarthquakes(mode, sort, minMag, maxMag, numDays)
         }
     }
 
@@ -82,12 +83,13 @@ class EarthquakeMainActivity : AppCompatActivity(),
         when (item.itemId) {
             R.id.options_item -> {
                     val mode = QueryPreferences.getMode(this)
+                    val sort = QueryPreferences.getSort(this)
                     val startDate = QueryPreferences.getStartDate(this)
                     val endDate = QueryPreferences.getEndDate(this)
                     val minMag = QueryPreferences.getMinMag(this)
                     val maxMag = QueryPreferences.getMaxMag(this)
                     val numDays = QueryPreferences.getNumDays(this)
-                    val dialog = EarthquakeOptionsDialog.newInstance(mode, startDate, endDate, minMag, maxMag, numDays)
+                    val dialog = EarthquakeOptionsDialog.newInstance(mode, sort, startDate, endDate, minMag, maxMag, numDays)
                     dialog.show(supportFragmentManager, "options")
             }
         }
@@ -95,11 +97,11 @@ class EarthquakeMainActivity : AppCompatActivity(),
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onOptionsSelected(mode: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int, numDays: Int) {
+    override fun onOptionsSelected(mode: Int, sort: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int, numDays: Int) {
         if (mode == QueryPreferences.MODE_RANGE) {
-            viewModel.loadEarthquakes(mode, startDate, endDate, minMag, maxMag)
+            viewModel.loadEarthquakes(mode, sort, startDate, endDate, minMag, maxMag)
         } else {
-            viewModel.loadEarthquakes(mode, minMag, maxMag, numDays)
+            viewModel.loadEarthquakes(mode, sort, minMag, maxMag, numDays)
         }
     }
 }

@@ -20,6 +20,10 @@ object QueryPreferences {
     const val MODE_RECENT: Int = 0
     const val MODE_RANGE: Int = 1
     private const val MODE_DEFAULT: Int = MODE_RANGE
+    const val SORT: String = "sort"
+    const val SORT_DATE: Int = 0
+    const val SORT_MAG: Int = 1
+    private const val SORT_DEFAULT: Int = SORT_DATE
 
     fun getMode(context: Context): Int {
         return PreferenceManager.getDefaultSharedPreferences(context).getInt(MODE, MODE_DEFAULT)
@@ -28,6 +32,16 @@ object QueryPreferences {
     fun setMode(context: Context, mode: Int) {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         editor.putInt(MODE, mode)
+        editor.apply()
+    }
+
+    fun getSort(context: Context): Int {
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(SORT, SORT_DEFAULT)
+    }
+
+    fun setSort(context: Context, sort: Int) {
+        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        editor.putInt(SORT, sort)
         editor.apply()
     }
 

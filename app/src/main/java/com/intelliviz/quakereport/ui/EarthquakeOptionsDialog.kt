@@ -11,6 +11,8 @@ import android.widget.*
 import com.intelliviz.quakereport.QueryPreferences
 import com.intelliviz.quakereport.QueryPreferences.MODE_RANGE
 import com.intelliviz.quakereport.QueryPreferences.MODE_RECENT
+import com.intelliviz.quakereport.QueryPreferences.SORT_DATE
+import com.intelliviz.quakereport.QueryPreferences.SORT_MAG
 import com.intelliviz.quakereport.R
 import kotlinx.android.synthetic.main.earthquake_options.*
 
@@ -28,20 +30,23 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
         private const val ARG_MAX_MAG = "max_mag"
         private const val ARG_NUM_DAYS = "num_days"
         private const val ARG_MODE = "mode"
+        private const val ARG_SORT = "sort"
         private const val START_DATE: Int = 1
         private const val END_DATE: Int = 2
         private const val DATE_REQUEST: Int = 3
 
         const val EXTRA_MODE = ARG_MODE
+        const val EXTRA_SORT = ARG_SORT
         const val EXTRA_END_DATE = ARG_END_DATE
         const val EXTRA_START_DATE = ARG_START_DATE
         const val EXTRA_MIN_MAG = ARG_MIN_MAG
         const val EXTRA_MAX_MAG = ARG_MAX_MAG
         const val EXTRA_NUM_DAYS = ARG_NUM_DAYS
 
-        fun newInstance(mode: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int, numDays: Int): EarthquakeOptionsDialog {
+        fun newInstance(mode: Int, sort: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int, numDays: Int): EarthquakeOptionsDialog {
             val args = Bundle()
             args.putInt(ARG_MODE, mode)
+            args.putInt(ARG_SORT, sort)
             args.putString(ARG_START_DATE, startDate)
             args.putString(ARG_END_DATE, endDate)
             args.putInt(ARG_MIN_MAG, minMag)
@@ -54,13 +59,14 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
     }
 
     interface OnOptionsSelectedListener {
-        fun onOptionsSelected(mode: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int, numDays: Int)
+        fun onOptionsSelected(mode: Int, sort: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int, numDays: Int)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.earthquake_options, container, false)
 
         val mode = arguments!!.getInt(ARG_MODE)
+        val sort = arguments!!.getInt(ARG_SORT)
         val startDate = arguments!!.getString(ARG_START_DATE)
         val endDate = arguments!!.getString(ARG_END_DATE)
         val minMag = arguments!!.getInt(ARG_MIN_MAG)
@@ -70,6 +76,9 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
         val modeGroup =  view.findViewById<View>(R.id.modeRadioGroup) as RadioGroup
         val rangeButton = view.findViewById<View>(R.id.range_button) as RadioButton
         val recentButton = view.findViewById<View>(R.id.recent_button) as RadioButton
+        val sortGroup =  view.findViewById<View>(R.id.sortRadioGroup) as RadioGroup
+        val dateSortButton = view.findViewById<View>(R.id.date_sort_button) as RadioButton
+        val magSortButton = view.findViewById<View>(R.id.mag_sort_button) as RadioButton
         val startDateButton = view.findViewById<View>(R.id.start_date_button) as Button
         val endDateButton = view.findViewById<View>(R.id.end_date_button) as Button
         val startDateLayout = view.findViewById<View>(R.id.start_date_layout) as LinearLayout
@@ -103,10 +112,10 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
             lastNumDaysLayout.visibility = View.GONE
         }
 
-        if(mode == MODE_RANGE) {
-            modeGroup.check(R.id.range_button)
+        if(sort == QueryPreferences.SORT_DATE) {
+            sortGroup.check(R.id.date_sort_button)
         } else {
-            modeGroup.check(R.id.recent_button)
+            sortGroup.check(R.id.mag_sort_button)
         }
 
         magnitudes = resources.getStringArray(R.array.magnitudes)
@@ -137,6 +146,11 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
             if(recentButton.isChecked) {
                 newMode = MODE_RECENT
             }
+
+            var newSort = SORT_DATE
+            if(magSortButton.isChecked) {
+                newSort = SORT_MAG
+            }
             val minmag = min_mag_spinner.selectedItem.toString().toInt()
             val maxmag = max_mag_spinner.selectedItem.toString().toInt()
             val startdate = start_date_text_view.text.toString()
@@ -147,7 +161,7 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
             intent.putExtra(EXTRA_END_DATE, enddate)
             intent.putExtra(EXTRA_MIN_MAG, minmag)
             intent.putExtra(EXTRA_MAX_MAG, maxmag)
-            sendResult(newMode, startdate, enddate, minmag, maxmag, newNumDays)
+            sendResult(newMode, newSort, startdate, enddate, minmag, maxmag, newNumDays)
             dismiss()
         }
 
@@ -212,10 +226,11 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
         }
     }
 
-    fun sendResult(mode: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int, numDays: Int) {
+    fun sendResult(mode: Int, sort: Int, startDate: String, endDate: String, minMag: Int, maxMag: Int, numDays: Int) {
         if(targetFragment != null) {
             val intent = Intent()
             intent.putExtra(EXTRA_MODE, mode)
+            intent.putExtra(EXTRA_SORT, sort)
             intent.putExtra(EXTRA_START_DATE, startDate)
             intent.putExtra(EXTRA_END_DATE, endDate)
             intent.putExtra(EXTRA_MIN_MAG, minMag)
@@ -226,7 +241,7 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
             if(activity is OnOptionsSelectedListener) {
                 //var listener: EarthquakeOptionsDialog.OnOptionsSelectedListener? = null
                 val listener = activity as OnOptionsSelectedListener
-                listener.onOptionsSelected(mode, startDate, endDate, minMag, maxMag, numDays)
+                listener.onOptionsSelected(mode, sort, startDate, endDate, minMag, maxMag, numDays)
             }
         }
     }

@@ -19,34 +19,65 @@ class EarthquakeViewModel(application: Application): AndroidViewModel(applicatio
 
     val earthquakes = MediatorLiveData<List<Earthquake>>()
 
-    fun init(mode: Int, endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?, numDays: Int) {
+    private var sort = 0
+
+    fun init(mode: Int, sort: Int, startDate: String?, endDate: String?, minMag: Int?, maxMag: Int?, numDays: Int) {
+        this.sort = sort
         if(mode == MODE_RECENT) {
             repo?.loadEarthquakes(getApplication(), mode, minMag, maxMag, numDays)
         } else {
-            repo?.loadEarthquakes(getApplication(), mode, endDate, startDate, minMag, maxMag)
+            repo?.loadEarthquakes(getApplication(), mode, startDate, endDate, minMag, maxMag)
         }
 
         earthquakes.addSource(dbEarthquakes!!) {value ->
-            value?.let{ earthquakes.value = sortQuakes(it, 1)}
+            value?.let{ earthquakes.value = sortQuakes(it, sort)}
         }
     }
 
     private fun sortQuakes(list: List<EarthquakeEntity>, sortBy: Int): List<Earthquake> {
         var earthquakes = ArrayList<Earthquake>()
         list.forEach{ e -> earthquakes.add(mapper(e))}
-        return earthquakes.sortedWith(compareByDescending({ it.magnitude }))
+
+        if(sortBy == QueryPreferences.SORT_MAG) {
+            return earthquakes.sortedWith(compareByDescending({ it.magnitude }))
+        } else {
+            return earthquakes
+        }
+    }
+
+    private fun sortQuakes(sort: Int) = dbEarthquakes?.value?.let {
+        var earthquakes = ArrayList<Earthquake>()
+        it.forEach{ e -> earthquakes.add(mapper(e))}
+
+        if(sort == QueryPreferences.SORT_MAG) {
+            this.earthquakes.value = earthquakes.sortedWith(compareByDescending({ it.magnitude }))
+        } else {
+            this.earthquakes.value = earthquakes
+        }
     }
 
     private fun mapper(ee: EarthquakeEntity): Earthquake {
         return Earthquake(ee.magnitude, ee.distance, ee.city, ee.date, ee.time, ee.url)
     }
 
-    fun loadEarthquakes(mode: Int, endDate: String?, startDate: String?, minMag: Int?, maxMag: Int?) {
-        repo?.loadEarthquakes(getApplication(), mode, endDate, startDate, minMag, maxMag)
+    fun loadEarthquakes(mode: Int, sort: Int, startDate: String?, endDate: String?, minMag: Int?, maxMag: Int?) {
+        if(this.sort != sort) {
+            this.sort = sort
+            QueryPreferences.setSort(getApplication(), sort)
+            sortQuakes(sort)
+        } else {
+            repo?.loadEarthquakes(getApplication(), mode, startDate, endDate, minMag, maxMag)
+        }
     }
 
-    fun loadEarthquakes(mode: Int, minMag: Int?, maxMag: Int?, numDays: Int?) {
-        repo?.loadEarthquakes(getApplication(), mode, minMag, maxMag, numDays)
+    fun loadEarthquakes(mode: Int, sort: Int, minMag: Int?, maxMag: Int?, numDays: Int?) {
+        if(this.sort != sort) {
+            this.sort = sort
+            QueryPreferences.setSort(getApplication(), sort)
+            sortQuakes(sort)
+        } else {
+            repo?.loadEarthquakes(getApplication(), mode, minMag, maxMag, numDays)
+        }
     }
 
     class Factory(private val mApplication: Application) : ViewModelProvider.NewInstanceFactory() {

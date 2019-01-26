@@ -14,6 +14,8 @@
     <string name="last_label">Last</string>
     <string name="range">Date Range</string>
     <string name="earthquake_options">Earthquake Options</string>
+    <string name="sort_by_date">Sort by date</string>
+    <string name="sort_by_magnitude">Sort by magnitude</string>
 
     <string-array name="magnitudes">
         <item>1</item>
