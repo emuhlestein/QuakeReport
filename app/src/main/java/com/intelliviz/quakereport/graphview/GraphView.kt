@@ -42,8 +42,6 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
     private var verticalLabel: String = ""
     private var horizontalLabel: String = ""
     private lateinit var spotPaint: Paint
-    //private lateinit var legendValues: FloatArray
-    //private lateinit var valueColors: MutableList<Paint>
     private lateinit var legendValues: MutableList<Pair<Paint, Float>>
 
     init{

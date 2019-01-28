@@ -40,8 +40,6 @@ object QueryUtils {
                 val place = properties.getString("place")
                 val time = properties.getLong("time")
                 val url = properties.getString("url")
-//                val dateString = getDateToDisplay(time)
-//                val timeString = getTimeToDisplay(time)
                 val tokens: List<String> = place.split(",")
                 if(tokens.isEmpty()) {
                     earthquakes.add(EarthquakeEntity(0, mag, "", "", time, url))

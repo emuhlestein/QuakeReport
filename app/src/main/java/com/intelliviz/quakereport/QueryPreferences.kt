@@ -16,11 +16,11 @@ object QueryPreferences {
     const val MAX_MAG_DEFAULT: Int = 7
     private const val NUM_DAYS_DEFAULT: Int = 30
     private const val YEAR_DEFAULT: Int = 1900
-    const val MODE: String = "mode"
+    private const val MODE: String = "mode"
     const val MODE_RECENT: Int = 0
     const val MODE_RANGE: Int = 1
     private const val MODE_DEFAULT: Int = MODE_RANGE
-    const val SORT: String = "sort"
+    private const val SORT: String = "sort"
     const val SORT_DATE: Int = 0
     const val SORT_MAG: Int = 1
     private const val SORT_DEFAULT: Int = SORT_DATE

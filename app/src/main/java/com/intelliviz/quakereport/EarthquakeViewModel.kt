@@ -35,7 +35,7 @@ class EarthquakeViewModel(application: Application): AndroidViewModel(applicatio
     }
 
     private fun sortQuakes(list: List<EarthquakeEntity>, sortBy: Int): List<Earthquake> {
-        var earthquakes = ArrayList<Earthquake>()
+        val earthquakes = ArrayList<Earthquake>()
         list.forEach{ e -> earthquakes.add(mapper(e))}
 
         if(sortBy == QueryPreferences.SORT_MAG) {
@@ -46,7 +46,7 @@ class EarthquakeViewModel(application: Application): AndroidViewModel(applicatio
     }
 
     private fun sortQuakes(sort: Int) = dbEarthquakes?.value?.let {
-        var earthquakes = ArrayList<Earthquake>()
+        val earthquakes = ArrayList<Earthquake>()
         it.forEach{ e -> earthquakes.add(mapper(e))}
 
         if(sort == QueryPreferences.SORT_MAG) {
@@ -57,8 +57,8 @@ class EarthquakeViewModel(application: Application): AndroidViewModel(applicatio
     }
 
     private fun mapper(ee: EarthquakeEntity): Earthquake {
-        var displayDate = QueryUtils.getDateToDisplay(ee.date)
-        var displayTime = QueryUtils.getTimeToDisplay(ee.date)
+        val displayDate = QueryUtils.getDateToDisplay(ee.date)
+        val displayTime = QueryUtils.getTimeToDisplay(ee.date)
         return Earthquake(ee.magnitude, ee.distance, ee.city, displayDate, displayTime, ee.url)
     }
 
