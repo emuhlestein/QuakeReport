@@ -13,7 +13,7 @@ import android.view.View
 import android.widget.Toast
 import com.intelliviz.quakereport.*
 import com.intelliviz.quakereport.QueryPreferences.MODE_RANGE
-import kotlinx.android.synthetic.main.earthquake_range_fragment.*
+import kotlinx.android.synthetic.main.activity_earthquake.*
 import java.util.*
 
 class EarthquakeMainActivity : AppCompatActivity(),
@@ -22,7 +22,7 @@ class EarthquakeMainActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.earthquake_range_fragment)
+        setContentView(R.layout.activity_earthquake)
 
         val toolbar = findViewById<Toolbar>(R.id.app_toolbar)
         setSupportActionBar(toolbar)
