@@ -63,8 +63,7 @@ class EarthquakeViewModel(application: Application): AndroidViewModel(applicatio
     }
 
     fun loadEarthquakes(mode: Int, sort: Int, startDate: String?, endDate: String?, minMag: Int?, maxMag: Int?) {
-        if(this.sort != sort) {
-            this.sort = sort
+        if(needToSort(sort, startDate, endDate, minMag, maxMag)) {
             QueryPreferences.setSort(getApplication(), sort)
             sortQuakes(sort)
         } else {
@@ -74,7 +73,6 @@ class EarthquakeViewModel(application: Application): AndroidViewModel(applicatio
 
     fun loadEarthquakes(mode: Int, sort: Int, minMag: Int, maxMag: Int, numDays: Int) {
         if(needToSort(sort, minMag, maxMag, numDays)) {
-            this.sort = sort
             QueryPreferences.setSort(getApplication(), sort)
             sortQuakes(sort)
         } else {

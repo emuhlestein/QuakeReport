@@ -32,8 +32,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
         }
     }
 
-    // TODO is copied from GetEarthquakeDataAsyncTask
-    fun loadDataFromURL(jsonURL: String?): String {
+    private fun loadDataFromURL(jsonURL: String?): String {
         val url = URL(jsonURL)
         val connection = url.openConnection() as HttpURLConnection
         try {
@@ -42,7 +41,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
             connection.readTimeout = 10000
             connection.connect()
             val resCode = connection.responseCode
-            var inStream: InputStream?
+            val inStream: InputStream?
             if(resCode == HttpURLConnection.HTTP_OK) {
                 inStream = connection.inputStream
 
@@ -76,15 +75,15 @@ class EarthquakeService : IntentService("EarthquakeService") {
     }
 
     private fun handleRecentEarthquake(intent: Intent) {
-        if(needToDownloadRecent(intent)) {
+        //if(needToDownloadRecent(intent)) {
             getRangeEarthquake(intent)
-        }
+        //}
     }
 
     private fun handleRangeEarthquake(intent: Intent) {
-        if(needToDownloadRange(intent)) {
+        //if(needToDownloadRange(intent)) {
             getRangeEarthquake(intent)
-        }
+        //}
     }
 
     private fun handleEarthquakeTrend() {
@@ -102,14 +101,14 @@ class EarthquakeService : IntentService("EarthquakeService") {
         val baseURL = "https://earthquake.usgs.gov/fdsnws/event/1/query?"
         var url: String = baseURL + "format=geojson"
         if (startDate != null && !startDate.isEmpty()) {
-            url = url + "&starttime=" + startDate
+            url = "$url + &starttime= + $startDate"
         }
         if (endDate != null && !endDate.isEmpty()) {
-            url = url + "&endtime=" + endDate + "T23:59:59"
+            url = "$url + &endtime= + $endDate + T23:59:59"
         }
 
-        url = url + "&minmagnitude=" + minMag
-        url = url + "&maxmagnitude=" + maxMag
+        url = "$url + &minmagnitude= + $minMag"
+        url = "$url + &maxmagnitude= + $maxMag"
 
 
         val jsonString = loadDataFromURL(url)
