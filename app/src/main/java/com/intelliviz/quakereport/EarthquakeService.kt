@@ -105,7 +105,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
             url = url + "&starttime=" + startDate
         }
         if (endDate != null && !endDate.isEmpty()) {
-            url = url + "&endtime=" + endDate
+            url = url + "&endtime=" + endDate + "T23:59:59"
         }
 
         url = url + "&minmagnitude=" + minMag

@@ -72,13 +72,43 @@ class EarthquakeViewModel(application: Application): AndroidViewModel(applicatio
         }
     }
 
-    fun loadEarthquakes(mode: Int, sort: Int, minMag: Int?, maxMag: Int?, numDays: Int?) {
-        if(this.sort != sort) {
+    fun loadEarthquakes(mode: Int, sort: Int, minMag: Int, maxMag: Int, numDays: Int) {
+        if(needToSort(sort, minMag, maxMag, numDays)) {
             this.sort = sort
             QueryPreferences.setSort(getApplication(), sort)
             sortQuakes(sort)
         } else {
             repo?.loadEarthquakes(getApplication(), mode, minMag, maxMag, numDays)
+        }
+    }
+
+    fun needToSort(sort: Int, minMag: Int, maxMag: Int, numDays: Int): Boolean {
+        val currentSort = QueryPreferences.getSort(getApplication())
+        val currentMinMag = QueryPreferences.getMinMag(getApplication())
+        val currentMaxMag = QueryPreferences.getMaxMag(getApplication())
+        val currentNumDays = QueryPreferences.getNumDays(getApplication())
+        if(currentMinMag == minMag && currentMaxMag == maxMag &&
+           currentNumDays == numDays && currentSort != sort ) {
+            QueryPreferences.setSort(getApplication(), sort)
+            return true
+        } else {
+            return false
+        }
+    }
+
+    fun needToSort(sort: Int, startDate: String?, endDate: String?, minMag: Int?, maxMag: Int?): Boolean {
+        val currentSort = QueryPreferences.getSort(getApplication())
+        val currentMinMag = QueryPreferences.getMinMag(getApplication())
+        val currentMaxMag = QueryPreferences.getMaxMag(getApplication())
+        val currentEndDate = QueryPreferences.getEndDate(getApplication())
+        val currentStartDate = QueryPreferences.getStartDate(getApplication())
+        if(currentMinMag == minMag && currentMaxMag == maxMag &&
+           currentEndDate == endDate && currentStartDate == startDate &&
+           currentSort != sort ) {
+            QueryPreferences.setSort(getApplication(), sort)
+            return true
+        } else {
+            return false
         }
     }
 
