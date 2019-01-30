@@ -63,7 +63,8 @@ class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>
 
         fun bind(earthquake: Earthquake, context: Context) {
             this.earthquake = earthquake
-            magnitudeTextView.text = earthquake.magnitude.toString()
+            val str:String = "%2.1f".format(earthquake.magnitude)
+            magnitudeTextView.text = str
             distanceTextView.text = earthquake.distance
             cityTextView.text = earthquake.city
             dateTextView.text = earthquake.date
