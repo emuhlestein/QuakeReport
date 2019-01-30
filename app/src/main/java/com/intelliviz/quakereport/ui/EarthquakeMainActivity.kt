@@ -61,7 +61,7 @@ class EarthquakeMainActivity : AppCompatActivity(),
         val maxMag: Int = QueryPreferences.getMaxMag(this)
         val numDays: Int = QueryPreferences.getNumDays(this)
 
-        val factory: EarthquakeViewModel.Factory = EarthquakeViewModel.Factory(application)
+        val factory: EarthquakeViewModel.Factory = EarthquakeViewModel.Factory(application, sort)
         viewModel = ViewModelProviders.of(this, factory).get(EarthquakeViewModel::class.java)
         viewModel.init(mode, sort, startDate, endDate, minMag, maxMag, numDays)
         viewModel.earthquakes?.observe(this, earthquakeObserver)

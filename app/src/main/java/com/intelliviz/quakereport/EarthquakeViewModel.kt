@@ -1,23 +1,25 @@
 package com.intelliviz.quakereport
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.*
 import com.intelliviz.quakereport.QueryPreferences.MODE_RECENT
 import com.intelliviz.quakereport.db.EarthquakeEntity
 
 
-class EarthquakeViewModel(application: Application): AndroidViewModel(application) {
+class EarthquakeViewModel(application: Application, sort: Int): AndroidViewModel(application) {
     private var repo: EarthquakeRepository? = null
-    init {
-        repo = EarthquakeRepository(application)
-    }
 
-    private val dbEarthquakes = repo?.getEarthquakes()
 
     val earthquakes = MediatorLiveData<List<Earthquake>>()
+    val dbEarthquakes: LiveData<List<EarthquakeEntity>>?
+    init {
+        repo = EarthquakeRepository(application)
+        dbEarthquakes = repo?.getEarthquakes()
+
+        earthquakes.addSource(dbEarthquakes!!) {value ->
+            value?.let{ earthquakes.value = sortQuakes(it, sort)}
+        }
+    }
 
     private var sort = 0
 
@@ -29,9 +31,7 @@ class EarthquakeViewModel(application: Application): AndroidViewModel(applicatio
             repo?.loadEarthquakes(getApplication(), mode, startDate, endDate, minMag, maxMag)
         }
 
-        earthquakes.addSource(dbEarthquakes!!) {value ->
-            value?.let{ earthquakes.value = sortQuakes(it, sort)}
-        }
+
     }
 
     private fun sortQuakes(list: List<EarthquakeEntity>, sortBy: Int): List<Earthquake> {
@@ -110,9 +110,9 @@ class EarthquakeViewModel(application: Application): AndroidViewModel(applicatio
         }
     }
 
-    class Factory(private val mApplication: Application) : ViewModelProvider.NewInstanceFactory() {
+    class Factory(private val mApplication: Application, private val sort: Int) : ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return EarthquakeViewModel(mApplication) as T
+            return EarthquakeViewModel(mApplication, sort) as T
         }
     }
 }

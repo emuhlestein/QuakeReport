@@ -13,7 +13,7 @@ class EarthquakeRepository(private val context: Context) {
 
     init {
         val db = AppDatabase.getAppDataBase(context)
-        earthquakeDao = db?.earthquakeDao()!!
+        earthquakeDao = db!!.earthquakeDao()
     }
 
     fun getEarthquakes(): LiveData<List<EarthquakeEntity>> {
