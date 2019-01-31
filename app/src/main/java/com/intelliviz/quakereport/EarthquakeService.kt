@@ -2,6 +2,7 @@ package com.intelliviz.quakereport
 
 import android.app.IntentService
 import android.content.Intent
+import com.intelliviz.quakereport.QueryPreferences.SORT_DATE
 import com.intelliviz.quakereport.QueryUtils.EXTRA_END_DATE
 import com.intelliviz.quakereport.QueryUtils.EXTRA_MAX_MAG
 import com.intelliviz.quakereport.QueryUtils.EXTRA_MIN_MAG
@@ -10,6 +11,7 @@ import com.intelliviz.quakereport.QueryUtils.EXTRA_START_DATE
 import com.intelliviz.quakereport.db.AppDatabase
 import com.intelliviz.quakereport.db.EarthquakeEntity
 import com.intelliviz.quakereport.ui.EarthquakeOptionsDialog.Companion.EXTRA_MODE
+import com.intelliviz.quakereport.ui.EarthquakeOptionsDialog.Companion.EXTRA_SORT
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -93,6 +95,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
     private fun getRangeEarthquake(intent: Intent) {
         val db = AppDatabase.getAppDataBase(this)
 
+        val sort = intent.getIntExtra(EXTRA_SORT, SORT_DATE)
         val endDate = intent.getStringExtra(EXTRA_END_DATE)
         val startDate = intent.getStringExtra(EXTRA_START_DATE)
         val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 0)
@@ -101,27 +104,39 @@ class EarthquakeService : IntentService("EarthquakeService") {
         val baseURL = "https://earthquake.usgs.gov/fdsnws/event/1/query?"
         var url: String = baseURL + "format=geojson"
         if (startDate != null && !startDate.isEmpty()) {
-            url = "$url &starttime=$startDate"
+            url = "$url&starttime=$startDate"
         }
         if (endDate != null && !endDate.isEmpty()) {
-            url = "$url &endtime=$endDate" + "T23:59:59"
+            url = "$url&endtime=$endDate" + "T23:59:59"
         }
 
-        url = "$url &minmagnitude=$minMag"
-        url = "$url &maxmagnitude=$maxMag"
+        url = "$url&minmagnitude=$minMag"
+        url = "$url&maxmagnitude=$maxMag"
+
+        var orderby = "&orderby=time"
+        if(sort == QueryPreferences.SORT_MAG) {
+            orderby = "&orderby=magnitude"
+        }
+
+        url = "$url$orderby"
 
 
         val jsonString = loadDataFromURL(url)
 
         val earthquakes: MutableList<EarthquakeEntity> = QueryUtils.extractEarthquakes(jsonString)
+        val limit = 200
 
         if(!earthquakes.isEmpty()) {
             db?.beginTransaction()
             try {
                 db?.earthquakeDao()?.deleteAll()
 
-                earthquakes.forEach { earthquake ->
+                for(item in earthquakes.indices) {
+                    val earthquake = earthquakes[item]
                     db?.earthquakeDao()?.insertEarthquake(earthquake)
+                    if(item > limit) {
+                        break
+                    }
                 }
                 db?.setTransactionSuccessful()
             } finally {
