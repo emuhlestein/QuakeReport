@@ -4,6 +4,11 @@
     <item
         android:id="@+id/options_item"
         android:orderInCategory="100"
-        android:title="Options"
+        android:title="@string/options"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/trends_item"
+        android:orderInCategory="100"
+        android:title="@string/trends"
         app:showAsAction="never" />
 </menu>

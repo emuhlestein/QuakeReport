@@ -34,6 +34,13 @@ class EarthquakeRepository(private val context: Context) {
         }
     }
 
+    fun loadEarthquakes(application: Application, year: Int?, minMag: Int?, maxMag: Int?) {
+        if(needToDownloadRecent(year, minMag, maxMag)) {
+            val intent = createIntent(application, year, minMag, maxMag)
+            application.startService(intent)
+        }
+    }
+
     private fun createIntent(application: Application, mode: Int, minMag: Int?, maxMag: Int?, numDays: Int?): Intent {
         val intent = Intent(application, EarthquakeService::class.java)
         intent.action = ACTION_EARTHQUAKE_RECENT
@@ -54,6 +61,15 @@ class EarthquakeRepository(private val context: Context) {
         intent.putExtra(QueryUtils.EXTRA_MODE, mode)
         intent.putExtra(QueryUtils.EXTRA_START_DATE, startDate)
         intent.putExtra(QueryUtils.EXTRA_END_DATE, endDate)
+        intent.putExtra(QueryUtils.EXTRA_MIN_MAG, minMag)
+        intent.putExtra(QueryUtils.EXTRA_MAX_MAG, maxMag)
+        return intent
+    }
+
+    private fun createIntent(application: Application, year: Int?, minMag: Int?, maxMag: Int?): Intent {
+        val intent = Intent(application, EarthquakeService::class.java)
+        intent.action = ACTION_EARTHQUAKE_TREND
+        intent.putExtra(QueryUtils.EXTRA_YEAR, year)
         intent.putExtra(QueryUtils.EXTRA_MIN_MAG, minMag)
         intent.putExtra(QueryUtils.EXTRA_MAX_MAG, maxMag)
         return intent
@@ -92,6 +108,22 @@ class EarthquakeRepository(private val context: Context) {
             QueryPreferences.setMinMag(context, minMag!!)
             QueryPreferences.setMaxMag(context, maxMag!!)
             QueryPreferences.setNumDays(context, numDays!!)
+            true
+        } else {
+            false
+        }
+    }
+
+    private fun needToDownloadRecent(year: Int?, minMag: Int?, maxMag: Int?): Boolean {
+        val currentYear = QueryPreferences.getYear(context)
+        val currentMinMag = QueryPreferences.getMinMag(context)
+        val currentMaxMag = QueryPreferences.getMaxMag(context)
+
+        return if(year != currentYear ||
+                minMag != currentMinMag || maxMag != currentMaxMag) {
+            QueryPreferences.setYear(context, year!!)
+            QueryPreferences.setMinMag(context, minMag!!)
+            QueryPreferences.setMaxMag(context, maxMag!!)
             true
         } else {
             false

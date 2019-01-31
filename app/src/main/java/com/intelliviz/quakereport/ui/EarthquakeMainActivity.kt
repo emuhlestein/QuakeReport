@@ -2,6 +2,7 @@ package com.intelliviz.quakereport.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -91,6 +92,18 @@ class EarthquakeMainActivity : AppCompatActivity(),
                     val numDays = QueryPreferences.getNumDays(this)
                     val dialog = EarthquakeOptionsDialog.newInstance(mode, sort, startDate, endDate, minMag, maxMag, numDays)
                     dialog.show(supportFragmentManager, "options")
+            }
+            R.id.trends_item -> {
+                val mode = QueryPreferences.getMode(this)
+                val year = QueryPreferences.getYear(this)
+                val minMag = QueryPreferences.getMinMag(this)
+                val maxMag = QueryPreferences.getMaxMag(this)
+                val intent = Intent(application, EarthquakeTrendsActivity::class.java)
+                intent.action = ACTION_EARTHQUAKE_TREND
+                intent.putExtra(QueryUtils.EXTRA_YEAR, year)
+                intent.putExtra(QueryUtils.EXTRA_MIN_MAG, minMag)
+                intent.putExtra(QueryUtils.EXTRA_MAX_MAG, maxMag)
+                startActivity(intent)
             }
         }
 

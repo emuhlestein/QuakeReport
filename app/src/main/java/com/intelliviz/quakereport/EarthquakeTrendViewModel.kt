@@ -1,36 +1,25 @@
 package com.intelliviz.quakereport
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.*
 import android.content.Intent
 import com.intelliviz.quakereport.db.EarthquakeEntity
 
 class EarthquakeTrendViewModel(application: Application, year: Int?, minMag: Int?, maxMag: Int?): AndroidViewModel(application) {
     private var repo: EarthquakeRepository? = null
+    val earthquakes = MediatorLiveData<List<Earthquake>>()
+    val dbEarthquakes: LiveData<List<EarthquakeEntity>>?
     init {
         repo = EarthquakeRepository(application)
-        subscriberToDatabaseChanges()
-        requestEarthquakes(year, minMag, maxMag)
-    }
+        dbEarthquakes = repo?.getEarthquakes()
 
-    private var earthquakes: LiveData<List<EarthquakeEntity>>? = null
-
-    private fun subscriberToDatabaseChanges() {
-        earthquakes = repo?.getEarthquakes()
-    }
-
-    fun getEarthquakes() = earthquakes
-
-    private fun requestEarthquakes(year: Int?, minMag: Int?, maxMag: Int?) {
-        loadEarthquakes(year, minMag, maxMag)
+        earthquakes.addSource(dbEarthquakes!!) {value ->
+            value?.let{ earthquakes.value = sortQuakes(it)}
+        }
     }
 
     fun loadEarthquakes(year: Int?, minMag: Int?, maxMag: Int?) {
-        val intent = createIntent(year, minMag, maxMag)
-        getApplication<Application>().startService(intent)
+        repo?.loadEarthquakes(getApplication(), year, minMag, maxMag)
     }
 
     private fun createIntent(year: Int?, minMag: Int?, maxMag: Int?): Intent {
@@ -40,6 +29,11 @@ class EarthquakeTrendViewModel(application: Application, year: Int?, minMag: Int
         intent.putExtra(QueryUtils.EXTRA_MIN_MAG, minMag)
         intent.putExtra(QueryUtils.EXTRA_MAX_MAG, maxMag)
         return intent
+    }
+
+    private fun sortQuakes(list: List<EarthquakeEntity>): List<Earthquake> {
+        val earthquakes = ArrayList<Earthquake>()
+        return earthquakes
     }
 
     class Factory(private val mApplication: Application,

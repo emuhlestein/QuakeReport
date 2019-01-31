@@ -16,6 +16,8 @@
     <string name="earthquake_options">Earthquake Options</string>
     <string name="sort_by_date">Sort by date</string>
     <string name="sort_by_magnitude">Sort by magnitude</string>
+    <string name="options">Options</string>
+    <string name="trends">Trends</string>
 
     <string-array name="magnitudes">
         <item>1</item>
@@ -31,4 +33,5 @@
         <item>11</item>
         <item>12</item>
     </string-array>
+    <string name="title_activity_earthquake_trends">EarthquakeTrendsActivity</string>
 </resources>
