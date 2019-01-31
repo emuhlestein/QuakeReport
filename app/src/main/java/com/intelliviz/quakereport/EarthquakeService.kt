@@ -101,14 +101,14 @@ class EarthquakeService : IntentService("EarthquakeService") {
         val baseURL = "https://earthquake.usgs.gov/fdsnws/event/1/query?"
         var url: String = baseURL + "format=geojson"
         if (startDate != null && !startDate.isEmpty()) {
-            url = "$url + &starttime= + $startDate"
+            url = "$url &starttime=$startDate"
         }
         if (endDate != null && !endDate.isEmpty()) {
-            url = "$url + &endtime= + $endDate + T23:59:59"
+            url = "$url &endtime=$endDate" + "T23:59:59"
         }
 
-        url = "$url + &minmagnitude= + $minMag"
-        url = "$url + &maxmagnitude= + $maxMag"
+        url = "$url &minmagnitude=$minMag"
+        url = "$url &maxmagnitude=$maxMag"
 
 
         val jsonString = loadDataFromURL(url)
