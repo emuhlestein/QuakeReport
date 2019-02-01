@@ -34,4 +34,9 @@
         <item>12</item>
     </string-array>
     <string name="title_activity_earthquake_trends">EarthquakeTrendsActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="earthquake_trend_options">Earthquake Trend Options</string>
+    <string name="start_year">Start Year</string>
 </resources>

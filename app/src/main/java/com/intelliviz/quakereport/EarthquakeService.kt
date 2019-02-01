@@ -27,7 +27,7 @@ const val ACTION_EARTHQUAKE_RANGE = "action earthquake range"
 class EarthquakeService : IntentService("EarthquakeService") {
     override fun onHandleIntent(intent: Intent?) {
         when(intent?.action) {
-            ACTION_EARTHQUAKE_TREND -> handleEarthquakeTrend()
+            ACTION_EARTHQUAKE_TREND -> handleEarthquakeTrend(intent)
             ACTION_EARTHQUAKE_RECENT -> handleRecentEarthquake(intent)
             ACTION_EARTHQUAKE_RANGE -> handleRangeEarthquake(intent)
             else -> {}
@@ -88,7 +88,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
         //}
     }
 
-    private fun handleEarthquakeTrend() {
+    private fun handleEarthquakeTrend(intent: Intent) {
 
     }
 

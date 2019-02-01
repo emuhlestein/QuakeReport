@@ -22,6 +22,10 @@ class EarthquakeTrendViewModel(application: Application, year: Int?, minMag: Int
         repo?.loadEarthquakes(getApplication(), year, minMag, maxMag)
     }
 
+    fun init(year: Int, minMag: Int?, maxMag: Int?) {
+        repo?.loadEarthquakes(getApplication(), year, minMag, maxMag)
+    }
+
     private fun createIntent(year: Int?, minMag: Int?, maxMag: Int?): Intent {
         val intent = Intent(getApplication(), EarthquakeService::class.java)
         intent.action = ACTION_EARTHQUAKE_TREND

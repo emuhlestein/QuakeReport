@@ -7,13 +7,17 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
 import com.intelliviz.quakereport.Earthquake
 import com.intelliviz.quakereport.EarthquakeTrendViewModel
 import com.intelliviz.quakereport.QueryPreferences
 import com.intelliviz.quakereport.R
 import com.intelliviz.quakereport.graphview.GraphView
 
-class EarthquakeTrendsActivity : AppCompatActivity() {
+class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDialog.OnTrendOptionsSelectedListener {
+
+
     private lateinit var viewModel: EarthquakeTrendViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,4 +79,27 @@ class EarthquakeTrendsActivity : AppCompatActivity() {
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.trends_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.options_item -> {
+                val year = QueryPreferences.getYear(this)
+                val minMag = QueryPreferences.getMinMag(this)
+                val maxMag = QueryPreferences.getMaxMag(this)
+                val dialog = EarthquakeTrendsOptionsDialog.newInstance(year, minMag, maxMag)
+                dialog.show(supportFragmentManager, "options")
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onOptionsSelected(year: Int, minMag: Int, maxMag: Int) {
+        viewModel.loadEarthquakes(year, minMag, maxMag)
+    }
 }
