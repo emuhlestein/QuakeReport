@@ -50,7 +50,7 @@ class EarthquakeMainActivity : AppCompatActivity(),
                 emptyView.visibility = View.GONE
             }
 
-            //var sortedList = earthquakeData.sortedWith(compareBy({e.}))
+            // add earthquakes to list
             adapter.addAll(earthquakeData)
         }
 

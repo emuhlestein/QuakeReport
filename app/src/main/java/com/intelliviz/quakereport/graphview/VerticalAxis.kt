@@ -36,19 +36,8 @@ class VerticalAxis(context: Context, private var projection: VerticalProjection,
         margin = spToPixel(context, MARGIN_SP)
         padding = spToPixel(context, PADDING_SP)
 
-        var min = values[0]
-        var max = values[0]
-        for(value in values) {
-            if(value < min) {
-                min = value
-            }
-            if(value > max) {
-                max = value
-            }
-        }
-
-        minValue = min
-        maxValue = max
+        minValue = values.min() ?: 0F
+        maxValue = values.max() ?: 0F
 
         val textHeight = getTextHeight(ticPaint, minValue.toString())
         val spTextHeight = spToPixel(context, textHeight)

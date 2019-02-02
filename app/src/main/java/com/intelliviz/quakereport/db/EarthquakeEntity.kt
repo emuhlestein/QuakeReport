@@ -9,10 +9,9 @@ object EarthquakeConstant {
 
 @Entity(tableName = EarthquakeConstant.TABLE_NAME)
 data class EarthquakeEntity(
-        @PrimaryKey(autoGenerate = true)
-        val id: Int,
         val magnitude: Double,
         val distance: String,
         val city: String,
         val date: Long,
-        val url: String)
+        val url: String,
+        @PrimaryKey(autoGenerate = true) val id: Long = 0)

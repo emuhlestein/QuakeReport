@@ -3,18 +3,20 @@ package com.intelliviz.quakereport
 import android.app.Application
 import android.arch.lifecycle.*
 import android.content.Intent
-import com.intelliviz.quakereport.db.EarthquakeEntity
+import android.graphics.Color
+import com.intelliviz.quakereport.db.EarthquakeInfoEntity
+import com.intelliviz.quakereport.graphview.PointValue
 
-class EarthquakeTrendViewModel(application: Application, year: Int?, minMag: Int?, maxMag: Int?): AndroidViewModel(application) {
+class EarthquakeTrendViewModel(application: Application): AndroidViewModel(application) {
     private var repo: EarthquakeRepository? = null
-    val earthquakes = MediatorLiveData<List<Earthquake>>()
-    val dbEarthquakes: LiveData<List<EarthquakeEntity>>?
+    val earthquakeInfo = MediatorLiveData<EarthquakeTrendViewData>()
+    val dbEarthquakeInfo: LiveData<List<EarthquakeInfoEntity>>?
     init {
         repo = EarthquakeRepository(application)
-        dbEarthquakes = repo?.getEarthquakes()
+        dbEarthquakeInfo = repo?.getEarthquakeInfo()
 
-        earthquakes.addSource(dbEarthquakes!!) {value ->
-            value?.let{ earthquakes.value = sortQuakes(it)}
+        earthquakeInfo.addSource(dbEarthquakeInfo!!) {value ->
+            value?.let{ earthquakeInfo.value = mapQuakes(it)}
         }
     }
 
@@ -35,18 +37,31 @@ class EarthquakeTrendViewModel(application: Application, year: Int?, minMag: Int
         return intent
     }
 
-    private fun sortQuakes(list: List<EarthquakeEntity>): List<Earthquake> {
-        val earthquakes = ArrayList<Earthquake>()
-        return earthquakes
+    private fun mapQuakes(list: List<EarthquakeInfoEntity>): EarthquakeTrendViewData {
+        val earthquakes = ArrayList<EarthquakeInfo>()
+        val pointValues = ArrayList<PointValue>()
+        val colors = HashMap<Int, Int>()
+        list.forEach{
+            val point = PointValue(it.year.toFloat(),  it.count.toFloat(), it.magnitude)
+            var color = Color.BLUE
+            pointValues.add(point)
+
+            var earthquakeInfo = EarthquakeInfo(it.year, it.magnitude, it.count)
+            earthquakes.add(earthquakeInfo)
+        }
+
+        colors[6] = Color.GREEN
+        colors[7] = Color.RED
+        colors[8] = Color.MAGENTA
+
+        var earthquakeInfo = EarthquakeTrendViewData(pointValues, colors)
+        return earthquakeInfo
     }
 
-    class Factory(private val mApplication: Application,
-                  private val year: Int?,
-                  private val minMag: Int?,
-                  private val maxMag: Int?) : ViewModelProvider.NewInstanceFactory() {
+    class Factory(private val mApplication: Application) : ViewModelProvider.NewInstanceFactory() {
 
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return EarthquakeTrendViewModel(mApplication, year,  minMag, maxMag) as T
+            return EarthquakeTrendViewModel(mApplication) as T
         }
     }
 }

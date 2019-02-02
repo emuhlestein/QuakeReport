@@ -42,11 +42,11 @@ object QueryUtils {
                 val url = properties.getString("url")
                 val tokens: List<String> = place.split(",")
                 if(tokens.isEmpty()) {
-                    earthquakes.add(EarthquakeEntity(0, mag, "", "", time, url))
+                    earthquakes.add(EarthquakeEntity(mag, "", "", time, url))
                 } else if(tokens.size == 1) {
-                    earthquakes.add(EarthquakeEntity(0, mag, tokens[0], "", time, url))
+                    earthquakes.add(EarthquakeEntity(mag, tokens[0], "", time, url))
                 } else {
-                    earthquakes.add(EarthquakeEntity(0, mag, tokens[0], tokens[1], time, url))
+                    earthquakes.add(EarthquakeEntity(mag, tokens[0], tokens[1], time, url))
                 }
             }
         } catch (e: JSONException) {
@@ -66,6 +66,13 @@ object QueryUtils {
         val dateObject = Date(time)
         val timeFormatter = SimpleDateFormat("h:mm a")
         return timeFormatter.format(dateObject)
+    }
+
+    fun getYearFromDate(time: Long): Int {
+        val cal = Calendar.getInstance()
+        val dateObject = Date(time)
+        cal.time = dateObject
+        return cal.get(Calendar.YEAR)
     }
 
     fun getCurrentDate(): String {

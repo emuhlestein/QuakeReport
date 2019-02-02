@@ -9,14 +9,11 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import com.intelliviz.quakereport.graphview.GraphView.companion.HORIZONTAL_MARGIN_SP
-import com.intelliviz.quakereport.graphview.GraphView.companion.PADDING_SP
-import com.intelliviz.quakereport.graphview.GraphView.companion.VERTICAL_MARGIN_SP
 
 
 class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context, attributes), SurfaceHolder.Callback {
 
-    object companion {
+    companion object {
         var HORIZONTAL_MARGIN_SP: Float = 50F
         var VERTICAL_MARGIN_SP: Float = 50F
         var PADDING_SP: Float = 8F
@@ -39,10 +36,11 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
     private var padding: Float = 0F
     private lateinit var xValues: FloatArray
     private lateinit var yValues: FloatArray
+    private lateinit var zValues: IntArray
     private var verticalLabel: String = ""
     private var horizontalLabel: String = ""
     private lateinit var spotPaint: Paint
-    private lateinit var legendValues: MutableList<Pair<Paint, Float>>
+    private var legendValues = HashMap<Int, Paint>()
 
     init{
         backgroundPaint.color = Color.WHITE
@@ -58,48 +56,46 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         horizontalMargin = spToPixel(context, HORIZONTAL_MARGIN_SP)
         verticalMargin = spToPixel(context, VERTICAL_MARGIN_SP)
         padding = spToPixel(context, PADDING_SP)
+
+        xValues = floatArrayOf()
+        yValues = floatArrayOf()
+        zValues = intArrayOf()
+    }
+
+    fun setData(values: ArrayList<PointValue>) {
+        val xValues = ArrayList<Float>()
+        val yValues = ArrayList<Float>()
+        val zValues = ArrayList<Int>()
+        values.forEach {
+            xValues.add(it.x)
+            yValues.add(it.y)
+            zValues.add(it.z)
+        }
+
+        setData(xValues.toFloatArray(), yValues.toFloatArray())
+        this.zValues = zValues.toIntArray()
     }
 
     fun setData(xValues: FloatArray, yValues: FloatArray) {
-        var minValue = xValues[0]
-        var maxValue = xValues[0]
-        for(value in xValues) {
-            if(value < minValue) {
-                minValue = value
-            }
-            if(value > maxValue) {
-                maxValue = value
-            }
-        }
-
-        minX = minValue
-        maxX = maxValue
-
-        minValue = yValues[0]
-        maxValue = yValues[0]
-        for(value in yValues) {
-            if(value < minValue) {
-                minValue = value
-            }
-            if(value > maxValue) {
-                maxValue = value
-            }
-        }
-
-        minY = minValue
-        maxY = maxValue
-
+        minX = xValues.min()!!
+        maxX = xValues.max()!!
+        minY = yValues.min()!!
+        maxY = yValues.max()!!
         this.xValues = xValues
         this.yValues = yValues
     }
 
-    fun setLegendValues(legendValues: MutableList<Float>, valueColors: MutableList<Paint>) {
-        this.legendValues = mutableListOf()
-        for(i in 0 until legendValues.size) {
-            this.legendValues.add(Pair(valueColors[i], legendValues[i]))
+    fun setLegendValues(map: HashMap<Int, Int>) {
+        map.forEach{(key, value) ->
+            var paint = Paint()
+            paint.color = value
+            legendValues[key] = paint
         }
-    }
 
+//        for(i in 0 until legendValues.size) {
+//            this.legendValues[legendValues[i]] = valueColors[i]
+//        }
+    }
 
     fun setVerticalLabel(label: String) {
         verticalLabel = label
@@ -129,8 +125,15 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
 
     override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
 
+
         Log.d("EDM", "width = $width, height = $height")
         val canvas = holder?.lockCanvas()
+        clear(canvas)
+
+        if(xValues.isEmpty()) {
+            holder?.unlockCanvasAndPost(canvas)
+            return
+        }
 
         canvas?.drawColor(Color.WHITE)
         deltaX = maxX - minX
@@ -148,7 +151,7 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         val verticalAxis = VerticalAxis(context, verticalProjection, verticalLabel, yValues, height.toFloat())
         val horizontalAxis = HorizontalAxis(context, horizontalProjection, horizontalLabel, xValues, width.toFloat(), height.toFloat())
 
-        canvas?.drawRect(0F, 0F, canvas.width.toFloat(), canvas.height.toFloat(), backgroundPaint)
+
 
         val textSize = spToPixel(context, 16F)
 
@@ -156,7 +159,7 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
 
 
         for(i in 0..(yValues.size-1)) {
-            drawDot(canvas, xValues[i], yValues[i])
+            drawDot(canvas, xValues[i], yValues[i], zValues[i])
         }
 
         verticalAxis.draw(canvas, context)
@@ -172,6 +175,7 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
 
     override fun surfaceCreated(holder: SurfaceHolder?) {
         Log.d("EDM", "surfaceCreated")
+        setWillNotDraw(false)
     }
 
     private fun worldToPixelX(x: Float): Float {
@@ -187,10 +191,11 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         return sp * density
     }
 
-    private fun drawDot(canvas: Canvas?, x: Float, y: Float) {
+    private fun drawDot(canvas: Canvas?, x: Float, y: Float, z: Int) {
         val pixelX = worldToPixelX(x)
         val pixelY = worldToPixelY(y)
-        canvas?.drawCircle(pixelX, pixelY, 10F, spotPaint)
+        var paint = this.legendValues[z]
+        canvas?.drawCircle(pixelX, pixelY, 10F, paint)
     }
 
     private fun getTextHeight(paint: Paint, text: String): Float {
@@ -215,12 +220,19 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         var textWidth = getTextWidth(ticPaint, label)
 
         x += (textWidth + textSize)
-        for(i in 0 until legendValues.size) {
-            var str = "-" + legendValues[i].second.toString() + ","
-            var paint = legendValues[i].first
+
+        legendValues.forEach{(key, value) ->
+            val str = "-" + key.toString() + ","
+            val paint = value
             drawLegendItem(canvas, paint, str, x, y)
             x += 140F
         }
+//        for(i in 0 until legendValues.size) {
+//            var str = "-" + legendValues[i].second.toString() + ","
+//            var paint = legendValues[i].first
+//            drawLegendItem(canvas, paint, str, x, y)
+//            x += 140F
+//        }
 
 
 //        var str = "-" + "7" + ","
@@ -236,4 +248,9 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         canvas?.drawCircle(x, y, 10F, dotPaint)
         canvas?.drawText(str, x+20F, y+textHeight/2, ticPaint)
     }
+
+    private fun clear(canvas: Canvas?) {
+        canvas?.drawRect(0F, 0F, canvas.width.toFloat(), canvas.height.toFloat(), backgroundPaint)
+    }
+
 }

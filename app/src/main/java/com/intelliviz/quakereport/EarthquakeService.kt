@@ -6,11 +6,10 @@ import com.intelliviz.quakereport.QueryPreferences.SORT_DATE
 import com.intelliviz.quakereport.QueryUtils.EXTRA_END_DATE
 import com.intelliviz.quakereport.QueryUtils.EXTRA_MAX_MAG
 import com.intelliviz.quakereport.QueryUtils.EXTRA_MIN_MAG
-import com.intelliviz.quakereport.QueryUtils.EXTRA_NUM_DAYS
 import com.intelliviz.quakereport.QueryUtils.EXTRA_START_DATE
 import com.intelliviz.quakereport.db.AppDatabase
 import com.intelliviz.quakereport.db.EarthquakeEntity
-import com.intelliviz.quakereport.ui.EarthquakeOptionsDialog.Companion.EXTRA_MODE
+import com.intelliviz.quakereport.db.EarthquakeInfoEntity
 import com.intelliviz.quakereport.ui.EarthquakeOptionsDialog.Companion.EXTRA_SORT
 import java.io.BufferedReader
 import java.io.IOException
@@ -23,6 +22,7 @@ import java.net.URL
 const val ACTION_EARTHQUAKE_TREND = "action earthquake trend"
 const val ACTION_EARTHQUAKE_RECENT = "action earthquake recent"
 const val ACTION_EARTHQUAKE_RANGE = "action earthquake range"
+const val BASEURL = "https://earthquake.usgs.gov/fdsnws/event/1/query?"
 
 class EarthquakeService : IntentService("EarthquakeService") {
     override fun onHandleIntent(intent: Intent?) {
@@ -77,19 +77,112 @@ class EarthquakeService : IntentService("EarthquakeService") {
     }
 
     private fun handleRecentEarthquake(intent: Intent) {
-        //if(needToDownloadRecent(intent)) {
-            getRangeEarthquake(intent)
-        //}
+        getRangeEarthquake(intent)
     }
 
     private fun handleRangeEarthquake(intent: Intent) {
-        //if(needToDownloadRange(intent)) {
-            getRangeEarthquake(intent)
-        //}
+        getRangeEarthquake(intent)
     }
 
     private fun handleEarthquakeTrend(intent: Intent) {
+        val db = AppDatabase.getAppDataBase(this)
 
+        val year = intent.getIntExtra(QueryUtils.EXTRA_YEAR, 1900)
+        val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 0)
+        val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 0)
+
+        val startDate = year.toString()+"-1-1"
+        val endDate = (year+10).toString()+"-1-1"
+        var url: String = BASEURL + "format=geojson"
+        if (startDate != null && !startDate.isEmpty()) {
+            url = "$url&starttime=$startDate"
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            url = "$url&endtime=$endDate" + "T23:59:59"
+        }
+
+        url = "$url&minmagnitude=$minMag"
+        url = "$url&maxmagnitude=$maxMag"
+
+        val jsonString = loadDataFromURL(url)
+        val earthquakes: MutableList<EarthquakeEntity> = QueryUtils.extractEarthquakes(jsonString)
+        if(earthquakes.size == 0) {
+
+        }
+
+        val earthquakeTrends = mutableMapOf<Int, MutableMap<Int, Int>>()
+
+        val years = arrayListOf(1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020)
+        years.forEach {
+            var startYear = it
+            var endStart = startYear + 10
+
+            val startDate = startYear.toString()+"-1-1"
+            val endDate = (endStart).toString()+"-1-1"
+
+            var earthquakes = getEarthquakes(startDate, endDate, minMag, maxMag)
+            for (earthquake in earthquakes) {
+                var mag = earthquake.magnitude.toInt()
+                var year = QueryUtils.getYearFromDate(earthquake.date)
+                addQuake(earthquakeTrends, year, mag)
+            }
+        }
+
+        if(!earthquakeTrends.isEmpty()) {
+            db?.beginTransaction()
+            try {
+                db?.earthquakeInfoDao()?.deleteAll()
+
+                for(yearKey in earthquakeTrends.keys) {
+                    val yearMap = earthquakeTrends[yearKey]
+                    if(yearMap != null) {
+                        for (magKey in yearMap.keys) {
+                            val count = yearMap[magKey]
+                            if(count != null) {
+                                val entity = EarthquakeInfoEntity(yearKey, magKey, count)
+                                db?.earthquakeInfoDao()?.insertEarthquakeInfo(entity)
+                            }
+                        }
+                    }
+                }
+                db?.setTransactionSuccessful()
+            } finally {
+                db?.endTransaction()
+            }
+        }
+    }
+
+    fun addQuake(quakeMap: MutableMap<Int, MutableMap<Int, Int>>, year: Int, mag: Int) {
+        var yearMap = quakeMap[year]
+        if(yearMap == null) {
+            yearMap = mutableMapOf<Int, Int>()
+            yearMap[mag] = 1
+            quakeMap[year] = yearMap
+        } else {
+            var count = yearMap[mag]
+            if(count == null) {
+                yearMap[mag] = 1
+            } else {
+                count++
+                yearMap[mag] = count
+            }
+        }
+    }
+
+    private fun getEarthquakes(startDate: String, endDate: String, minMag: Int, maxMag: Int): MutableList<EarthquakeEntity>{
+        var url: String = BASEURL + "format=geojson"
+        if (startDate != null && !startDate.isEmpty()) {
+            url = "$url&starttime=$startDate"
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            url = "$url&endtime=$endDate" + "T23:59:59"
+        }
+
+        url = "$url&minmagnitude=$minMag"
+        url = "$url&maxmagnitude=$maxMag"
+
+        val jsonString = loadDataFromURL(url)
+        return QueryUtils.extractEarthquakes(jsonString)
     }
 
     private fun getRangeEarthquake(intent: Intent) {
@@ -101,8 +194,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
         val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 0)
         val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 0)
 
-        val baseURL = "https://earthquake.usgs.gov/fdsnws/event/1/query?"
-        var url: String = baseURL + "format=geojson"
+        var url: String = BASEURL + "format=geojson"
         if (startDate != null && !startDate.isEmpty()) {
             url = "$url&starttime=$startDate"
         }
@@ -142,54 +234,6 @@ class EarthquakeService : IntentService("EarthquakeService") {
             } finally {
                 db?.endTransaction()
             }
-        }
-    }
-
-    private fun needToDownloadRange(intent: Intent): Boolean {
-        val mode = intent.getIntExtra(EXTRA_MODE, 0)
-        val endDate = intent.getStringExtra(EXTRA_END_DATE)
-        val startDate = intent.getStringExtra(EXTRA_START_DATE)
-        val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 0)
-        val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 0)
-        val currentMode = QueryPreferences.getMode(this)
-        val currentMinMag = QueryPreferences.getMinMag(this)
-        val currentMaxMag = QueryPreferences.getMaxMag(this)
-        val currentEndDate = QueryPreferences.getEndDate(this)
-        val currentStartDate = QueryPreferences.getStartDate(this)
-
-        return if(mode != currentMode ||
-                endDate != currentEndDate || startDate != currentStartDate ||
-                minMag != currentMinMag || maxMag != currentMaxMag) {
-            QueryPreferences.setMode(this, mode)
-            QueryPreferences.setMinMag(this, minMag)
-            QueryPreferences.setMaxMag(this, maxMag)
-            QueryPreferences.setStartDate(this, startDate)
-            QueryPreferences.setEndDate(this, endDate)
-            true
-        } else {
-            false
-        }
-    }
-
-    private fun needToDownloadRecent(intent: Intent): Boolean {
-        val mode = intent.getIntExtra(EXTRA_MODE, 0)
-        val numDays = intent.getIntExtra(EXTRA_NUM_DAYS, 0)
-        val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 0)
-        val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 0)
-        val currentMode = QueryPreferences.getMode(this)
-        val currentMinMag = QueryPreferences.getMinMag(this)
-        val currentMaxMag = QueryPreferences.getMaxMag(this)
-        val currentNumDays = QueryPreferences.getNumDays(this)
-
-        return if(mode != currentMode || numDays != currentNumDays ||
-                minMag != currentMinMag || maxMag != currentMaxMag) {
-            QueryPreferences.setMode(this, mode)
-            QueryPreferences.setMinMag(this, minMag)
-            QueryPreferences.setMaxMag(this, maxMag)
-            QueryPreferences.setNumDays(this, numDays)
-            true
-        } else {
-            false
         }
     }
 }

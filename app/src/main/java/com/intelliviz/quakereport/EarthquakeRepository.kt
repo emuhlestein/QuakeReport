@@ -4,20 +4,25 @@ import android.app.Application
 import android.arch.lifecycle.LiveData
 import android.content.Context
 import android.content.Intent
-import com.intelliviz.quakereport.db.AppDatabase
-import com.intelliviz.quakereport.db.EarthquakeDao
-import com.intelliviz.quakereport.db.EarthquakeEntity
+import com.intelliviz.quakereport.db.*
 
 class EarthquakeRepository(private val context: Context) {
     private val earthquakeDao: EarthquakeDao
+    private val earthquakeInfoDao: EarthquakeInfoDao
+
 
     init {
         val db = AppDatabase.getAppDataBase(context)
         earthquakeDao = db!!.earthquakeDao()
+        earthquakeInfoDao = db!!.earthquakeInfoDao()
     }
 
     fun getEarthquakes(): LiveData<List<EarthquakeEntity>> {
         return earthquakeDao.getEarthquakes()
+    }
+
+    fun getEarthquakeInfo(): LiveData<List<EarthquakeInfoEntity>> {
+        return earthquakeInfoDao.getEarthquakeInfo()
     }
 
     fun loadEarthquakes(application: Application, mode: Int, startDate: String?, endDate: String?, minMag: Int?, maxMag: Int?) {
@@ -35,10 +40,10 @@ class EarthquakeRepository(private val context: Context) {
     }
 
     fun loadEarthquakes(application: Application, year: Int?, minMag: Int?, maxMag: Int?) {
-        if(needToDownloadRecent(year, minMag, maxMag)) {
+        //if(needToDownloadRecent(year, minMag, maxMag)) {
             val intent = createIntent(application, year, minMag, maxMag)
             application.startService(intent)
-        }
+        //}
     }
 
     private fun createIntent(application: Application, mode: Int, minMag: Int?, maxMag: Int?, numDays: Int?): Intent {

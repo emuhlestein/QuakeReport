@@ -124,7 +124,7 @@ class EarthquakeTrendsOptionsDialog : DialogFragment() {
             intent.putExtra(EarthquakeTrendsOptionsDialog.EXTRA_MAX_MAG, maxMag)
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         } else {
-            if(activity is EarthquakeOptionsDialog.OnOptionsSelectedListener) {
+            if(activity is EarthquakeTrendsOptionsDialog.OnTrendOptionsSelectedListener) {
                 //var listener: EarthquakeOptionsDialog.OnOptionsSelectedListener? = null
                 val listener = activity as EarthquakeTrendsOptionsDialog.OnTrendOptionsSelectedListener
                 listener.onOptionsSelected(year, minMag, maxMag)
