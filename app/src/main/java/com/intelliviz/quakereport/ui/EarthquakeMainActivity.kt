@@ -68,7 +68,7 @@ class EarthquakeMainActivity : AppCompatActivity(),
         viewModel.earthquakes?.observe(this, earthquakeObserver)
 
         if(mode == MODE_RANGE) {
-            viewModel.loadEarthquakes(mode, sort, endDate, startDate, minMag, maxMag)
+            viewModel.loadEarthquakes(mode, sort, startDate, endDate, minMag, maxMag)
         } else {
             viewModel.loadEarthquakes(mode, sort, minMag, maxMag, numDays)
         }
