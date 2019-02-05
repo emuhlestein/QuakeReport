@@ -7,18 +7,17 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.util.Log
-import android.view.SurfaceHolder
-import android.view.SurfaceView
+import android.view.View
 
-
-class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context, attributes), SurfaceHolder.Callback {
-
+class GraphView : View {
     companion object {
         var HORIZONTAL_MARGIN_SP: Float = 50F
         var VERTICAL_MARGIN_SP: Float = 50F
         var PADDING_SP: Float = 8F
     }
-    private lateinit var surfaceHolder: SurfaceHolder
+
+    private var mWidth: Float = 0.toFloat()
+    private var mHeight: Float = 0.toFloat()
     private var backgroundPaint: Paint = Paint()
     private var bluePaint: Paint
     private var greenPaint: Paint
@@ -34,15 +33,58 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
     private var horizontalMargin: Float = 0F
     private var verticalMargin: Float = 0F
     private var padding: Float = 0F
-    private lateinit var xValues: FloatArray
-    private lateinit var yValues: FloatArray
-    private lateinit var zValues: IntArray
+    private var xValues: FloatArray
+    private var yValues: FloatArray
+    private var zValues: IntArray
     private var verticalLabel: String = ""
     private var horizontalLabel: String = ""
-    private lateinit var spotPaint: Paint
     private var legendValues = HashMap<Int, Paint>()
+    private lateinit var verticalAxis: VerticalAxis
+    private lateinit var horizontalAxis: HorizontalAxis
 
-    init{
+
+    constructor(context: Context) : super(context)
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        mWidth = w.toFloat()
+        mHeight = h.toFloat()
+
+        init()
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+
+
+        Log.d("EDM", "width = $width, height = $height")
+
+        if(xValues.isEmpty()) {
+            return
+        }
+
+        canvas.drawColor(Color.WHITE)
+
+
+        val textSize = spToPixel(context, 16F)
+
+        ticPaint.textSize = textSize
+
+
+        for(i in 0..(yValues.size-1)) {
+            drawDot(canvas, xValues[i], yValues[i], zValues[i])
+        }
+
+        verticalAxis.draw(canvas, context)
+        horizontalAxis.draw(canvas, context)
+
+        drawLegend(canvas)
+    }
+
+    init {
         backgroundPaint.color = Color.WHITE
         bluePaint = Paint()
         bluePaint.color = Color.BLUE
@@ -51,11 +93,10 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         ticPaint = Paint()
         ticPaint.color = Color.BLACK
         greenPaint.textSize = 8F
-        holder.addCallback(this)
 
-        horizontalMargin = spToPixel(context, HORIZONTAL_MARGIN_SP)
-        verticalMargin = spToPixel(context, VERTICAL_MARGIN_SP)
-        padding = spToPixel(context, PADDING_SP)
+        horizontalMargin = spToPixel(context, GraphView.HORIZONTAL_MARGIN_SP)
+        verticalMargin = spToPixel(context, GraphView.VERTICAL_MARGIN_SP)
+        padding = spToPixel(context, GraphView.PADDING_SP)
 
         xValues = floatArrayOf()
         yValues = floatArrayOf()
@@ -83,18 +124,15 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         maxY = yValues.max()!!
         this.xValues = xValues
         this.yValues = yValues
+        init()
     }
 
     fun setLegendValues(map: HashMap<Int, Int>) {
         map.forEach{(key, value) ->
-            var paint = Paint()
+            val paint = Paint()
             paint.color = value
             legendValues[key] = paint
         }
-
-//        for(i in 0 until legendValues.size) {
-//            this.legendValues[legendValues[i]] = valueColors[i]
-//        }
     }
 
     fun setVerticalLabel(label: String) {
@@ -105,78 +143,22 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         horizontalLabel = label
     }
 
-    fun setSpotColor(paint: Paint) {
-        spotPaint = paint
-    }
-
-    fun setMinMaxX(minX: Float, maxX: Float) {
-        this.minX = minX
-        this.maxX = maxX
-    }
-
-    fun setMinMaxY(minY: Float, maxY: Float) {
-        this.minY = minY
-        this.maxY = maxY
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-    }
-
-    override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-
-
-        Log.d("EDM", "width = $width, height = $height")
-        val canvas = holder?.lockCanvas()
-        clear(canvas)
-
-        if(xValues.isEmpty()) {
-            holder?.unlockCanvasAndPost(canvas)
-            return
-        }
-
-        canvas?.drawColor(Color.WHITE)
+    private fun init() {
         deltaX = maxX - minX
-        deltaY = width.toFloat() - 1.5F * horizontalMargin
+        deltaY = mWidth - 1.5F * horizontalMargin
         val horProjection = deltaY/deltaX
-
         horizontalProjection = HorizontalProjection(horProjection, minX, horizontalMargin)
 
         deltaY = maxY - minY
-        deltaX = height.toFloat() - 2.0F * verticalMargin
+        deltaX = mHeight - 2.0F * verticalMargin
         val vertProjection = deltaX/deltaY
 
-        verticalProjection = VerticalProjection(vertProjection, minY, height.toFloat(), verticalMargin)
+        verticalProjection = VerticalProjection(vertProjection, minY, mHeight, verticalMargin)
 
-        val verticalAxis = VerticalAxis(context, verticalProjection, verticalLabel, yValues, height.toFloat())
-        val horizontalAxis = HorizontalAxis(context, horizontalProjection, horizontalLabel, xValues, width.toFloat(), height.toFloat())
-
-
-
-        val textSize = spToPixel(context, 16F)
-
-        ticPaint.textSize = textSize
-
-
-        for(i in 0..(yValues.size-1)) {
-            drawDot(canvas, xValues[i], yValues[i], zValues[i])
-        }
-
-        verticalAxis.draw(canvas, context)
-        horizontalAxis.draw(canvas, context)
-
-        drawLegend(canvas)
-
-        holder?.unlockCanvasAndPost(canvas)
+        verticalAxis = VerticalAxis(context, verticalProjection, verticalLabel, yValues, mHeight)
+        horizontalAxis = HorizontalAxis(context, horizontalProjection, horizontalLabel, xValues, mWidth, mHeight)
     }
 
-    override fun surfaceDestroyed(holder: SurfaceHolder?) {
-    }
-
-    override fun surfaceCreated(holder: SurfaceHolder?) {
-        Log.d("EDM", "surfaceCreated")
-        setWillNotDraw(false)
-    }
 
     private fun worldToPixelX(x: Float): Float {
         return horizontalProjection.worldToPixel(x)
@@ -194,8 +176,8 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
     private fun drawDot(canvas: Canvas?, x: Float, y: Float, z: Int) {
         val pixelX = worldToPixelX(x)
         val pixelY = worldToPixelY(y)
-        var paint = this.legendValues[z]
-        canvas?.drawCircle(pixelX, pixelY, 10F, paint)
+        val paint = legendValues[z]
+        canvas?.drawCircle(pixelX, pixelY, 10F, paint!!)
     }
 
     private fun getTextHeight(paint: Paint, text: String): Float {
@@ -214,33 +196,18 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         val textSize = spToPixel(context, 16F)
         var x = textSize
         val y = verticalMargin/2 * .75F
-        var label = "Magnitude:"
+        val label = "Magnitude:"
         val textHeight = getTextHeight(ticPaint, label)
         canvas?.drawText(label, x, y+textHeight/2, ticPaint)
-        var textWidth = getTextWidth(ticPaint, label)
+        val textWidth = getTextWidth(ticPaint, label)
 
         x += (textWidth + textSize)
 
         legendValues.forEach{(key, value) ->
             val str = "-" + key.toString() + ","
-            val paint = value
-            drawLegendItem(canvas, paint, str, x, y)
+            drawLegendItem(canvas, value, str, x, y)
             x += 140F
         }
-//        for(i in 0 until legendValues.size) {
-//            var str = "-" + legendValues[i].second.toString() + ","
-//            var paint = legendValues[i].first
-//            drawLegendItem(canvas, paint, str, x, y)
-//            x += 140F
-//        }
-
-
-//        var str = "-" + "7" + ","
-//        drawLegendItem(canvas, greenPaint, str, x, y)
-//
-//        x += 100F
-//        str = "-" + "8"
-//        drawLegendItem(canvas, bluePaint, str, x, y)
     }
 
     private fun drawLegendItem(canvas: Canvas?, dotPaint: Paint, str: String, x: Float, y: Float) {
@@ -248,9 +215,4 @@ class GraphView(context: Context, attributes: AttributeSet): SurfaceView(context
         canvas?.drawCircle(x, y, 10F, dotPaint)
         canvas?.drawText(str, x+20F, y+textHeight/2, ticPaint)
     }
-
-    private fun clear(canvas: Canvas?) {
-        canvas?.drawRect(0F, 0F, canvas.width.toFloat(), canvas.height.toFloat(), backgroundPaint)
-    }
-
 }

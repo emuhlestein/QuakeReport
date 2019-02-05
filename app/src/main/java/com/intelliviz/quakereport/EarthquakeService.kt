@@ -87,17 +87,17 @@ class EarthquakeService : IntentService("EarthquakeService") {
     private fun handleEarthquakeTrend(intent: Intent) {
         val db = AppDatabase.getAppDataBase(this)
 
-        val year = intent.getIntExtra(QueryUtils.EXTRA_YEAR, 1900)
+        var year = intent.getIntExtra(QueryUtils.EXTRA_YEAR, 1900)
         val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 0)
         val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 0)
 
-        val startDate = year.toString()+"-1-1"
-        val endDate = (year+10).toString()+"-1-1"
+        var startDate = year.toString()+"-1-1"
+        var endDate = (year+10).toString()+"-1-1"
         var url: String = BASEURL + "format=geojson"
-        if (startDate != null && !startDate.isEmpty()) {
+        if (!startDate.isEmpty()) {
             url = "$url&starttime=$startDate"
         }
-        if (endDate != null && !endDate.isEmpty()) {
+        if (!endDate.isEmpty()) {
             url = "$url&endtime=$endDate" + "T23:59:59"
         }
 
@@ -105,7 +105,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
         url = "$url&maxmagnitude=$maxMag"
 
         val jsonString = loadDataFromURL(url)
-        val earthquakes: MutableList<EarthquakeEntity> = QueryUtils.extractEarthquakes(jsonString)
+        var earthquakes: MutableList<EarthquakeEntity> = QueryUtils.extractEarthquakes(jsonString)
         if(earthquakes.size == 0) {
 
         }
@@ -114,16 +114,16 @@ class EarthquakeService : IntentService("EarthquakeService") {
 
         val years = arrayListOf(1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020)
         years.forEach {
-            var startYear = it
-            var endStart = startYear + 10
+            val startYear = it
+            val endStart = startYear + 10
 
-            val startDate = startYear.toString()+"-1-1"
-            val endDate = (endStart).toString()+"-1-1"
+            startDate = startYear.toString()+"-1-1"
+            endDate = (endStart).toString()+"-1-1"
 
-            var earthquakes = getEarthquakes(startDate, endDate, minMag, maxMag)
+            earthquakes = getEarthquakes(startDate, endDate, minMag, maxMag)
             for (earthquake in earthquakes) {
-                var mag = earthquake.magnitude.toInt()
-                var year = QueryUtils.getYearFromDate(earthquake.date)
+                val mag = earthquake.magnitude.toInt()
+                year = QueryUtils.getYearFromDate(earthquake.date)
                 addQuake(earthquakeTrends, year, mag)
             }
         }
@@ -171,10 +171,10 @@ class EarthquakeService : IntentService("EarthquakeService") {
 
     private fun getEarthquakes(startDate: String, endDate: String, minMag: Int, maxMag: Int): MutableList<EarthquakeEntity>{
         var url: String = BASEURL + "format=geojson"
-        if (startDate != null && !startDate.isEmpty()) {
+        if (!startDate.isEmpty()) {
             url = "$url&starttime=$startDate"
         }
-        if (endDate != null && !endDate.isEmpty()) {
+        if (!endDate.isEmpty()) {
             url = "$url&endtime=$endDate" + "T23:59:59"
         }
 
