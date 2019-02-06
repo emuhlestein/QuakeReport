@@ -10,6 +10,6 @@ object EarthquakeInfoConstant {
 @Entity(tableName = EarthquakeInfoConstant.TABLE_NAME)
 data class EarthquakeInfoEntity (
         val year: Int,
-        val magnitude: Int,
+        val magnitude: Float,
         val count: Int,
         @PrimaryKey(autoGenerate = true) val id: Long = 0)

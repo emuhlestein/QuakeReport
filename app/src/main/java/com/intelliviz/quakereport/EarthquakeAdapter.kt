@@ -43,12 +43,12 @@ class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
 
-        val magnitudeTextView = view.magnitude
-        val distanceTextView = view.distance
-        val cityTextView = view.city
-        val dateTextView = view.date
-        val timeTextView = view.time
-        var earthquake: Earthquake? = null
+        private val magnitudeTextView = view.magnitude
+        private val distanceTextView = view.distance
+        private val cityTextView = view.city
+        private val dateTextView = view.date
+        private val timeTextView = view.time
+        private var earthquake: Earthquake? = null
 
         override fun onClick(p0: View?) {
             val intent = Intent(Intent.ACTION_VIEW)
@@ -69,12 +69,12 @@ class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>
             cityTextView.text = earthquake.city
             dateTextView.text = earthquake.date
             timeTextView.text = earthquake.time
-            val magnitudeCircle = magnitudeTextView.getBackground() as GradientDrawable
+            val magnitudeCircle = magnitudeTextView.background as GradientDrawable
             val magnitudeColor = getMagnitudeColor(context, earthquake.magnitude)
             magnitudeCircle.setColor(magnitudeColor)
         }
 
-        private fun getMagnitudeColor(context: Context, magnitude: Double): Int {
+        private fun getMagnitudeColor(context: Context, magnitude: Float): Int {
 
             val colorIndex: Int
             if(magnitude < 1.0) {

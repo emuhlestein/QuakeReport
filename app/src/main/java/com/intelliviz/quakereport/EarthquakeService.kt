@@ -2,6 +2,7 @@ package com.intelliviz.quakereport
 
 import android.app.IntentService
 import android.content.Intent
+import com.intelliviz.quakereport.QueryPreferences.DEFAULT_MAGNITUDE
 import com.intelliviz.quakereport.QueryPreferences.SORT_DATE
 import com.intelliviz.quakereport.QueryUtils.EXTRA_END_DATE
 import com.intelliviz.quakereport.QueryUtils.EXTRA_MAX_MAG
@@ -88,8 +89,8 @@ class EarthquakeService : IntentService("EarthquakeService") {
         val db = AppDatabase.getAppDataBase(this)
 
         var year = intent.getIntExtra(QueryUtils.EXTRA_YEAR, 1900)
-        val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 0)
-        val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 0)
+        val minMag = intent.getFloatExtra(EXTRA_MIN_MAG, DEFAULT_MAGNITUDE)
+        val maxMag = intent.getFloatExtra(EXTRA_MAX_MAG, DEFAULT_MAGNITUDE) + 0.99F
 
         var startDate = year.toString()+"-1-1"
         var endDate = (year+10).toString()+"-1-1"
@@ -110,9 +111,22 @@ class EarthquakeService : IntentService("EarthquakeService") {
 
         }
 
-        val earthquakeTrends = mutableMapOf<Int, MutableMap<Int, Int>>()
+        // key=year, <mag=key, count=value>
+        val earthquakeTrends = mutableMapOf<Int, MutableMap<Float, Int>>()
 
-        val years = arrayListOf(1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020)
+        var years = mutableListOf<Int>()
+
+        var currentYear = year
+        while(true) {
+            years.add(currentYear)
+            currentYear += 10
+            if(currentYear > 2020) {
+                break
+            }
+        }
+
+
+        //val years = arrayListOf(1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020)
         years.forEach {
             val startYear = it
             val endStart = startYear + 10
@@ -122,7 +136,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
 
             earthquakes = getEarthquakes(startDate, endDate, minMag, maxMag)
             for (earthquake in earthquakes) {
-                val mag = earthquake.magnitude.toInt()
+                val mag = earthquake.magnitude
                 year = QueryUtils.getYearFromDate(earthquake.date)
                 addQuake(earthquakeTrends, year, mag)
             }
@@ -152,10 +166,10 @@ class EarthquakeService : IntentService("EarthquakeService") {
         }
     }
 
-    fun addQuake(quakeMap: MutableMap<Int, MutableMap<Int, Int>>, year: Int, mag: Int) {
+    private fun addQuake(quakeMap: MutableMap<Int, MutableMap<Float, Int>>, year: Int, mag: Float) {
         var yearMap = quakeMap[year]
         if(yearMap == null) {
-            yearMap = mutableMapOf<Int, Int>()
+            yearMap = mutableMapOf()
             yearMap[mag] = 1
             quakeMap[year] = yearMap
         } else {
@@ -169,7 +183,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
         }
     }
 
-    private fun getEarthquakes(startDate: String, endDate: String, minMag: Int, maxMag: Int): MutableList<EarthquakeEntity>{
+    private fun getEarthquakes(startDate: String, endDate: String, minMag: Float, maxMag: Float): MutableList<EarthquakeEntity>{
         var url: String = BASEURL + "format=geojson"
         if (!startDate.isEmpty()) {
             url = "$url&starttime=$startDate"
@@ -191,8 +205,8 @@ class EarthquakeService : IntentService("EarthquakeService") {
         val sort = intent.getIntExtra(EXTRA_SORT, SORT_DATE)
         val endDate = intent.getStringExtra(EXTRA_END_DATE)
         val startDate = intent.getStringExtra(EXTRA_START_DATE)
-        val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 0)
-        val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 0)
+        val minMag = intent.getFloatExtra(EXTRA_MIN_MAG, DEFAULT_MAGNITUDE)
+        val maxMag = intent.getFloatExtra(EXTRA_MAX_MAG, DEFAULT_MAGNITUDE) + .99F
 
         var url: String = BASEURL + "format=geojson"
         if (startDate != null && !startDate.isEmpty()) {

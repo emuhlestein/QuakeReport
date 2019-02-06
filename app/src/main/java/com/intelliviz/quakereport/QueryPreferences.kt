@@ -12,8 +12,9 @@ object QueryPreferences {
     private const val MAX_MAG: String = "MaxMag"
     private const val NUM_DAYS: String = "NumDays"
     private const val YEAR: String = "year"
-    const val MIN_MAG_DEFAULT: Int = 6
-    const val MAX_MAG_DEFAULT: Int = 7
+    const val DEFAULT_MAGNITUDE = 7.0F
+    private const val MIN_MAG_DEFAULT: Int = 7
+    private const val MAX_MAG_DEFAULT: Int = 7
     private const val NUM_DAYS_DEFAULT: Int = 30
     private const val YEAR_DEFAULT: Int = 1900
     private const val MODE: String = "mode"

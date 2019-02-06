@@ -71,7 +71,7 @@ class EarthquakeTrendsOptionsDialog : DialogFragment() {
             intent.putExtra(EarthquakeTrendsOptionsDialog.EXTRA_YEAR, yearInt)
             intent.putExtra(EarthquakeTrendsOptionsDialog.EXTRA_MIN_MAG, minmag)
             intent.putExtra(EarthquakeTrendsOptionsDialog.EXTRA_MAX_MAG, maxmag)
-            sendResult(year, minmag, maxmag)
+            sendResult(yearInt, minmag, maxmag)
             dismiss()
         }
 

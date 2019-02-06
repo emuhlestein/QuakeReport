@@ -40,10 +40,10 @@ class EarthquakeRepository(private val context: Context) {
     }
 
     fun loadEarthquakes(application: Application, year: Int?, minMag: Int?, maxMag: Int?) {
-        //if(needToDownloadRecent(year, minMag, maxMag)) {
+        if(needToDownloadTrend(year, minMag, maxMag)) {
             val intent = createIntent(application, year, minMag, maxMag)
             application.startService(intent)
-        //}
+        }
     }
 
     private fun createIntent(application: Application, mode: Int, minMag: Int?, maxMag: Int?, numDays: Int?): Intent {
@@ -119,7 +119,7 @@ class EarthquakeRepository(private val context: Context) {
         }
     }
 
-    private fun needToDownloadRecent(year: Int?, minMag: Int?, maxMag: Int?): Boolean {
+    private fun needToDownloadTrend(year: Int?, minMag: Int?, maxMag: Int?): Boolean {
         val currentYear = QueryPreferences.getYear(context)
         val currentMinMag = QueryPreferences.getMinMag(context)
         val currentMaxMag = QueryPreferences.getMaxMag(context)

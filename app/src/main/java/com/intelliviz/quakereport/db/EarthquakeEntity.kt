@@ -9,7 +9,7 @@ object EarthquakeConstant {
 
 @Entity(tableName = EarthquakeConstant.TABLE_NAME)
 data class EarthquakeEntity(
-        val magnitude: Double,
+        val magnitude: Float,
         val distance: String,
         val city: String,
         val date: Long,

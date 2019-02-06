@@ -42,11 +42,11 @@ class EarthquakeTrendViewModel(application: Application): AndroidViewModel(appli
         val pointValues = ArrayList<PointValue>()
         val colors = HashMap<Int, Int>()
         list.forEach{
-            val point = PointValue(it.year.toFloat(),  it.count.toFloat(), it.magnitude)
+            val point = PointValue(it.year.toFloat(), it.count.toFloat(), it.magnitude.toInt())
             var color = Color.BLUE
             pointValues.add(point)
 
-            var earthquakeInfo = EarthquakeInfo(it.year, it.magnitude, it.count)
+            val earthquakeInfo = EarthquakeInfo(it.year, it.magnitude, it.count)
             earthquakes.add(earthquakeInfo)
         }
 
@@ -54,8 +54,7 @@ class EarthquakeTrendViewModel(application: Application): AndroidViewModel(appli
         colors[7] = Color.RED
         colors[8] = Color.MAGENTA
 
-        var earthquakeInfo = EarthquakeTrendViewData(pointValues, colors)
-        return earthquakeInfo
+        return EarthquakeTrendViewData(pointValues, colors)
     }
 
     class Factory(private val mApplication: Application) : ViewModelProvider.NewInstanceFactory() {

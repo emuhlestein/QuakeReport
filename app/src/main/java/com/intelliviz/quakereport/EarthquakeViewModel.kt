@@ -30,8 +30,6 @@ class EarthquakeViewModel(application: Application, sort: Int): AndroidViewModel
         } else {
             repo?.loadEarthquakes(getApplication(), mode, startDate, endDate, minMag, maxMag)
         }
-
-
     }
 
     private fun sortQuakes(list: List<EarthquakeEntity>, sortBy: Int): List<Earthquake> {

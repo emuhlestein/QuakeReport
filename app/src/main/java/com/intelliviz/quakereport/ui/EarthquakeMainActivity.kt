@@ -19,6 +19,7 @@ import java.util.*
 
 class EarthquakeMainActivity : AppCompatActivity(),
         EarthquakeOptionsDialog.OnOptionsSelectedListener {
+
     private lateinit var viewModel: EarthquakeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +66,7 @@ class EarthquakeMainActivity : AppCompatActivity(),
         val factory: EarthquakeViewModel.Factory = EarthquakeViewModel.Factory(application, sort)
         viewModel = ViewModelProviders.of(this, factory).get(EarthquakeViewModel::class.java)
         viewModel.init(mode, sort, startDate, endDate, minMag, maxMag, numDays)
-        viewModel.earthquakes?.observe(this, earthquakeObserver)
+        viewModel.earthquakes.observe(this, earthquakeObserver)
 
         if(mode == MODE_RANGE) {
             viewModel.loadEarthquakes(mode, sort, startDate, endDate, minMag, maxMag)
@@ -94,7 +95,6 @@ class EarthquakeMainActivity : AppCompatActivity(),
                     dialog.show(supportFragmentManager, "options")
             }
             R.id.trends_item -> {
-                val mode = QueryPreferences.getMode(this)
                 val year = QueryPreferences.getYear(this)
                 val minMag = QueryPreferences.getMinMag(this)
                 val maxMag = QueryPreferences.getMaxMag(this)

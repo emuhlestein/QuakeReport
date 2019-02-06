@@ -42,11 +42,11 @@ object QueryUtils {
                 val url = properties.getString("url")
                 val tokens: List<String> = place.split(",")
                 if(tokens.isEmpty()) {
-                    earthquakes.add(EarthquakeEntity(mag, "", "", time, url))
+                    earthquakes.add(EarthquakeEntity(mag.toFloat(), "", "", time, url))
                 } else if(tokens.size == 1) {
-                    earthquakes.add(EarthquakeEntity(mag, tokens[0], "", time, url))
+                    earthquakes.add(EarthquakeEntity(mag.toFloat(), tokens[0], "", time, url))
                 } else {
-                    earthquakes.add(EarthquakeEntity(mag, tokens[0], tokens[1], time, url))
+                    earthquakes.add(EarthquakeEntity(mag.toFloat(), tokens[0], tokens[1], time, url))
                 }
             }
         } catch (e: JSONException) {
