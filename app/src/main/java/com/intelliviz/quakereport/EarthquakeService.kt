@@ -112,9 +112,9 @@ class EarthquakeService : IntentService("EarthquakeService") {
         }
 
         // key=year, <mag=key, count=value>
-        val earthquakeTrends = mutableMapOf<Int, MutableMap<Float, Int>>()
+        val earthquakeTrends = mutableMapOf<Int, MutableMap<Int, Int>>()
 
-        var years = mutableListOf<Int>()
+        val years = mutableListOf<Int>()
 
         var currentYear = year
         while(true) {
@@ -138,7 +138,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
             for (earthquake in earthquakes) {
                 val mag = earthquake.magnitude
                 year = QueryUtils.getYearFromDate(earthquake.date)
-                addQuake(earthquakeTrends, year, mag)
+                addQuake(earthquakeTrends, year, mag.toInt())
             }
         }
 
@@ -166,7 +166,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
         }
     }
 
-    private fun addQuake(quakeMap: MutableMap<Int, MutableMap<Float, Int>>, year: Int, mag: Float) {
+    private fun addQuake(quakeMap: MutableMap<Int, MutableMap<Int, Int>>, year: Int, mag: Int) {
         var yearMap = quakeMap[year]
         if(yearMap == null) {
             yearMap = mutableMapOf()

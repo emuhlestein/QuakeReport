@@ -65,8 +65,10 @@ class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDia
             //val earthquakeData =  ArrayList<EarthquakeTrendViewData>(earthquakes)
             // add data to graphview
 
-            earthquakeGraphView.setData(earthquake!!.values)
-            earthquakeGraphView.setLegendValues(earthquake.colors)
+            if(!earthquake!!.values.isEmpty()) {
+                earthquakeGraphView.setData(earthquake!!.values)
+                earthquakeGraphView.setLegendValues(earthquake.colors)
+            }
         }
 
         val year: Int = QueryPreferences.getYear(this)

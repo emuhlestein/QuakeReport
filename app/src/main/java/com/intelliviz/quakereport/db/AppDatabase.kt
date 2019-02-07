@@ -6,7 +6,7 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 
-@Database(entities = [EarthquakeEntity::class, EarthquakeInfoEntity::class], version = 1)
+@Database(entities = [EarthquakeEntity::class, EarthquakeInfoEntity::class], version = 2)
 abstract class AppDatabase : RoomDatabase(){
     abstract fun earthquakeDao(): EarthquakeDao
     abstract fun earthquakeInfoDao(): EarthquakeInfoDao
