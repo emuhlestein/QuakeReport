@@ -89,9 +89,9 @@ class EarthquakeService : IntentService("EarthquakeService") {
         val db = AppDatabase.getAppDataBase(this)
 
         var year = intent.getIntExtra(QueryUtils.EXTRA_YEAR, 1900)
-        val minMag = intent.getFloatExtra(EXTRA_MIN_MAG, DEFAULT_MAGNITUDE)
-        val maxMag = intent.getFloatExtra(EXTRA_MAX_MAG, DEFAULT_MAGNITUDE) + 0.99F
-
+        val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 7) + 0.0F
+        val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 7) + 0.99F
+/*
         var startDate = year.toString()+"-1-1"
         var endDate = (year+10).toString()+"-1-1"
         var url: String = BASEURL + "format=geojson"
@@ -110,6 +110,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
         if(earthquakes.size == 0) {
 
         }
+*/
 
         // key=year, <mag=key, count=value>
         val earthquakeTrends = mutableMapOf<Int, MutableMap<Int, Int>>()
@@ -131,10 +132,10 @@ class EarthquakeService : IntentService("EarthquakeService") {
             val startYear = it
             val endStart = startYear + 10
 
-            startDate = startYear.toString()+"-1-1"
-            endDate = (endStart).toString()+"-1-1"
+            var startDate = startYear.toString()+"-1-1"
+            var endDate = (endStart).toString()+"-1-1"
 
-            earthquakes = getEarthquakes(startDate, endDate, minMag, maxMag)
+            var earthquakes = getEarthquakes(startDate, endDate, minMag, maxMag)
             for (earthquake in earthquakes) {
                 val mag = earthquake.magnitude
                 year = QueryUtils.getYearFromDate(earthquake.date)
