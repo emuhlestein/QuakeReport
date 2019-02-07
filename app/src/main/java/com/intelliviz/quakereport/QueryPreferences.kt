@@ -47,7 +47,7 @@ object QueryPreferences {
     }
 
     fun getStartDate(context: Context): String {
-        val currentDate: String = getCurrentDate(0)
+        val currentDate: String = getCurrentDate(1)
         return PreferenceManager.getDefaultSharedPreferences(context).getString(START_DATE, currentDate)
     }
 
@@ -58,7 +58,7 @@ object QueryPreferences {
     }
 
     fun getEndDate(context: Context): String {
-        val currentDate = getCurrentDate(1)
+        val currentDate = getCurrentDate(0)
         return PreferenceManager.getDefaultSharedPreferences(context).getString(END_DATE, currentDate)
     }
 
