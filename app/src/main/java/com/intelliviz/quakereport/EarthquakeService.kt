@@ -2,7 +2,6 @@ package com.intelliviz.quakereport
 
 import android.app.IntentService
 import android.content.Intent
-import com.intelliviz.quakereport.QueryPreferences.DEFAULT_MAGNITUDE
 import com.intelliviz.quakereport.QueryPreferences.SORT_DATE
 import com.intelliviz.quakereport.QueryUtils.EXTRA_END_DATE
 import com.intelliviz.quakereport.QueryUtils.EXTRA_MAX_MAG
@@ -206,8 +205,8 @@ class EarthquakeService : IntentService("EarthquakeService") {
         val sort = intent.getIntExtra(EXTRA_SORT, SORT_DATE)
         val endDate = intent.getStringExtra(EXTRA_END_DATE)
         val startDate = intent.getStringExtra(EXTRA_START_DATE)
-        val minMag = intent.getFloatExtra(EXTRA_MIN_MAG, DEFAULT_MAGNITUDE)
-        val maxMag = intent.getFloatExtra(EXTRA_MAX_MAG, DEFAULT_MAGNITUDE) + .99F
+        val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 7)
+        val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 7) + .99F
 
         var url: String = BASEURL + "format=geojson"
         if (startDate != null && !startDate.isEmpty()) {
