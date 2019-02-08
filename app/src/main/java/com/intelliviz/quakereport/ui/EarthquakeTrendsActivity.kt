@@ -15,7 +15,6 @@ import com.intelliviz.quakereport.graphview.GraphView
 
 class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDialog.OnTrendOptionsSelectedListener {
 
-
     private lateinit var viewModel: EarthquakeTrendViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,40 +25,9 @@ class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDia
         setSupportActionBar(toolbar)
 
         val earthquakeGraphView = findViewById<GraphView>(R.id.earthquakeGraphView)
-//
-//        var y: FloatArray = floatArrayOf(20F, 10F)
-//        var x: FloatArray = floatArrayOf(1900F, 2010F)
-//        earthquakeGraphView.setData(x, y)
+
         earthquakeGraphView.setVerticalLabel("Number of quakes")
         earthquakeGraphView.setHorizontalLabel("Year")
-
-//
-//        var spotPaint = Paint()
-//        spotPaint.color = Color.GREEN
-//        earthquakeGraphView.setSpotColor(spotPaint)
-//
-//        var legendValues = mutableListOf(6F, 7F, 8F, 9F)
-//
-//        var valueColors = mutableListOf<Paint>()
-//
-//        var paint = Paint()
-//        paint.color = Color.BLUE
-//        valueColors.add(paint)
-//
-//        paint = Paint()
-//        paint.color = Color.GREEN
-//        valueColors.add(paint)
-//
-//        paint = Paint()
-//        paint.color = Color.MAGENTA
-//        valueColors.add(paint)
-//
-//        paint = Paint()
-//        paint.color = Color.RED
-//        valueColors.add(paint)
-
-
-
 
         val earthquakeObserver = Observer<EarthquakeTrendViewData> { earthquake ->
             //val earthquakeData =  ArrayList<EarthquakeTrendViewData>(earthquakes)

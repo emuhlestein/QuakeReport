@@ -40,6 +40,10 @@ object QueryUtils {
                 val place = properties.getString("place")
                 val time = properties.getLong("time")
                 val url = properties.getString("url")
+                val eventType = properties.getString("type")
+                if(eventType != "earthquake") {
+                    Log.d("EDM", "Not a quake")
+                }
                 val tokens: List<String> = place.split(",")
                 if(tokens.isEmpty()) {
                     earthquakes.add(EarthquakeEntity(mag.toFloat(), "", "", time, url))

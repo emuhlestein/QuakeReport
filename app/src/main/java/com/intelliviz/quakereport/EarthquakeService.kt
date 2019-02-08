@@ -61,7 +61,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
 
                 return jsonData.toString()
             } else if(resCode == HttpURLConnection.HTTP_BAD_REQUEST) {
-                return "ERROR"
+                return "400 Bad Request"
             } else {
                 return "ERROR"
             }
@@ -90,26 +90,6 @@ class EarthquakeService : IntentService("EarthquakeService") {
         var year = intent.getIntExtra(QueryUtils.EXTRA_YEAR, 1900)
         val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 7) + 0.0F
         val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 7) + 0.99F
-/*
-        var startDate = year.toString()+"-1-1"
-        var endDate = (year+10).toString()+"-1-1"
-        var url: String = BASEURL + "format=geojson"
-        if (!startDate.isEmpty()) {
-            url = "$url&starttime=$startDate"
-        }
-        if (!endDate.isEmpty()) {
-            url = "$url&endtime=$endDate" + "T23:59:59"
-        }
-
-        url = "$url&minmagnitude=$minMag"
-        url = "$url&maxmagnitude=$maxMag"
-
-        val jsonString = loadDataFromURL(url)
-        var earthquakes: MutableList<EarthquakeEntity> = QueryUtils.extractEarthquakes(jsonString)
-        if(earthquakes.size == 0) {
-
-        }
-*/
 
         // key=year, <mag=key, count=value>
         val earthquakeTrends = mutableMapOf<Int, MutableMap<Int, Int>>()
@@ -125,8 +105,6 @@ class EarthquakeService : IntentService("EarthquakeService") {
             }
         }
 
-
-        //val years = arrayListOf(1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020)
         years.forEach {
             val startYear = it
             val endStart = startYear + 10
