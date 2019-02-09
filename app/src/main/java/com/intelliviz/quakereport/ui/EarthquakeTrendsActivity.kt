@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ProgressBar
 import com.intelliviz.quakereport.EarthquakeTrendViewData
 import com.intelliviz.quakereport.EarthquakeTrendViewModel
 import com.intelliviz.quakereport.QueryPreferences
@@ -24,6 +25,8 @@ class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDia
         val toolbar = findViewById<Toolbar>(R.id.app_toolbar)
         setSupportActionBar(toolbar)
 
+        val progressBar = findViewById<ProgressBar>(R.id.progress_bar)
+        progressBar.progress = 50
         val earthquakeGraphView = findViewById<GraphView>(R.id.earthquakeGraphView)
 
         earthquakeGraphView.setVerticalLabel("Number of quakes")

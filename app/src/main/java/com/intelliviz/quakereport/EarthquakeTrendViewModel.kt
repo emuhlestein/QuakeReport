@@ -53,6 +53,7 @@ class EarthquakeTrendViewModel(application: Application): AndroidViewModel(appli
         colors[6] = Color.GREEN
         colors[7] = Color.RED
         colors[8] = Color.MAGENTA
+        colors[9] = Color.BLUE
 
         return EarthquakeTrendViewData(pointValues, colors)
     }

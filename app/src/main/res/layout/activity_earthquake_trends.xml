@@ -15,6 +15,12 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+
     <com.intelliviz.quakereport.graphview.GraphView
         android:id="@+id/earthquakeGraphView"
         android:layout_width="match_parent"
