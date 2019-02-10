@@ -7,11 +7,10 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ProgressBar
-import com.intelliviz.quakereport.EarthquakeTrendViewData
-import com.intelliviz.quakereport.EarthquakeTrendViewModel
-import com.intelliviz.quakereport.QueryPreferences
-import com.intelliviz.quakereport.R
+import com.intelliviz.quakereport.*
+import com.intelliviz.quakereport.db.DownloadStatusConstant
 import com.intelliviz.quakereport.graphview.GraphView
 
 class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDialog.OnTrendOptionsSelectedListener {
@@ -26,7 +25,7 @@ class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDia
         setSupportActionBar(toolbar)
 
         val progressBar = findViewById<ProgressBar>(R.id.progress_bar)
-        progressBar.progress = 50
+        progressBar.visibility = View.GONE
         val earthquakeGraphView = findViewById<GraphView>(R.id.earthquakeGraphView)
 
         earthquakeGraphView.setVerticalLabel("Number of quakes")
@@ -37,22 +36,36 @@ class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDia
             // add data to graphview
 
             if(!earthquake!!.values.isEmpty()) {
-                earthquakeGraphView.setData(earthquake!!.values)
+                earthquakeGraphView.setData(earthquake.values)
                 earthquakeGraphView.setLegendValues(earthquake.colors)
                 earthquakeGraphView.invalidate()
                 earthquakeGraphView.requestLayout()
             }
         }
 
+        val downloadStatusObserver = Observer<DownloadStatus> { status ->
+            if(status?.status == DownloadStatusConstant.DOWNLOAD_STATUS_BEGIN) {
+                // show status bar
+                progressBar.visibility = View.VISIBLE
+            } else if(status?.status == DownloadStatusConstant.DOWNLOAD_STATUS_END) {
+                // hide status bar
+                progressBar.visibility = View.GONE
+            } else if(status?.status == DownloadStatusConstant.DOWNLOAD_STATUS_INPROGRESS) {
+                // update status bar
+                progressBar.progress = status.progress
+            }
+        }
+
+        val factory: EarthquakeTrendViewModel.Factory = EarthquakeTrendViewModel.Factory(application)
+        viewModel = ViewModelProviders.of(this, factory).get(EarthquakeTrendViewModel::class.java)
+        viewModel.status.observe(this, downloadStatusObserver)
+
         val year: Int = QueryPreferences.getYear(this)
         val minMag: Int = QueryPreferences.getMinMag(this)
         val maxMag: Int = QueryPreferences.getMaxMag(this)
 
-        val factory: EarthquakeTrendViewModel.Factory = EarthquakeTrendViewModel.Factory(application)
-        viewModel = ViewModelProviders.of(this, factory).get(EarthquakeTrendViewModel::class.java)
-        viewModel.earthquakeInfo?.observe(this, earthquakeObserver)
+        viewModel.earthquakeInfo.observe(this, earthquakeObserver)
         viewModel.loadEarthquakes(year, minMag, maxMag)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

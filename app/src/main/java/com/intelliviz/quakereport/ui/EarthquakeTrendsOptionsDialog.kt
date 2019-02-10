@@ -87,8 +87,8 @@ class EarthquakeTrendsOptionsDialog : DialogFragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
-                val minMagnitude = magnitudes[position]
-                val maxMagnitude = magnitudes[maxMagSpinner!!.selectedItemPosition]
+                val minMagnitude = magnitudes[position].toInt()
+                val maxMagnitude = magnitudes[maxMagSpinner!!.selectedItemPosition].toInt()
                 if(minMagnitude > maxMagnitude) {
                     maxMagSpinner?.setSelection(position)
                 }
@@ -104,8 +104,8 @@ class EarthquakeTrendsOptionsDialog : DialogFragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
-                val maxMagnitude = magnitudes[position]
-                val minMagnitude = magnitudes[minMagSpinner!!.selectedItemPosition]
+                val maxMagnitude = magnitudes[position].toInt()
+                val minMagnitude = magnitudes[minMagSpinner!!.selectedItemPosition].toInt()
                 if(maxMagnitude < minMagnitude) {
                     minMagSpinner?.setSelection(position)
                 }

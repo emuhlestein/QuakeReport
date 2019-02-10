@@ -3,12 +3,12 @@ package com.intelliviz.quakereport
 import android.app.Application
 import android.arch.lifecycle.*
 import com.intelliviz.quakereport.QueryPreferences.MODE_RECENT
+import com.intelliviz.quakereport.db.DownloadStatusEntity
 import com.intelliviz.quakereport.db.EarthquakeEntity
 
 
 class EarthquakeViewModel(application: Application, sort: Int): AndroidViewModel(application) {
     private var repo: EarthquakeRepository? = null
-
 
     val earthquakes = MediatorLiveData<List<Earthquake>>()
     val dbEarthquakes: LiveData<List<EarthquakeEntity>>?

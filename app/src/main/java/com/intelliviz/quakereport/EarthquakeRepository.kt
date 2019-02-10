@@ -9,12 +9,17 @@ import com.intelliviz.quakereport.db.*
 class EarthquakeRepository(private val context: Context) {
     private val earthquakeDao: EarthquakeDao
     private val earthquakeInfoDao: EarthquakeInfoDao
-
+    private val downloadStatusDao: DownloadStatusDao
 
     init {
         val db = AppDatabase.getAppDataBase(context)
         earthquakeDao = db!!.earthquakeDao()
         earthquakeInfoDao = db!!.earthquakeInfoDao()
+        downloadStatusDao = db!!.downloadStatusDao()
+    }
+
+    fun getDownloadStatus(): LiveData<DownloadStatusEntity> {
+        return downloadStatusDao.getStatus()
     }
 
     fun getEarthquakes(): LiveData<List<EarthquakeEntity>> {

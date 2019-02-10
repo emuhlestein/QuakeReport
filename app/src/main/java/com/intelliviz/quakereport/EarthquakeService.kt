@@ -7,9 +7,7 @@ import com.intelliviz.quakereport.QueryUtils.EXTRA_END_DATE
 import com.intelliviz.quakereport.QueryUtils.EXTRA_MAX_MAG
 import com.intelliviz.quakereport.QueryUtils.EXTRA_MIN_MAG
 import com.intelliviz.quakereport.QueryUtils.EXTRA_START_DATE
-import com.intelliviz.quakereport.db.AppDatabase
-import com.intelliviz.quakereport.db.EarthquakeEntity
-import com.intelliviz.quakereport.db.EarthquakeInfoEntity
+import com.intelliviz.quakereport.db.*
 import com.intelliviz.quakereport.ui.EarthquakeOptionsDialog.Companion.EXTRA_SORT
 import java.io.BufferedReader
 import java.io.IOException
@@ -86,6 +84,9 @@ class EarthquakeService : IntentService("EarthquakeService") {
 
     private fun handleEarthquakeTrend(intent: Intent) {
         val db = AppDatabase.getAppDataBase(this)
+        if(db == null) {
+            return
+        }
 
         var year = intent.getIntExtra(QueryUtils.EXTRA_YEAR, 1900)
         val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 7) + 0.0F
@@ -105,7 +106,26 @@ class EarthquakeService : IntentService("EarthquakeService") {
             }
         }
 
+//        var downloadStatus = DownloadStatusEntity(DownloadStatusConstant.DOWNLOAD_STATUS_BEGIN, 0)
+//        db?.beginTransaction()
+//        db?.downloadStatusDao()?.deleteAll()
+//        try {
+//            db.downloadStatusDao().insertStatus(downloadStatus)
+//            db?.setTransactionSuccessful()
+//        } finally {
+//            db.endTransaction()
+//        }
+        //db?.downloadStatusDao()?.updateStatus(downloadStatus)
+        setStatus(db, DownloadStatusConstant.DOWNLOAD_STATUS_BEGIN, 0)
+
+        var size = years.size
+        var index = 0
+
         years.forEach {
+           /* var progress = (index / size.toFloat()) * 100
+            var downloadStatus = DownloadStatusEntity(DownloadStatusConstant.DOWNLOAD_STATUS_INPROGRESS, progress.toInt())
+            db?.downloadStatusDao()?.updateStatus(downloadStatus)*/
+
             val startYear = it
             val endStart = startYear + 10
 
@@ -118,7 +138,11 @@ class EarthquakeService : IntentService("EarthquakeService") {
                 year = QueryUtils.getYearFromDate(earthquake.date)
                 addQuake(earthquakeTrends, year, mag.toInt())
             }
+            index++
         }
+
+//        downloadStatus = DownloadStatusEntity(DownloadStatusConstant.DOWNLOAD_STATUS_INPROGRESS, 100)
+//        db?.downloadStatusDao()?.updateStatus(downloadStatus)
 
         if(!earthquakeTrends.isEmpty()) {
             db?.beginTransaction()
@@ -140,8 +164,20 @@ class EarthquakeService : IntentService("EarthquakeService") {
                 db?.setTransactionSuccessful()
             } finally {
                 db?.endTransaction()
+//                downloadStatus = DownloadStatusEntity(DownloadStatusConstant.DOWNLOAD_STATUS_END, 0)
+//                db?.downloadStatusDao()?.updateStatus(downloadStatus)
             }
         }
+
+//        downloadStatus = DownloadStatusEntity(DownloadStatusConstant.DOWNLOAD_STATUS_END, 0)
+//        db?.beginTransaction()
+//        db?.downloadStatusDao()?.deleteAll()
+//        try {
+//            db.downloadStatusDao().insertStatus(downloadStatus)
+//        } finally {
+//            db.endTransaction()
+//        }
+        setStatus(db, DownloadStatusConstant.DOWNLOAD_STATUS_END, 0)
     }
 
     private fun addQuake(quakeMap: MutableMap<Int, MutableMap<Int, Int>>, year: Int, mag: Int) {
@@ -226,6 +262,18 @@ class EarthquakeService : IntentService("EarthquakeService") {
             } finally {
                 db?.endTransaction()
             }
+        }
+    }
+
+    private fun setStatus(db: AppDatabase, status: Int, progress: Int) {
+        var downloadStatus = DownloadStatusEntity(status, progress)
+        db?.beginTransaction()
+        db?.downloadStatusDao()?.deleteAll()
+        try {
+            db.downloadStatusDao().insertStatus(downloadStatus)
+            db?.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
         }
     }
 }

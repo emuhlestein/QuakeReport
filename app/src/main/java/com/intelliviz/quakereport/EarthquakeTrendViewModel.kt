@@ -1,22 +1,37 @@
 package com.intelliviz.quakereport
 
 import android.app.Application
-import android.arch.lifecycle.*
+import android.arch.lifecycle.AndroidViewModel
+import android.arch.lifecycle.MediatorLiveData
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import android.content.Intent
 import android.graphics.Color
+import com.intelliviz.quakereport.db.DownloadStatusEntity
 import com.intelliviz.quakereport.db.EarthquakeInfoEntity
 import com.intelliviz.quakereport.graphview.PointValue
 
 class EarthquakeTrendViewModel(application: Application): AndroidViewModel(application) {
-    private var repo: EarthquakeRepository? = null
-    val earthquakeInfo = MediatorLiveData<EarthquakeTrendViewData>()
-    val dbEarthquakeInfo: LiveData<List<EarthquakeInfoEntity>>?
-    init {
-        repo = EarthquakeRepository(application)
-        dbEarthquakeInfo = repo?.getEarthquakeInfo()
+    private val repo = EarthquakeRepository(application)
 
-        earthquakeInfo.addSource(dbEarthquakeInfo!!) {value ->
+    val status = MediatorLiveData<DownloadStatus>()
+    //val dbStatus: LiveData<DownloadStatusEntity>
+    val earthquakeInfo = MediatorLiveData<EarthquakeTrendViewData>()
+    //val dbEarthquakeInfo: LiveData<List<EarthquakeInfoEntity>>?
+    init {
+
+        val dbEarthquakeInfo = repo.getEarthquakeInfo()
+        earthquakeInfo.addSource(dbEarthquakeInfo) {value ->
             value?.let{ earthquakeInfo.value = mapQuakes(it)}
+        }
+
+//        val dbStatus = repo.getDownloadStatus()
+//        status = Transformations.map(dbStatus) {  data ->
+//            mapper(data)
+//        }
+        val dbStatus = repo?.getDownloadStatus()
+        status.addSource(dbStatus!!) {value ->
+            value?.let { status.value = mapper(it) }
         }
     }
 
@@ -56,6 +71,11 @@ class EarthquakeTrendViewModel(application: Application): AndroidViewModel(appli
         colors[9] = Color.BLUE
 
         return EarthquakeTrendViewData(pointValues, colors)
+    }
+
+
+    private fun mapper(status: DownloadStatusEntity): DownloadStatus {
+        return DownloadStatus(status.status, status.progress)
     }
 
     class Factory(private val mApplication: Application) : ViewModelProvider.NewInstanceFactory() {
