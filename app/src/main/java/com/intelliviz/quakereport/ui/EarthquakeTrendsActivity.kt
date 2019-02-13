@@ -40,10 +40,7 @@ class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDia
             // add data to graphview
 
             if(!earthquake!!.values.isEmpty()) {
-                earthquakeGraphView.setData(earthquake.values)
-                earthquakeGraphView.setLegendValues(earthquake.colors)
-                earthquakeGraphView.invalidate()
-                earthquakeGraphView.requestLayout()
+                earthquakeGraphView.setData(earthquake.values, earthquake.colors)
             }
         }
 

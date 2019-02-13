@@ -103,7 +103,7 @@ class GraphView : View {
         zValues = intArrayOf()
     }
 
-    fun setData(values: ArrayList<PointValue>) {
+    fun setData(values: ArrayList<PointValue>, map: HashMap<Int, Int>) {
         val xValues = ArrayList<Float>()
         val yValues = ArrayList<Float>()
         val zValues = ArrayList<Int>()
@@ -115,9 +115,18 @@ class GraphView : View {
 
         setData(xValues.toFloatArray(), yValues.toFloatArray())
         this.zValues = zValues.toIntArray()
+
+        map.forEach{(key, value) ->
+            val paint = Paint()
+            paint.color = value
+            legendValues[key] = paint
+        }
+
+        invalidate()
+        requestLayout()
     }
 
-    fun setData(xValues: FloatArray, yValues: FloatArray) {
+    private fun setData(xValues: FloatArray, yValues: FloatArray) {
         minX = xValues.min()!!
         maxX = xValues.max()!!
         minY = yValues.min()!!
@@ -125,14 +134,6 @@ class GraphView : View {
         this.xValues = xValues
         this.yValues = yValues
         init()
-    }
-
-    fun setLegendValues(map: HashMap<Int, Int>) {
-        map.forEach{(key, value) ->
-            val paint = Paint()
-            paint.color = value
-            legendValues[key] = paint
-        }
     }
 
     fun setVerticalLabel(label: String) {
