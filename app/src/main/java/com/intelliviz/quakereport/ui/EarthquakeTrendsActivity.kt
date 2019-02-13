@@ -2,13 +2,13 @@ package com.intelliviz.quakereport.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ProgressBar
 import com.intelliviz.quakereport.*
 import com.intelliviz.quakereport.db.DownloadStatusConstant
 import com.intelliviz.quakereport.graphview.GraphView
@@ -16,6 +16,9 @@ import com.intelliviz.quakereport.graphview.GraphView
 class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDialog.OnTrendOptionsSelectedListener {
 
     private lateinit var viewModel: EarthquakeTrendViewModel
+    private lateinit var progressBar: View
+    private lateinit var animation: AnimationDrawable
+    private var level = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,8 +27,9 @@ class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDia
         val toolbar = findViewById<Toolbar>(R.id.app_toolbar)
         setSupportActionBar(toolbar)
 
-        val progressBar = findViewById<ProgressBar>(R.id.progress_bar)
+        progressBar = findViewById<View>(R.id.progress_bar)
         progressBar.visibility = View.GONE
+        animation = progressBar.background as AnimationDrawable
         val earthquakeGraphView = findViewById<GraphView>(R.id.earthquakeGraphView)
 
         earthquakeGraphView.setVerticalLabel("Number of quakes")
@@ -47,12 +51,14 @@ class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDia
             if(status?.status == DownloadStatusConstant.DOWNLOAD_STATUS_BEGIN) {
                 // show status bar
                 progressBar.visibility = View.VISIBLE
+                animation.start()
             } else if(status?.status == DownloadStatusConstant.DOWNLOAD_STATUS_END) {
                 // hide status bar
                 progressBar.visibility = View.GONE
+                animation.stop()
             } else if(status?.status == DownloadStatusConstant.DOWNLOAD_STATUS_INPROGRESS) {
                 // update status bar
-                progressBar.progress = status.progress
+                //progressBar.progress = status.progress
             }
         }
 

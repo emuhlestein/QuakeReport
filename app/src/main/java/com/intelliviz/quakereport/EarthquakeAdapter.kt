@@ -52,7 +52,7 @@ class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>
 
         override fun onClick(p0: View?) {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.setData(Uri.parse(earthquake!!.url))
+            intent.data = Uri.parse(earthquake!!.url)
             startActivity(context, intent, null)
         }
 
