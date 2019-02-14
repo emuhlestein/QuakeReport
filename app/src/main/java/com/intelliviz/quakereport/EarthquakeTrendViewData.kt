@@ -5,4 +5,4 @@ import com.intelliviz.quakereport.graphview.PointValue
 /**
  *
  */
-data class EarthquakeTrendViewData(var values: ArrayList<PointValue>, var colors: HashMap<Int, Int>)
+data class EarthquakeTrendViewData(var values: ArrayList<PointValue>, var colors: LinkedHashMap<Int, Int>)

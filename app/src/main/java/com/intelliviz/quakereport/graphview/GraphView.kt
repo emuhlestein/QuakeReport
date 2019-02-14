@@ -38,7 +38,7 @@ class GraphView : View {
     private var zValues: IntArray
     private var verticalLabel: String = ""
     private var horizontalLabel: String = ""
-    private var legendValues = HashMap<Int, Paint>()
+    private var legendValues: LinkedHashMap<Int, Paint>
     private lateinit var verticalAxis: VerticalAxis
     private lateinit var horizontalAxis: HorizontalAxis
 
@@ -101,9 +101,10 @@ class GraphView : View {
         xValues = floatArrayOf()
         yValues = floatArrayOf()
         zValues = intArrayOf()
+        legendValues = linkedMapOf()
     }
 
-    fun setData(values: ArrayList<PointValue>, map: HashMap<Int, Int>) {
+    fun setData(values: ArrayList<PointValue>, colors: LinkedHashMap<Int, Int>) {
         val xValues = ArrayList<Float>()
         val yValues = ArrayList<Float>()
         val zValues = ArrayList<Int>()
@@ -116,10 +117,12 @@ class GraphView : View {
         setData(xValues.toFloatArray(), yValues.toFloatArray())
         this.zValues = zValues.toIntArray()
 
-        map.forEach{(key, value) ->
+        //legendValues = Array(21) {Paint()}
+
+        for(i in colors.keys) {
             val paint = Paint()
-            paint.color = value
-            legendValues[key] = paint
+            paint.color = colors[i]!!
+            legendValues[i] = paint
         }
 
         invalidate()
@@ -204,9 +207,9 @@ class GraphView : View {
 
         x += (textWidth + textSize)
 
-        legendValues.forEach{(key, value) ->
-            val str = "-" + key.toString() + ","
-            drawLegendItem(canvas, value, str, x, y)
+        for(i in legendValues.keys) {
+            val str = "-" + i.toString() + ","
+            drawLegendItem(canvas, legendValues[i]!!, str, x, y)
             x += 140F
         }
     }

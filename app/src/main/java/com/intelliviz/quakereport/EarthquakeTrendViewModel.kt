@@ -55,20 +55,27 @@ class EarthquakeTrendViewModel(application: Application): AndroidViewModel(appli
     private fun mapQuakes(list: List<EarthquakeInfoEntity>): EarthquakeTrendViewData {
         val earthquakes = ArrayList<EarthquakeInfo>()
         val pointValues = ArrayList<PointValue>()
-        val colors = HashMap<Int, Int>()
+        val colors = LinkedHashMap<Int, Int>()
+
+        val set = HashSet<Int>()
         list.forEach{
-            val point = PointValue(it.year.toFloat(), it.count.toFloat(), it.magnitude.toInt())
-            var color = Color.BLUE
+            set.add(it.magnitude)
+        }
+
+        var sortedSet = set.toSortedSet()
+        sortedSet.forEach{
+            colors.put(it, getColor(it))
+        }
+
+        list.forEach{
+            val point = PointValue(it.year.toFloat(), it.count.toFloat(), it.magnitude)
+
+            //colors.put(it.magnitude, color)
             pointValues.add(point)
 
             val earthquakeInfo = EarthquakeInfo(it.year, it.magnitude, it.count)
             earthquakes.add(earthquakeInfo)
         }
-
-        colors[6] = Color.GREEN
-        colors[7] = Color.RED
-        colors[8] = Color.MAGENTA
-        colors[9] = Color.BLUE
 
         return EarthquakeTrendViewData(pointValues, colors)
     }
@@ -76,6 +83,25 @@ class EarthquakeTrendViewModel(application: Application): AndroidViewModel(appli
 
     private fun mapper(status: DownloadStatusEntity): DownloadStatus {
         return DownloadStatus(status.status, status.progress)
+    }
+
+    private fun getColor(index: Int): Int {
+        return when(index) {
+            0 -> Color.GREEN
+            1 -> Color.GREEN
+            2 -> Color.GREEN
+            3 -> Color.GREEN
+            4 -> Color.GREEN
+            5 -> Color.GREEN
+            6 -> Color.GREEN
+            7 -> Color.RED
+            8 -> Color.BLUE
+            9 -> Color.MAGENTA
+            10 -> Color.BLACK
+            11 -> Color.BLACK
+            12 -> Color.BLACK
+            else -> Color.GREEN
+        }
     }
 
     class Factory(private val mApplication: Application) : ViewModelProvider.NewInstanceFactory() {
