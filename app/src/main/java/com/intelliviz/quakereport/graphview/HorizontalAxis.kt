@@ -5,16 +5,18 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.util.Log
 import android.util.TypedValue
 import kotlin.math.roundToInt
 
 
 
-class HorizontalAxis(context: Context, private var projection: HorizontalProjection, var label: String, values: FloatArray, var width: Float, var height: Float) {
+class HorizontalAxis(context: Context, private var projection: HorizontalProjection, var label: String,
+                     private var minValue: Float, private var maxValue: Float, values: FloatArray, var width: Float, var height: Float) {
     private var margin: Int = 0
     private var axisInc: Int = 0
-    private var minValue: Float
-    private var maxValue: Float
+    //private var minValue: Float
+    //private var maxValue: Float
     private var ticPaint: Paint = Paint()
     private var padding: Int = 0
     private var format = ""
@@ -32,8 +34,8 @@ class HorizontalAxis(context: Context, private var projection: HorizontalProject
         margin = spToPixel(context, MARGIN_SP)
         padding = spToPixel(context, PADDING_SP)
 
-        minValue = values.min() ?: 0F
-        maxValue = values.max() ?: 0F
+//        minValue = values.min() ?: 0F
+//        maxValue = values.max() ?: 0F
 
         val scaledSizeInPixels = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP,
@@ -45,6 +47,10 @@ class HorizontalAxis(context: Context, private var projection: HorizontalProject
         val slots = ((width - 2 * margin) / spTextWidth)
         val inc = (maxValue - minValue) / slots
         axisInc = inc.roundToInt()
+        if(axisInc < 1) {
+            Log.e("EDM", "Bad step value")
+            axisInc = 1
+        }
         if(axisInc < inc) {
             axisInc++
         }

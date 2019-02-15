@@ -28,6 +28,10 @@ class GraphView : View {
     private var maxX: Float = 0F
     private var minY: Float = 0F
     private var maxY: Float = 0F
+    private var currentMinX: Float = 0F
+    private var currentMaxX: Float = 0F
+    private var currentMinY: Float = 0F
+    private var currentMaxY: Float = 0F
     private lateinit var horizontalProjection: HorizontalProjection
     private lateinit var verticalProjection: VerticalProjection
     private var horizontalMargin: Float = 0F
@@ -134,9 +138,48 @@ class GraphView : View {
         maxX = xValues.max()!!
         minY = yValues.min()!!
         maxY = yValues.max()!!
+        currentMinX = minX
+        currentMaxX = maxX
+        currentMinY = minY
+        currentMaxY = maxY
         this.xValues = xValues
         this.yValues = yValues
         init()
+    }
+
+    fun setScale(scaleFactor: Float) {
+        var dx = (maxX - minX)
+        var midX = minX + dx/2
+        var fact = dx * (1 - Math.abs(1-scaleFactor))
+        var diff = Math.abs((fact - dx)/2)
+        currentMinX = minX + diff
+        currentMaxX = maxX - diff
+
+        if(currentMinX > midX) {
+            currentMinX = midX - 1
+        }
+        if(currentMaxX < midX) {
+            currentMaxX = midX + 1
+        }
+
+        var dy = (maxY - minY)
+        var midY = minY + dy/2
+        fact = dy * (1 - Math.abs(1-scaleFactor))
+        diff = Math.abs((fact - dy)/2)
+        currentMinY = minY + diff
+        currentMaxY = maxY - diff
+
+        if(currentMinY > midY) {
+            currentMinY = midY - 1
+        }
+        if(currentMaxY < midY) {
+            currentMaxY = midY + 1
+        }
+
+        updateVerticalProjection(currentMinY, currentMaxY)
+        updateHorizontalProjection(currentMinX, currentMaxX)
+        invalidate()
+        requestLayout()
     }
 
     fun setVerticalLabel(label: String) {
@@ -148,21 +191,41 @@ class GraphView : View {
     }
 
     private fun init() {
-        deltaX = maxX - minX
-        deltaY = mWidth - 1.5F * horizontalMargin
-        val horProjection = deltaY/deltaX
-        horizontalProjection = HorizontalProjection(horProjection, minX, horizontalMargin)
+//        deltaX = maxX - minX
+//        deltaY = mWidth - 1.5F * horizontalMargin
+//        var horProjection = deltaY/deltaX
+//        horizontalProjection = HorizontalProjection(horProjection, minX, horizontalMargin)
+//
+//        deltaY = maxY - minY
+//        deltaX = mHeight - 2.0F * verticalMargin
+//        var vertProjection = deltaX/deltaY
+//
+//        verticalProjection = VerticalProjection(vertProjection, minY, mHeight, verticalMargin)
 
-        deltaY = maxY - minY
-        deltaX = mHeight - 2.0F * verticalMargin
-        val vertProjection = deltaX/deltaY
+        currentMinY = 91F
+        currentMaxY = 121F
+        updateVerticalProjection(currentMinY, currentMaxY)
 
-        verticalProjection = VerticalProjection(vertProjection, minY, mHeight, verticalMargin)
-
-        verticalAxis = VerticalAxis(context, verticalProjection, verticalLabel, yValues, mHeight)
-        horizontalAxis = HorizontalAxis(context, horizontalProjection, horizontalLabel, xValues, mWidth, mHeight)
+        currentMinX = 1951F
+        currentMaxX = 1968F
+        updateHorizontalProjection(currentMinX, currentMaxX)
     }
 
+    private fun updateVerticalProjection(minY: Float, maxY: Float) {
+        val deltaY = maxY - minY
+        val deltaX = mHeight - 2.0F * verticalMargin
+        val vertProjection = deltaX/deltaY
+        verticalProjection = VerticalProjection(vertProjection, minY, mHeight, verticalMargin)
+        verticalAxis = VerticalAxis(context, verticalProjection, verticalLabel, minY!!, maxY!!, yValues, mHeight)
+    }
+
+    private fun updateHorizontalProjection(minX: Float, maxX: Float) {
+        val deltaX = maxX - minX
+        val deltaY = mWidth - 1.5F * horizontalMargin
+        val horProjection = deltaY/deltaX
+        horizontalProjection = HorizontalProjection(horProjection, minX, horizontalMargin)
+        horizontalAxis = HorizontalAxis(context, horizontalProjection, horizontalLabel, minX!!, maxX!!, xValues, mWidth, mHeight)
+    }
 
     private fun worldToPixelX(x: Float): Float {
         return horizontalProjection.worldToPixel(x)
