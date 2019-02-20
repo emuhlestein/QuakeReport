@@ -221,7 +221,7 @@ class GraphView : View {
         var x1 = pixelToWorldX(dpixel)
 
         Log.e("EDM", "delta world X: $x: min: $currentMinX  max: $currentMaxX")
-        var change = x0 - x1
+        var change = x1 - x0
         var diffX = currentMaxX - currentMinX
         currentMinX = currentMinX+change
         if(currentMinX <= minX) {
@@ -244,7 +244,7 @@ class GraphView : View {
         var y1 = pixelToWorldY(dpixel)
 
         Log.e("EDM", "delta world Y: $y: min: $currentMinY  max: $currentMaxY")
-        var change = y0 - y1
+        var change = y1 - y0
         var diffY = currentMaxY - currentMinY
         currentMinY = currentMinY+change
         if(currentMinY <= minY) {
@@ -380,12 +380,12 @@ class GraphView : View {
             if(Math.abs(dx) > Math.abs(dy)) {
                 // sliding in x direction
                 Log.e("EDM", "dx: $dx")
-                setScrollX(dx)
+                setScrollX(distanceX)
                 return true
             } else if(Math.abs(dy) > Math.abs(dx)){
                 // sliding in y direction
                 Log.e("EDM", "dy: $dy")
-                setScrollY(dy)
+                setScrollY(distanceY)
                 return true
             }
             return false
