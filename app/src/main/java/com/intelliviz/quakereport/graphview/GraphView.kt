@@ -5,11 +5,17 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.support.v4.view.GestureDetectorCompat
 import android.util.AttributeSet
 import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.View
+import kotlinx.android.synthetic.main.activity_earthquake_trends.view.*
 
 class GraphView : View {
+
     companion object {
         var HORIZONTAL_MARGIN_SP: Float = 50F
         var VERTICAL_MARGIN_SP: Float = 50F
@@ -45,6 +51,9 @@ class GraphView : View {
     private var legendValues: LinkedHashMap<Int, Paint>
     private lateinit var verticalAxis: VerticalAxis
     private lateinit var horizontalAxis: HorizontalAxis
+    private var scaleFactor: Float = 1.0F
+    private lateinit var scaleGestureDetector: ScaleGestureDetector
+    private lateinit var detector: GestureDetectorCompat
 
 
     constructor(context: Context) : super(context)
@@ -106,7 +115,31 @@ class GraphView : View {
         yValues = floatArrayOf()
         zValues = intArrayOf()
         legendValues = linkedMapOf()
+
+        scaleGestureDetector = ScaleGestureDetector(context, ScaleListener())
+        detector = GestureDetectorCompat(context, ScrollListener())
+        //setOnTouchListener(OnSlidingTouchListener())
     }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        val action: Int? = event?.actionMasked
+
+//        if(action == MotionEvent.ACTION_DOWN) {
+//            Log.e("EDM", "Action Down")
+//            return true
+//        }
+
+        detector.onTouchEvent(event)
+
+        if(!scaleGestureDetector.onTouchEvent(event)) {
+
+        }
+        //if(!detector.onTouchEvent(event)) {
+            //scaleGestureDetector.onTouchEvent(event)
+        //}
+        return true
+    }
+
 
     fun setData(values: ArrayList<PointValue>, colors: LinkedHashMap<Int, Int>) {
         val xValues = ArrayList<Float>()
@@ -120,8 +153,6 @@ class GraphView : View {
 
         setData(xValues.toFloatArray(), yValues.toFloatArray())
         this.zValues = zValues.toIntArray()
-
-        //legendValues = Array(21) {Paint()}
 
         for(i in colors.keys) {
             val paint = Paint()
@@ -163,6 +194,9 @@ class GraphView : View {
         }
 
         var dy = (maxY - minY)
+        if(dy == 0F) {
+            dy = 2F
+        }
         var midY = minY + dy/2
         fact = dy * (1 - Math.abs(1-scaleFactor))
         diff = Math.abs((fact - dy)/2)
@@ -182,6 +216,53 @@ class GraphView : View {
         requestLayout()
     }
 
+    fun setScrollX(dpixel: Float) {
+        var x0 = pixelToWorldX(0F)
+        var x1 = pixelToWorldX(dpixel)
+
+        Log.e("EDM", "delta world X: $x: min: $currentMinX  max: $currentMaxX")
+        var change = x0 - x1
+        var diffX = currentMaxX - currentMinX
+        currentMinX = currentMinX+change
+        if(currentMinX <= minX) {
+            currentMinX = minX
+        }
+
+        currentMaxX = currentMinX + diffX
+        if(currentMaxX >= maxX) {
+            currentMaxX = maxX
+            currentMinX = currentMaxX - diffX
+        }
+
+        updateHorizontalProjection(currentMinX, currentMaxX)
+        invalidate()
+        requestLayout()
+    }
+
+    fun setScrollY(dpixel: Float) {
+        var y0 = pixelToWorldY(0F)
+        var y1 = pixelToWorldY(dpixel)
+
+        Log.e("EDM", "delta world Y: $y: min: $currentMinY  max: $currentMaxY")
+        var change = y0 - y1
+        var diffY = currentMaxY - currentMinY
+        currentMinY = currentMinY+change
+        if(currentMinY <= minY) {
+            currentMinY = minY
+        }
+
+        currentMaxY = currentMinY + diffY
+        if(currentMaxY >= maxY) {
+            currentMaxY = maxY
+            currentMinY = currentMaxY - diffY
+        }
+
+
+        updateVerticalProjection(currentMinY, currentMaxY)
+        invalidate()
+        requestLayout()
+    }
+
     fun setVerticalLabel(label: String) {
         verticalLabel = label
     }
@@ -191,23 +272,7 @@ class GraphView : View {
     }
 
     private fun init() {
-//        deltaX = maxX - minX
-//        deltaY = mWidth - 1.5F * horizontalMargin
-//        var horProjection = deltaY/deltaX
-//        horizontalProjection = HorizontalProjection(horProjection, minX, horizontalMargin)
-//
-//        deltaY = maxY - minY
-//        deltaX = mHeight - 2.0F * verticalMargin
-//        var vertProjection = deltaX/deltaY
-//
-//        verticalProjection = VerticalProjection(vertProjection, minY, mHeight, verticalMargin)
-
-        currentMinY = 91F
-        currentMaxY = 121F
         updateVerticalProjection(currentMinY, currentMaxY)
-
-        currentMinX = 1951F
-        currentMaxX = 1968F
         updateHorizontalProjection(currentMinX, currentMaxX)
     }
 
@@ -219,6 +284,10 @@ class GraphView : View {
         verticalAxis = VerticalAxis(context, verticalProjection, verticalLabel, minY!!, maxY!!, yValues, mHeight)
     }
 
+    /**
+     * minX is minx of the view in world space
+     * maxX is maxx of the view in world space
+     */
     private fun updateHorizontalProjection(minX: Float, maxX: Float) {
         val deltaX = maxX - minX
         val deltaY = mWidth - 1.5F * horizontalMargin
@@ -231,8 +300,16 @@ class GraphView : View {
         return horizontalProjection.worldToPixel(x)
     }
 
+    private fun pixelToWorldX(x: Float): Float {
+        return horizontalProjection.pixelToWorld(x)
+    }
+
     private fun worldToPixelY(y: Float): Float {
         return verticalProjection.worldToPixel(y)
+    }
+
+    private fun pixelToWorldY(y: Float): Float {
+        return verticalProjection.pixelToWorld(y)
     }
 
     private fun spToPixel(context: Context, sp: Float): Float {
@@ -281,5 +358,44 @@ class GraphView : View {
         val textHeight = getTextHeight(ticPaint, str)
         canvas?.drawCircle(x, y, 10F, dotPaint)
         canvas?.drawText(str, x+20F, y+textHeight/2, ticPaint)
+    }
+
+    private inner class ScaleListener: ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        override fun onScale(detector: ScaleGestureDetector?): Boolean {
+            scaleFactor *= scaleGestureDetector!!.scaleFactor
+
+            scaleFactor = Math.max(1.0F, Math.min(scaleFactor, 10F))
+            Log.d("EDM", "Raw scale factor: ${scaleFactor}")
+
+            earthquakeGraphView.setScale(scaleFactor)
+            return true
+        }
+    }
+
+    private inner class ScrollListener: GestureDetector.SimpleOnGestureListener() {
+        override fun onScroll(e1: MotionEvent, e2: MotionEvent,
+                              distanceX: Float, distanceY: Float): Boolean {
+            var dx = e2.x - e1.x
+            var dy = e2.y - e1.y
+            if(Math.abs(dx) > Math.abs(dy)) {
+                // sliding in x direction
+                Log.e("EDM", "dx: $dx")
+                setScrollX(dx)
+                return true
+            } else if(Math.abs(dy) > Math.abs(dx)){
+                // sliding in y direction
+                Log.e("EDM", "dy: $dy")
+                setScrollY(dy)
+                return true
+            }
+            return false
+        }
+    }
+
+    private inner class OnSlidingTouchListener(val gestureDetector: GestureDetector): OnTouchListener {
+
+        override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+            return gestureDetector.onTouchEvent(event)
+        }
     }
 }

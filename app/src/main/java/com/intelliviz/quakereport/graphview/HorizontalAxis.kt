@@ -85,7 +85,7 @@ class HorizontalAxis(context: Context, private var projection: HorizontalProject
     }
 
     private fun drawAxisTic(canvas: Canvas?, value: Float) {
-        val pixelX = worldToPixelX(value)
+        val pixelX = worldToPixel(value)
         val textHeight = getTextHeight(ticPaint, value.toString())
         val textWidth = getTextWidth(ticPaint, value.toString())
         val ystart = height - padding
@@ -110,7 +110,7 @@ class HorizontalAxis(context: Context, private var projection: HorizontalProject
         return bounds.width().toFloat()
     }
 
-    private fun worldToPixelX(x: Float): Float {
+    private fun worldToPixel(x: Float): Float {
         return projection.worldToPixel(x)
     }
 

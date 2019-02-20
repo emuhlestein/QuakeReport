@@ -6,15 +6,12 @@ import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ScaleGestureDetector
 import android.view.View
 import com.intelliviz.quakereport.*
 import com.intelliviz.quakereport.db.DownloadStatusConstant
 import com.intelliviz.quakereport.graphview.GraphView
-import kotlinx.android.synthetic.main.activity_earthquake_trends.*
 
 class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDialog.OnTrendOptionsSelectedListener {
 
@@ -22,7 +19,6 @@ class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDia
     private lateinit var progressBar: View
     private lateinit var animation: AnimationDrawable
     private var level = 0
-    lateinit var scaleGestureDetector: ScaleGestureDetector
     private var scaleFactor: Float = 1.0F
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,12 +70,6 @@ class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDia
 
         viewModel.earthquakeInfo.observe(this, earthquakeObserver)
         viewModel.loadEarthquakes(year, minMag, maxMag)
-
-        scaleGestureDetector = ScaleGestureDetector(this, ScaleListener())
-        earthquakeGraphView.setOnTouchListener { x, event ->
-            scaleGestureDetector.onTouchEvent(event)
-            true
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -104,22 +94,5 @@ class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDia
 
     override fun onOptionsSelected(year: Int, minMag: Int, maxMag: Int) {
         viewModel.loadEarthquakes(year, minMag, maxMag)
-    }
-
-//    override fun onTouchEvent(event: MotionEvent?): Boolean {
-//        scaleGestureDetector!!.onTouchEvent(event)
-//        return true
-//    }
-
-    private inner class ScaleListener: ScaleGestureDetector.SimpleOnScaleGestureListener() {
-        override fun onScale(detector: ScaleGestureDetector?): Boolean {
-            scaleFactor *= scaleGestureDetector!!.scaleFactor
-
-            scaleFactor = Math.max(1.0F, Math.min(scaleFactor, 10F))
-            Log.d("EDM", "Raw scale factor: ${scaleFactor}")
-
-            earthquakeGraphView.setScale(scaleFactor)
-            return true
-        }
     }
 }

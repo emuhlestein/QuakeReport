@@ -100,7 +100,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
         var currentYear = year
         while(true) {
             years.add(currentYear)
-            currentYear += 10
+            currentYear += 20
             if(currentYear > 2020) {
                 break
             }
@@ -127,7 +127,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
             db?.downloadStatusDao()?.updateStatus(downloadStatus)*/
 
             val startYear = it
-            val endStart = startYear + 10
+            val endStart = startYear + 20
 
             var startDate = startYear.toString()+"-1-1"
             var endDate = (endStart).toString()+"-1-1"
@@ -244,7 +244,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
         val jsonString = loadDataFromURL(url)
 
         val earthquakes: MutableList<EarthquakeEntity> = QueryUtils.extractEarthquakes(jsonString)
-        val limit = 200
+        val limit = 2000
 
         if(!earthquakes.isEmpty()) {
             db?.beginTransaction()
