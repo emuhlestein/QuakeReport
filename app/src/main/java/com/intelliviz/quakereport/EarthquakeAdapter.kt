@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
-import android.support.v4.content.ContextCompat
 import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.intelliviz.quakereport.QueryUtils.getMagnitudeColor
 import kotlinx.android.synthetic.main.earthquake_list_item.view.*
 
 
@@ -72,34 +72,6 @@ class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>
             val magnitudeCircle = magnitudeTextView.background as GradientDrawable
             val magnitudeColor = getMagnitudeColor(context, earthquake.magnitude)
             magnitudeCircle.setColor(magnitudeColor)
-        }
-
-        private fun getMagnitudeColor(context: Context, magnitude: Float): Int {
-
-            val colorIndex: Int
-            if(magnitude < 1.0) {
-                colorIndex = R.color.magnitude1
-            } else if(magnitude < 2.0) {
-                colorIndex = R.color.magnitude2
-            } else if(magnitude < 3.0) {
-                colorIndex = R.color.magnitude3
-            } else if(magnitude < 4.0) {
-                colorIndex = R.color.magnitude4
-            } else if(magnitude < 5.0) {
-                colorIndex = R.color.magnitude5
-            } else if(magnitude < 6.0) {
-                colorIndex = R.color.magnitude6
-            } else if(magnitude < 7.0) {
-                colorIndex = R.color.magnitude7
-            } else if(magnitude < 8.0) {
-                colorIndex = R.color.magnitude8
-            } else if(magnitude < 9.0) {
-                colorIndex = R.color.magnitude9
-            } else {
-                colorIndex = R.color.magnitude10plus
-            }
-
-            return ContextCompat.getColor(context, colorIndex)
         }
     }
 }

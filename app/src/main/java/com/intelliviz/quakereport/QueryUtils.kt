@@ -1,5 +1,7 @@
 package com.intelliviz.quakereport
 
+import android.content.Context
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.intelliviz.quakereport.db.EarthquakeEntity
 import org.json.JSONException
@@ -95,5 +97,33 @@ object QueryUtils {
         }
 
         return currentFormattedDate
+    }
+
+    fun getMagnitudeColor(context: Context, magnitude: Float): Int {
+
+        val colorIndex: Int
+        if(magnitude < 1.0) {
+            colorIndex = R.color.magnitude1
+        } else if(magnitude < 2.0) {
+            colorIndex = R.color.magnitude2
+        } else if(magnitude < 3.0) {
+            colorIndex = R.color.magnitude3
+        } else if(magnitude < 4.0) {
+            colorIndex = R.color.magnitude4
+        } else if(magnitude < 5.0) {
+            colorIndex = R.color.magnitude5
+        } else if(magnitude < 6.0) {
+            colorIndex = R.color.magnitude6
+        } else if(magnitude < 7.0) {
+            colorIndex = R.color.magnitude7
+        } else if(magnitude < 8.0) {
+            colorIndex = R.color.magnitude8
+        } else if(magnitude < 9.0) {
+            colorIndex = R.color.magnitude9
+        } else {
+            colorIndex = R.color.magnitude10plus
+        }
+
+        return ContextCompat.getColor(context, colorIndex)
     }
 }

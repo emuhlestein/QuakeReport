@@ -64,7 +64,7 @@ class EarthquakeTrendViewModel(application: Application): AndroidViewModel(appli
 
         var sortedSet = set.toSortedSet()
         sortedSet.forEach{
-            colors.put(it, getColor(it))
+            colors.put(it, (QueryUtils.getMagnitudeColor(getApplication(), it.toFloat())))
         }
 
         list.forEach{

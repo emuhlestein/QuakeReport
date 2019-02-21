@@ -47,6 +47,7 @@
 
     <color name="white">#FFFFFF</color>
 
+    <!-- Progress bar colors -->
     <color name="center_color">#FFFFFF</color>
     <color name="start_color">#0000dd</color>
     <color name="end_color">#0000dd</color>
