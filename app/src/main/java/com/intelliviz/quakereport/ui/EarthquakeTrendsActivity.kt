@@ -18,8 +18,6 @@ class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDia
     private lateinit var viewModel: EarthquakeTrendViewModel
     private lateinit var progressBar: View
     private lateinit var animation: AnimationDrawable
-    private var level = 0
-    private var scaleFactor: Float = 1.0F
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

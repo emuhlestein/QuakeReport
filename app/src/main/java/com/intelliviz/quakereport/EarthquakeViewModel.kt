@@ -10,6 +10,7 @@ import com.intelliviz.quakereport.db.EarthquakeEntity
 class EarthquakeViewModel(application: Application, sort: Int): AndroidViewModel(application) {
     private var repo: EarthquakeRepository? = null
 
+    val status = MediatorLiveData<DownloadStatus>()
     val earthquakes = MediatorLiveData<List<Earthquake>>()
     val dbEarthquakes: LiveData<List<EarthquakeEntity>>?
     init {
@@ -18,6 +19,11 @@ class EarthquakeViewModel(application: Application, sort: Int): AndroidViewModel
 
         earthquakes.addSource(dbEarthquakes!!) {value ->
             value?.let{ earthquakes.value = sortQuakes(it, sort)}
+        }
+
+        val dbStatus = repo?.getDownloadStatus()
+        status.addSource(dbStatus!!) {value ->
+            value?.let { status.value = mapper(it) }
         }
     }
 
@@ -106,6 +112,10 @@ class EarthquakeViewModel(application: Application, sort: Int): AndroidViewModel
         } else {
             return false
         }
+    }
+
+    private fun mapper(status: DownloadStatusEntity): DownloadStatus {
+        return DownloadStatus(status.status, status.progress)
     }
 
     class Factory(private val mApplication: Application, private val sort: Int) : ViewModelProvider.NewInstanceFactory() {

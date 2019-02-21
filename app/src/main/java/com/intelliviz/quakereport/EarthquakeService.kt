@@ -164,6 +164,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
                 db?.setTransactionSuccessful()
             } finally {
                 db?.endTransaction()
+                setStatus(db, DownloadStatusConstant.DOWNLOAD_STATUS_END, 0)
 //                downloadStatus = DownloadStatusEntity(DownloadStatusConstant.DOWNLOAD_STATUS_END, 0)
 //                db?.downloadStatusDao()?.updateStatus(downloadStatus)
             }
@@ -177,7 +178,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
 //        } finally {
 //            db.endTransaction()
 //        }
-        setStatus(db, DownloadStatusConstant.DOWNLOAD_STATUS_END, 0)
+
     }
 
     private fun addQuake(quakeMap: MutableMap<Int, MutableMap<Int, Int>>, year: Int, mag: Int) {
@@ -215,12 +216,16 @@ class EarthquakeService : IntentService("EarthquakeService") {
 
     private fun getRangeEarthquake(intent: Intent) {
         val db = AppDatabase.getAppDataBase(this)
-
+        if(db == null) {
+            return
+        }
         val sort = intent.getIntExtra(EXTRA_SORT, SORT_DATE)
         val endDate = intent.getStringExtra(EXTRA_END_DATE)
         val startDate = intent.getStringExtra(EXTRA_START_DATE)
         val minMag = intent.getIntExtra(EXTRA_MIN_MAG, 7)
         val maxMag = intent.getIntExtra(EXTRA_MAX_MAG, 7) + .99F
+
+        setStatus(db, DownloadStatusConstant.DOWNLOAD_STATUS_BEGIN, 0)
 
         var url: String = BASEURL + "format=geojson"
         if (startDate != null && !startDate.isEmpty()) {
@@ -261,6 +266,7 @@ class EarthquakeService : IntentService("EarthquakeService") {
                 db?.setTransactionSuccessful()
             } finally {
                 db?.endTransaction()
+                setStatus(db, DownloadStatusConstant.DOWNLOAD_STATUS_END, 0)
             }
         }
     }
