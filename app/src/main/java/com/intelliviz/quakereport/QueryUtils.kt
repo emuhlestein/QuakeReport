@@ -101,27 +101,17 @@ object QueryUtils {
 
     fun getMagnitudeColor(context: Context, magnitude: Float): Int {
 
-        val colorIndex: Int
-        if(magnitude < 1.0) {
-            colorIndex = R.color.magnitude1
-        } else if(magnitude < 2.0) {
-            colorIndex = R.color.magnitude2
-        } else if(magnitude < 3.0) {
-            colorIndex = R.color.magnitude3
-        } else if(magnitude < 4.0) {
-            colorIndex = R.color.magnitude4
-        } else if(magnitude < 5.0) {
-            colorIndex = R.color.magnitude5
-        } else if(magnitude < 6.0) {
-            colorIndex = R.color.magnitude6
-        } else if(magnitude < 7.0) {
-            colorIndex = R.color.magnitude7
-        } else if(magnitude < 8.0) {
-            colorIndex = R.color.magnitude8
-        } else if(magnitude < 9.0) {
-            colorIndex = R.color.magnitude9
-        } else {
-            colorIndex = R.color.magnitude10plus
+        val colorIndex: Int = when {
+            magnitude < 1.0 -> R.color.magnitude1
+            magnitude < 2.0 -> R.color.magnitude2
+            magnitude < 3.0 -> R.color.magnitude3
+            magnitude < 4.0 -> R.color.magnitude4
+            magnitude < 5.0 -> R.color.magnitude5
+            magnitude < 6.0 -> R.color.magnitude6
+            magnitude < 7.0 -> R.color.magnitude7
+            magnitude < 8.0 -> R.color.magnitude8
+            magnitude < 9.0 -> R.color.magnitude9
+            else -> R.color.magnitude10plus
         }
 
         return ContextCompat.getColor(context, colorIndex)
