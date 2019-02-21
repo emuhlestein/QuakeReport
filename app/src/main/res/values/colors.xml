@@ -46,4 +46,9 @@
     <color name="textColorEarthquakeLocation">#2B3D4D</color>
 
     <color name="white">#FFFFFF</color>
+
+    <color name="center_color">#FFFFFF</color>
+    <color name="start_color">#0000dd</color>
+    <color name="end_color">#0000dd</color>
+
 </resources>
