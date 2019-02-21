@@ -84,7 +84,7 @@ class EarthquakeViewModel(application: Application, sort: Int): AndroidViewModel
         }
     }
 
-    fun needToSort(sort: Int, minMag: Int, maxMag: Int, numDays: Int): Boolean {
+    private fun needToSort(sort: Int, minMag: Int, maxMag: Int, numDays: Int): Boolean {
         val currentSort = QueryPreferences.getSort(getApplication())
         val currentMinMag = QueryPreferences.getMinMag(getApplication())
         val currentMaxMag = QueryPreferences.getMaxMag(getApplication())
@@ -98,7 +98,7 @@ class EarthquakeViewModel(application: Application, sort: Int): AndroidViewModel
         }
     }
 
-    fun needToSort(sort: Int, startDate: String?, endDate: String?, minMag: Int?, maxMag: Int?): Boolean {
+    private fun needToSort(sort: Int, startDate: String?, endDate: String?, minMag: Int?, maxMag: Int?): Boolean {
         val currentSort = QueryPreferences.getSort(getApplication())
         val currentMinMag = QueryPreferences.getMinMag(getApplication())
         val currentMaxMag = QueryPreferences.getMaxMag(getApplication())

@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import android.util.Log
 import kotlin.math.roundToInt
 
 
@@ -19,8 +18,6 @@ class VerticalAxis(context: Context, private var projection: VerticalProjection,
                    private var minValue: Float, private var maxValue: Float, values: FloatArray, var height: Float) {
     private var margin: Int = 0
     private var axisInc: Int = 0
-//    private var minValue: Float
-//    private var maxValue: Float
     private var ticPaint: Paint = Paint()
     private var padding: Int = 0
     private var format = ""
@@ -38,16 +35,12 @@ class VerticalAxis(context: Context, private var projection: VerticalProjection,
         margin = spToPixel(context, MARGIN_SP)
         padding = spToPixel(context, PADDING_SP)
 
-//        minValue = values.min() ?: 0F
-//        maxValue = values.max() ?: 0F
-
         val textHeight = getTextHeight(ticPaint, minValue.toString())
         val spTextHeight = spToPixel(context, textHeight)
         val slots = (height - 2 * margin) / spTextHeight
         val inc = (maxValue - minValue) / slots
         axisInc = inc.roundToInt()
         if(axisInc < 1) {
-            Log.e("EDM", "Bad step value")
             axisInc = 1
         }
         if(axisInc < inc) {

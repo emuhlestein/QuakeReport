@@ -15,8 +15,6 @@ class HorizontalAxis(context: Context, private var projection: HorizontalProject
                      private var minValue: Float, private var maxValue: Float, values: FloatArray, var width: Float, var height: Float) {
     private var margin: Int = 0
     private var axisInc: Int = 0
-    //private var minValue: Float
-    //private var maxValue: Float
     private var ticPaint: Paint = Paint()
     private var padding: Int = 0
     private var format = ""
@@ -33,9 +31,6 @@ class HorizontalAxis(context: Context, private var projection: HorizontalProject
 
         margin = spToPixel(context, MARGIN_SP)
         padding = spToPixel(context, PADDING_SP)
-
-//        minValue = values.min() ?: 0F
-//        maxValue = values.max() ?: 0F
 
         val scaledSizeInPixels = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP,
@@ -77,11 +72,6 @@ class HorizontalAxis(context: Context, private var projection: HorizontalProject
 
         val textWidth = getTextWidth(ticPaint, label)
         canvas?.drawText(label, width / 2 - textWidth/2, height - 12, ticPaint)
-
-        val Width = width.toInt()
-        for(value in 0..Width step 100) {
-            //drawVerticalLine(canvas, value.toFloat(), height - (padding + 50))
-        }
     }
 
     private fun drawAxisTic(canvas: Canvas?, value: Float) {

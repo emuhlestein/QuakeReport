@@ -17,10 +17,10 @@ class DatePickerFragment : DialogFragment() {
     }
 
     companion object {
-        val EXTRA_YEAR = "year"
-        val EXTRA_MONTH = "month"
-        val EXTRA_DAY = "day"
-        val EXTRA_ID = "id"
+        const val EXTRA_YEAR = "year"
+        const val EXTRA_MONTH = "month"
+        const val EXTRA_DAY = "day"
+        const val EXTRA_ID = "id"
         private val ARG_ID = "id"
         private val ARG_DATE = "date"
         fun newInstance(id: Int, date: String): DatePickerFragment {
@@ -50,7 +50,6 @@ class DatePickerFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         mId = arguments!!.getInt(ARG_ID)
         val date = arguments!!.getString(ARG_DATE)
-
 
         return DatePickerDialog(activity!!, dateSetListener, getYear(date), getMonth(date), getDay(date))
     }

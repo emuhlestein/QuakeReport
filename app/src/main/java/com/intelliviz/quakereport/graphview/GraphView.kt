@@ -28,8 +28,6 @@ class GraphView : View {
     private var bluePaint: Paint
     private var greenPaint: Paint
     private var ticPaint: Paint
-    private var deltaX: Float = 0F
-    private var deltaY: Float = 0F
     private var minX: Float = 0F
     private var maxX: Float = 0F
     private var minY: Float = 0F
@@ -52,9 +50,8 @@ class GraphView : View {
     private lateinit var verticalAxis: VerticalAxis
     private lateinit var horizontalAxis: HorizontalAxis
     private var scaleFactor: Float = 1.0F
-    private lateinit var scaleGestureDetector: ScaleGestureDetector
-    private lateinit var detector: GestureDetectorCompat
-
+    private var scaleGestureDetector: ScaleGestureDetector
+    private var detector: GestureDetectorCompat
 
     constructor(context: Context) : super(context)
 
@@ -71,9 +68,6 @@ class GraphView : View {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
-
-        Log.d("EDM", "width = $width, height = $height")
 
         if(xValues.isEmpty()) {
             return
@@ -118,25 +112,15 @@ class GraphView : View {
 
         scaleGestureDetector = ScaleGestureDetector(context, ScaleListener())
         detector = GestureDetectorCompat(context, ScrollListener())
-        //setOnTouchListener(OnSlidingTouchListener())
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val action: Int? = event?.actionMasked
-
-//        if(action == MotionEvent.ACTION_DOWN) {
-//            Log.e("EDM", "Action Down")
-//            return true
-//        }
-
         detector.onTouchEvent(event)
 
         if(!scaleGestureDetector.onTouchEvent(event)) {
 
         }
-        //if(!detector.onTouchEvent(event)) {
-            //scaleGestureDetector.onTouchEvent(event)
-        //}
         return true
     }
 
@@ -363,10 +347,7 @@ class GraphView : View {
     private inner class ScaleListener: ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector?): Boolean {
             scaleFactor *= scaleGestureDetector!!.scaleFactor
-
             scaleFactor = Math.max(1.0F, Math.min(scaleFactor, 10F))
-            Log.d("EDM", "Raw scale factor: ${scaleFactor}")
-
             earthquakeGraphView.setScale(scaleFactor)
             return true
         }
@@ -379,23 +360,14 @@ class GraphView : View {
             var dy = e2.y - e1.y
             if(Math.abs(dx) > Math.abs(dy)) {
                 // sliding in x direction
-                Log.e("EDM", "dx: $dx")
                 setScrollX(distanceX)
                 return true
             } else if(Math.abs(dy) > Math.abs(dx)){
                 // sliding in y direction
-                Log.e("EDM", "dy: $dy")
                 setScrollY(distanceY)
                 return true
             }
             return false
-        }
-    }
-
-    private inner class OnSlidingTouchListener(val gestureDetector: GestureDetector): OnTouchListener {
-
-        override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-            return gestureDetector.onTouchEvent(event)
         }
     }
 }

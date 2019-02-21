@@ -106,25 +106,11 @@ class EarthquakeService : IntentService("EarthquakeService") {
             }
         }
 
-//        var downloadStatus = DownloadStatusEntity(DownloadStatusConstant.DOWNLOAD_STATUS_BEGIN, 0)
-//        db?.beginTransaction()
-//        db?.downloadStatusDao()?.deleteAll()
-//        try {
-//            db.downloadStatusDao().insertStatus(downloadStatus)
-//            db?.setTransactionSuccessful()
-//        } finally {
-//            db.endTransaction()
-//        }
-        //db?.downloadStatusDao()?.updateStatus(downloadStatus)
         setStatus(db, DownloadStatusConstant.DOWNLOAD_STATUS_BEGIN, 0)
 
-        var size = years.size
         var index = 0
 
         years.forEach {
-           /* var progress = (index / size.toFloat()) * 100
-            var downloadStatus = DownloadStatusEntity(DownloadStatusConstant.DOWNLOAD_STATUS_INPROGRESS, progress.toInt())
-            db?.downloadStatusDao()?.updateStatus(downloadStatus)*/
 
             val startYear = it
             val endStart = startYear + 20
@@ -140,9 +126,6 @@ class EarthquakeService : IntentService("EarthquakeService") {
             }
             index++
         }
-
-//        downloadStatus = DownloadStatusEntity(DownloadStatusConstant.DOWNLOAD_STATUS_INPROGRESS, 100)
-//        db?.downloadStatusDao()?.updateStatus(downloadStatus)
 
         if(!earthquakeTrends.isEmpty()) {
             db?.beginTransaction()
@@ -165,20 +148,8 @@ class EarthquakeService : IntentService("EarthquakeService") {
             } finally {
                 db?.endTransaction()
                 setStatus(db, DownloadStatusConstant.DOWNLOAD_STATUS_END, 0)
-//                downloadStatus = DownloadStatusEntity(DownloadStatusConstant.DOWNLOAD_STATUS_END, 0)
-//                db?.downloadStatusDao()?.updateStatus(downloadStatus)
             }
         }
-
-//        downloadStatus = DownloadStatusEntity(DownloadStatusConstant.DOWNLOAD_STATUS_END, 0)
-//        db?.beginTransaction()
-//        db?.downloadStatusDao()?.deleteAll()
-//        try {
-//            db.downloadStatusDao().insertStatus(downloadStatus)
-//        } finally {
-//            db.endTransaction()
-//        }
-
     }
 
     private fun addQuake(quakeMap: MutableMap<Int, MutableMap<Int, Int>>, year: Int, mag: Int) {

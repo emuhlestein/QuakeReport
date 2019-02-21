@@ -239,7 +239,6 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         } else {
             if(activity is OnOptionsSelectedListener) {
-                //var listener: EarthquakeOptionsDialog.OnOptionsSelectedListener? = null
                 val listener = activity as OnOptionsSelectedListener
                 listener.onOptionsSelected(mode, sort, startDate, endDate, minMag, maxMag, numDays)
             }
@@ -247,6 +246,6 @@ class EarthquakeOptionsDialog : DialogFragment(), DatePickerFragment.OnDateSelec
     }
 
     private fun getFormatDate(day: String, month: String, year: String): String {
-        return year + "-" + month + "-" + day
+        return "$year - $month - $day"
     }
 }

@@ -54,7 +54,6 @@ class EarthquakeTrendsActivity : AppCompatActivity(), EarthquakeTrendsOptionsDia
                 animation.stop()
             } else if(status?.status == DownloadStatusConstant.DOWNLOAD_STATUS_INPROGRESS) {
                 // update status bar
-                //progressBar.progress = status.progress
             }
         }
 

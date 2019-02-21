@@ -80,7 +80,6 @@ class EarthquakeTrendsOptionsDialog : DialogFragment() {
             dismiss()
         }
 
-
         minMagSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(p0: AdapterView<*>?) {
             }
@@ -116,7 +115,7 @@ class EarthquakeTrendsOptionsDialog : DialogFragment() {
         return view
     }
 
-    fun sendResult(year: Int, minMag: Int, maxMag: Int) {
+    private fun sendResult(year: Int, minMag: Int, maxMag: Int) {
         if(targetFragment != null) {
             val intent = Intent()
             intent.putExtra(EarthquakeTrendsOptionsDialog.EXTRA_YEAR, year)
@@ -125,7 +124,6 @@ class EarthquakeTrendsOptionsDialog : DialogFragment() {
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         } else {
             if(activity is EarthquakeTrendsOptionsDialog.OnTrendOptionsSelectedListener) {
-                //var listener: EarthquakeOptionsDialog.OnOptionsSelectedListener? = null
                 val listener = activity as EarthquakeTrendsOptionsDialog.OnTrendOptionsSelectedListener
                 listener.onOptionsSelected(year, minMag, maxMag)
             }

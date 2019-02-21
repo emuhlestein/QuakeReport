@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.earthquake_list_item.view.*
 class EarthquakeAdapter(val context: Context, val items: MutableList<Earthquake>) :
         RecyclerView.Adapter<EarthquakeAdapter.ViewHolder>() {
     private val earthquakes: MutableList<Earthquake> = items
-    //private lateinit var listener: GetEarthQuakeDataAsyncTask.OnEarthquakeLoadListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context).inflate(R.layout.earthquake_list_item, parent, false))
